@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: enterpriseerp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: enterpriseerp
+      POSTGRES_PASSWORD: enterpriseerp
+      POSTGRES_DB: enterpriseerp_cloud
+    ports:
+      - "5432:5432"
+    volumes:
+      - enterpriseerp_postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: enterpriseerp-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+volumes:
+  enterpriseerp_postgres_data:
