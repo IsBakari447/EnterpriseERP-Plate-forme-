@@ -15,6 +15,7 @@ EnterpriseERP Cloud is designed for SMEs that need a clear command center for CR
 - SaaS-ready offer structure: free trial, Business plan and Enterprise plan.
 - PostgreSQL and Prisma migrations for a serious cloud database foundation.
 - NestJS API with health, readiness, modules, pricing and roadmap endpoints.
+- Market-ready pages for solutions, pricing, trust center, integrations and onboarding.
 - Responsive Next.js interface aligned with the EnterpriseERP visual identity.
 - Prepared roadmap for multi-tenant, audit logs, SSO, workflows and mobile sync.
 
@@ -110,6 +111,10 @@ GET /health/ready
 GET /modules
 GET /pricing
 GET /roadmap
+GET /security
+GET /integrations
+GET /onboarding
+GET /competitive-position
 GET /clients
 GET /products
 GET /invoices
@@ -130,6 +135,17 @@ The web dashboard includes:
 - AI executive summary
 - Pricing cards
 - Trust and deployment readiness signals
+
+Additional market pages:
+
+```text
+/cloud
+/solutions
+/pricing
+/security
+/integrations
+/onboarding
+```
 
 ## Quality Commands
 

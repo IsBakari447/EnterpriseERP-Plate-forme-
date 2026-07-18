@@ -77,6 +77,10 @@ npm start
 - `GET /modules`
 - `GET /pricing`
 - `GET /roadmap`
+- `GET /security`
+- `GET /integrations`
+- `GET /onboarding`
+- `GET /competitive-position`
 - `GET /clients`
 - `POST /clients`
 - `GET /products`

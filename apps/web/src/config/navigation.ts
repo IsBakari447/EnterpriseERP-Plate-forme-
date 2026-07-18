@@ -1,5 +1,8 @@
 export const navigationItems = [
   { name: "Dashboard", href: "/" },
+  { name: "Cloud", href: "/cloud" },
+  { name: "Solutions", href: "/solutions" },
+  { name: "Pricing", href: "/pricing" },
   { name: "CRM", href: "/crm" },
   { name: "Ventes", href: "/ventes" },
   { name: "Stock", href: "/stock" },
@@ -7,5 +10,8 @@ export const navigationItems = [
   { name: "Comptabilite", href: "/comptabilite" },
   { name: "RH", href: "/rh" },
   { name: "Assistant IA", href: "/assistant" },
+  { name: "Integrations", href: "/integrations" },
+  { name: "Securite", href: "/security" },
+  { name: "Onboarding", href: "/onboarding" },
   { name: "Parametres", href: "/parametres" },
 ];

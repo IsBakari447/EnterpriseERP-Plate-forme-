@@ -135,6 +135,60 @@ export class AppController {
     };
   }
 
+  @Get("security")
+  getSecurity() {
+    return {
+      trustCenter: "EnterpriseERP Cloud",
+      controls: [
+        { key: "roles", status: "planned", description: "Role-based access control for admin, manager and employee scopes." },
+        { key: "readiness", status: "ready", description: "Health and readiness endpoints for cloud QA and deployment checks." },
+        { key: "secrets", status: "ready", description: "Environment-based configuration with secrets excluded from Git." },
+        { key: "audit", status: "planned", description: "Audit trail for sensitive actions and business changes." },
+        { key: "retention", status: "planned", description: "Trial and subscription data retention policy." },
+      ],
+    };
+  }
+
+  @Get("integrations")
+  getIntegrations() {
+    return {
+      strategy: "API-first integrations for web, mobile, BI and automation.",
+      available: ["CRM API", "Products API", "Invoices API", "Health API", "Readiness API"],
+      planned: ["EnterpriseERP.Mobile sync", "Webhooks", "Payment providers", "Email and calendar", "Accounting connectors", "BI exports"],
+    };
+  }
+
+  @Get("onboarding")
+  getOnboarding() {
+    return {
+      goal: "Convert trial users into paying customers with a clear activation path.",
+      steps: [
+        "Create company workspace",
+        "Invite up to 3 trial users",
+        "Import clients, products and open invoices",
+        "Review dashboard KPIs and AI priorities",
+        "Connect mobile/API integrations",
+        "Upgrade before read-only mode",
+      ],
+    };
+  }
+
+  @Get("competitive-position")
+  getCompetitivePosition() {
+    return {
+      comparableCloudSignals: [
+        "Integrated business suite",
+        "CRM, finance, stock, HR and analytics",
+        "Free trial and clear pricing path",
+        "API-first architecture",
+        "Mobile-ready product story",
+        "AI recommendations and automation roadmap",
+        "Trust center and readiness checks",
+      ],
+      focus: "Small and medium businesses that need a simpler cloud ERP with professional dashboards and mobile extensibility.",
+    };
+  }
+
   @Get("login")
   @Header("Content-Type", "text/html; charset=utf-8")
   getLogin() {
