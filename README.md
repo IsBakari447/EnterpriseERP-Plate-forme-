@@ -102,6 +102,16 @@ npm install
 npm run dev
 ```
 
+You can also run common commands from the project root:
+
+```bash
+npm run dev        # starts the web app
+npm run dev:web    # starts the web app
+npm run dev:api    # starts the API
+npm run build      # builds web and API
+npm run qa         # builds and validates Prisma
+```
+
 Default URLs:
 
 ```text
