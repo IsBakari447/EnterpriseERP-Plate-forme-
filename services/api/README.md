@@ -81,6 +81,10 @@ npm start
 - `GET /integrations`
 - `GET /onboarding`
 - `GET /competitive-position`
+- `GET /demo-script`
+- `GET /roi-model`
+- `GET /faq`
+- `GET /platform-status`
 - `GET /clients`
 - `POST /clients`
 - `GET /products`

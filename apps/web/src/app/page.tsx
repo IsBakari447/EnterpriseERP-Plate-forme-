@@ -1,3 +1,3 @@
-import { DashboardPage } from "@modules/dashboard";
+import { CloudMarketPage } from "@modules/cloud-market/CloudMarketPage";
 
-export default DashboardPage;
+export default CloudMarketPage;

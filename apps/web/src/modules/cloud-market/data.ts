@@ -116,3 +116,76 @@ export const competitorSignals = [
   "Mobile et IA dans la proposition de valeur",
   "Securite et readiness presentes dans le produit",
 ];
+
+export const demoHighlights = [
+  "Vue dirigeant en moins de 2 minutes",
+  "Creation client, produit et facture",
+  "Lecture des alertes stock et factures dues",
+  "Verification API readiness et integrations",
+  "Explication essai gratuit et passage paiement",
+];
+
+export const roiCards = [
+  {
+    metric: "Temps administratif",
+    before: "8 h/semaine",
+    after: "4 h/semaine",
+    gain: "-50%",
+  },
+  {
+    metric: "Relance factures",
+    before: "Manuelle",
+    after: "Priorisee",
+    gain: "+Cash-flow",
+  },
+  {
+    metric: "Vision dirigeant",
+    before: "Fichiers disperses",
+    after: "Dashboard unique",
+    gain: "Temps reel",
+  },
+];
+
+export const faqs = [
+  {
+    question: "EnterpriseERP Cloud est-il different de EnterpriseERP classique ?",
+    answer: "Oui. EnterpriseERP Cloud est la version SaaS API-first, pensee pour web, mobile, integrations, multi-entreprise et deploiement cloud.",
+  },
+  {
+    question: "L'essai gratuit demande-t-il une carte bancaire ?",
+    answer: "La proposition produit recommande un essai de 14 jours sans friction, avec limites claires et lecture seule en fin d'essai.",
+  },
+  {
+    question: "Peut-on connecter l'application mobile ?",
+    answer: "Oui, l'architecture Cloud expose une API REST et une roadmap de synchronisation avec EnterpriseERP.Mobile.",
+  },
+  {
+    question: "Le produit est-il pret pour les integrations ?",
+    answer: "La base API-first existe deja. Les webhooks, paiement, email, calendrier et connecteurs comptables sont positionnes dans la roadmap.",
+  },
+];
+
+export const customerSegments = [
+  {
+    name: "PME commerciales",
+    need: "Centraliser clients, devis, factures et relances.",
+    value: "Cycle vente-facturation plus lisible.",
+  },
+  {
+    name: "Entreprises avec stock",
+    need: "Voir produits critiques, valeur stock et ruptures.",
+    value: "Moins de ruptures et meilleures decisions d'achat.",
+  },
+  {
+    name: "Dirigeants multi-activites",
+    need: "Un dashboard clair pour suivre finance, operations et priorites.",
+    value: "Pilotage plus rapide et moins de fichiers disperses.",
+  },
+];
+
+export const platformStatus = [
+  { service: "Web app", status: "Operational", detail: "Next.js frontend build OK" },
+  { service: "Cloud API", status: "Operational", detail: "NestJS API build OK" },
+  { service: "Database", status: "Ready", detail: "Prisma schema valid" },
+  { service: "Mobile sync", status: "Planned", detail: "EnterpriseERP.Mobile integration roadmap" },
+];

@@ -189,6 +189,70 @@ export class AppController {
     };
   }
 
+  @Get("demo-script")
+  getDemoScript() {
+    return {
+      duration: "15 minutes",
+      objective: "Show how EnterpriseERP Cloud helps SMEs centralize operations and make faster decisions.",
+      steps: [
+        "Open the Cloud landing page",
+        "Explain the free trial and limits",
+        "Show CEO dashboard KPIs",
+        "Create or review client/product/invoice records",
+        "Open integrations and trust center",
+        "Close with ROI and onboarding path",
+      ],
+    };
+  }
+
+  @Get("roi-model")
+  getRoiModel() {
+    return {
+      assumptions: {
+        adminHoursSavedPerWeek: 4,
+        invoiceFollowUpImprovement: "Prioritized collection",
+        reportingTimeSaved: "Single dashboard instead of spreadsheets",
+      },
+      outputs: [
+        { metric: "Administrative time", estimatedGain: "Up to 50%" },
+        { metric: "Decision speed", estimatedGain: "Real-time KPIs" },
+        { metric: "Cash-flow visibility", estimatedGain: "Overdue invoice focus" },
+      ],
+    };
+  }
+
+  @Get("faq")
+  getFaq() {
+    return {
+      items: [
+        {
+          question: "Is EnterpriseERP Cloud different from EnterpriseERP?",
+          answer: "Yes. It is the SaaS API-first cloud version prepared for web, mobile, integrations and multi-company usage.",
+        },
+        {
+          question: "What happens after the trial?",
+          answer: "The recommended policy is read-only mode until payment, with data retained for 90 days.",
+        },
+        {
+          question: "Can it connect to mobile?",
+          answer: "Yes. The API-first architecture is prepared for EnterpriseERP.Mobile synchronization.",
+        },
+      ],
+    };
+  }
+
+  @Get("platform-status")
+  getPlatformStatus() {
+    return {
+      services: [
+        { name: "Web app", status: "operational" },
+        { name: "Cloud API", status: "operational" },
+        { name: "Prisma schema", status: "valid" },
+        { name: "Mobile sync", status: "planned" },
+      ],
+    };
+  }
+
   @Get("login")
   @Header("Content-Type", "text/html; charset=utf-8")
   getLogin() {

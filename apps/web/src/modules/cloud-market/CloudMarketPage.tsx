@@ -25,10 +25,13 @@ export function CloudMarketPage() {
               securite et roadmap IA.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a href="/pricing" className="rounded-2xl bg-white px-6 py-4 font-black text-night">
+              <a href="/demo" className="rounded-2xl bg-white px-6 py-4 font-black text-night">
+                Demander une demo
+              </a>
+              <a href="/pricing" className="rounded-2xl border border-white/30 px-6 py-4 font-black text-white">
                 Voir les offres
               </a>
-              <a href="/" className="rounded-2xl border border-white/30 px-6 py-4 font-black text-white">
+              <a href="/dashboard" className="rounded-2xl border border-white/30 px-6 py-4 font-black text-white">
                 Ouvrir le dashboard
               </a>
             </div>
@@ -94,6 +97,20 @@ export function CloudMarketPage() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto grid max-w-7xl gap-5 px-6 pb-16 lg:grid-cols-4 lg:px-16">
+        {[
+          { href: "/demo", label: "Demo guidee", text: "Transformer un visiteur en prospect qualifie." },
+          { href: "/roi", label: "ROI", text: "Montrer la valeur business avant l'achat." },
+          { href: "/status", label: "Status", text: "Rassurer sur la disponibilite Cloud." },
+          { href: "/faq", label: "FAQ", text: "Lever les objections avant contact commercial." },
+        ].map((item) => (
+          <a key={item.href} href={item.href} className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200 transition hover:-translate-y-1 hover:shadow-xl">
+            <h2 className="text-xl font-black">{item.label}</h2>
+            <p className="mt-3 leading-7 text-slate-600">{item.text}</p>
+          </a>
+        ))}
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-5 px-6 pb-16 lg:grid-cols-3 lg:px-16">

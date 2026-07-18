@@ -2,6 +2,12 @@
 
 EnterpriseERP Cloud is the SaaS version of EnterpriseERP: a modern ERP platform for managing a business from the cloud, web and mobile.
 
+Project path:
+
+```text
+C:\ERP_Project\enterpriseerp-cloud
+```
+
 ## Positioning
 
 **Run your business everywhere, with a professional cloud ERP.**
@@ -115,6 +121,10 @@ GET /security
 GET /integrations
 GET /onboarding
 GET /competitive-position
+GET /demo-script
+GET /roi-model
+GET /faq
+GET /platform-status
 GET /clients
 GET /products
 GET /invoices
@@ -140,11 +150,17 @@ Additional market pages:
 
 ```text
 /cloud
+/dashboard
 /solutions
 /pricing
+/demo
+/roi
+/customers
 /security
 /integrations
 /onboarding
+/status
+/faq
 ```
 
 ## Quality Commands

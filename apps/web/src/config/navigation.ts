@@ -1,8 +1,11 @@
 export const navigationItems = [
-  { name: "Dashboard", href: "/" },
-  { name: "Cloud", href: "/cloud" },
+  { name: "Accueil Cloud", href: "/" },
+  { name: "Dashboard", href: "/dashboard" },
   { name: "Solutions", href: "/solutions" },
   { name: "Pricing", href: "/pricing" },
+  { name: "Demo", href: "/demo" },
+  { name: "ROI", href: "/roi" },
+  { name: "Clients", href: "/customers" },
   { name: "CRM", href: "/crm" },
   { name: "Ventes", href: "/ventes" },
   { name: "Stock", href: "/stock" },
@@ -12,6 +15,8 @@ export const navigationItems = [
   { name: "Assistant IA", href: "/assistant" },
   { name: "Integrations", href: "/integrations" },
   { name: "Securite", href: "/security" },
+  { name: "Status", href: "/status" },
+  { name: "FAQ", href: "/faq" },
   { name: "Onboarding", href: "/onboarding" },
   { name: "Parametres", href: "/parametres" },
 ];
