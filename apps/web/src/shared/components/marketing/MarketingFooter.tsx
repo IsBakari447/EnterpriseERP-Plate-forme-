@@ -1,0 +1,44 @@
+"use client";
+
+import { useI18n } from "@shared/i18n/I18nProvider";
+
+export default function MarketingFooter() {
+  const { t } = useI18n();
+
+  return (
+    <footer className="bg-[#101A26] text-white">
+      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-4">
+        <div className="md:col-span-2">
+          <div className="text-2xl font-bold">EnterpriseERP</div>
+          <p className="mt-3 max-w-md text-sm leading-6 text-slate-300">
+            {t("marketing.footerText")}
+          </p>
+        </div>
+
+        <div>
+          <h3 className="font-semibold">{t("marketing.solutions")}</h3>
+          <div className="mt-4 space-y-2 text-sm text-slate-300">
+            <p>Restaurant</p>
+            <p>Commerce</p>
+            <p>Services</p>
+            <p>PME</p>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="font-semibold">{t("marketing.product")}</h3>
+          <div className="mt-4 space-y-2 text-sm text-slate-300">
+            <p>CRM</p>
+            <p>Stock</p>
+            <p>{t("nav.facturation")}</p>
+            <p>{t("nav.assistant")}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-white/10 px-6 py-5 text-center text-sm text-slate-400">
+        © 2026 EnterpriseERP. Smart business. One platform.
+      </div>
+    </footer>
+  );
+}

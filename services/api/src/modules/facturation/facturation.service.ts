@@ -13,8 +13,19 @@ type InvoiceInput = {
 export class FacturationService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
+  private async getCompanyId() {
+    const company = await this.prisma.company.findFirst({
+      orderBy: { createdAt: "asc" },
+    });
+
+    return company?.id;
+  }
+
+  async findAll() {
+    const companyId = await this.getCompanyId();
+
     return this.prisma.invoice.findMany({
+      where: companyId ? { companyId } : undefined,
       orderBy: { createdAt: "desc" },
     });
   }
@@ -29,10 +40,13 @@ export class FacturationService {
     return invoice;
   }
 
-  create(data: InvoiceInput) {
+  async create(data: InvoiceInput) {
+    const companyId = await this.getCompanyId();
+
     return this.prisma.invoice.create({
       data: {
         ...data,
+        companyId,
         amount: data.amount ?? 0,
         due: new Date(data.due),
       },

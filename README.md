@@ -24,6 +24,7 @@ EnterpriseERP Cloud is designed for SMEs that need a clear command center for CR
 - Market-ready pages for solutions, pricing, trust center, integrations and onboarding.
 - Responsive Next.js interface aligned with the EnterpriseERP visual identity.
 - Prepared roadmap for multi-tenant, audit logs, SSO, workflows and mobile sync.
+- Official SaaS professional roadmap documented and visible on the `/roadmap` page.
 
 ## MVP Scope
 
@@ -64,15 +65,14 @@ EnterpriseERP Cloud is designed for SMEs that need a clear command center for CR
 
 ```text
 enterpriseerp-cloud/
-├── apps/
-│   ├── web/              Next.js SaaS frontend
-│   └── api/              Legacy/experimental API workspace
-├── services/
-│   └── api/              Active NestJS API service
-├── docs/                 Product and strategy documentation
-├── docker/               Docker assets
-├── packages/             Future shared packages
-└── scripts/              Setup scripts
++-- apps/
+�   +-- web/              Next.js SaaS frontend
++-- services/
+�   +-- api/              Active NestJS API service
++-- docs/                 Product and strategy documentation
++-- docker/               Docker assets
++-- packages/             Future shared packages
++-- scripts/              Setup scripts
 ```
 
 ## Quick Start
@@ -116,31 +116,62 @@ Default URLs:
 
 ```text
 Web: http://localhost:3000
-API: http://localhost:4000
+API: http://localhost:4000/api
 ```
+
+The web app reads `NEXT_PUBLIC_API_URL`. You can set it with or without `/api`; the shared API client normalizes it automatically.
 
 ## Cloud API Endpoints
 
 ```http
-GET /health
-GET /health/ready
-GET /modules
-GET /pricing
-GET /roadmap
-GET /security
-GET /integrations
-GET /onboarding
-GET /competitive-position
-GET /demo-script
-GET /roi-model
-GET /faq
-GET /platform-status
-GET /clients
-GET /products
-GET /invoices
+GET /api/health
+GET /api/health/ready
+GET /api/modules
+GET /api/pricing
+GET /api/roadmap
+GET /api/security
+GET /api/integrations
+GET /api/onboarding
+GET /api/competitive-position
+GET /api/demo/script
+POST /api/demo/requests
+GET /api/roi-model
+GET /api/faq
+GET /api/platform-status
+GET /api/platform/foundation
+GET /api/platform/modules
+GET /api/platform/roles
+GET /api/platform/permissions
+GET /api/platform/workflows
+GET /api/platform/roadmap
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh
+POST /api/auth/logout
+GET /api/auth/me
+GET /api/users
+GET /api/users/roles
+GET /api/users/:id
+POST /api/users
+POST /api/users/invite
+PUT /api/users/:id
+DELETE /api/users/:id
+GET /api/clients
+GET /api/products
+GET /api/invoices
 ```
 
 `/health/ready` verifies that the API can connect to the database.
+
+## Demo Corrections
+
+Recent demo-focused fixes:
+
+- The `/demo` web page now submits requests to the NestJS API.
+- Added API demo endpoints on the active `services/api` service with `GET /api/demo/script` and `POST /api/demo/requests`.
+- The shared web API client now normalizes `NEXT_PUBLIC_API_URL` to include `/api`.
+- CORS accepts `CORS_ORIGIN` with comma-separated origins and supports credentials.
+- The API logs the final local URL on startup for easier demo checks.
 
 ## Web Product Highlights
 
@@ -163,6 +194,7 @@ Additional market pages:
 /dashboard
 /solutions
 /pricing
+/roadmap
 /demo
 /roi
 /customers
@@ -196,6 +228,16 @@ cd services/api
 npx prisma validate
 ```
 
+## User Manual and Video Tutorials
+
+The complete suite user manual and the EnterpriseERP Cloud video tutorial script are available in this repository:
+
+```text
+docs/MANUEL_UTILISATION_SUITE_ENTERPRISEERP.md
+docs/tutoriels-video/03_ENTERPRISEERP_CLOUD.md
+docs/ROADMAP_SAAS_PROFESSIONNEL.md
+```
+
 ## Visual Identity
 
 - Night blue: `#1E2A38`
@@ -212,3 +254,54 @@ npx prisma validate
 - Add onboarding checklist and demo data reset.
 - Connect EnterpriseERP.Mobile.
 - Add automated billing and subscription management.
+
+## SaaS Foundation Added
+
+The active API in `services/api` now includes the foundation for the professional SaaS roadmap:
+
+- `companyId` added to business tables for tenant isolation.
+- User, session, invitation and audit models prepared in Prisma.
+- Role and permission catalog for ERP modules.
+- Platform endpoints exposing modules, workflows, roles, permissions and roadmap phases.
+- User governance endpoints for users, invitations and role matrix.
+- Real authentication flow with register, login, access JWT, refresh JWT, sessions and logout.
+- Protected business routes with role-based permissions.
+- Central API exception filter for cleaner production responses.
+- CRM, stock and invoice services start scoping records by the current company.
+
+## Authentication
+
+The active API uses Bearer tokens:
+
+```http
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh
+POST /api/auth/logout
+GET /api/auth/me
+```
+
+Successful login/register returns:
+
+```json
+{
+  "accessToken": "...",
+  "refreshToken": "...",
+  "tokenType": "Bearer",
+  "expiresIn": "15m"
+}
+```
+
+Use the access token on protected routes:
+
+```http
+Authorization: Bearer <accessToken>
+```
+
+Required environment variables:
+
+```bash
+JWT_SECRET="change-me-in-production"
+JWT_ACCESS_EXPIRES_IN="15m"
+JWT_REFRESH_EXPIRES_IN="7d"
+```

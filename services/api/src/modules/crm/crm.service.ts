@@ -13,8 +13,19 @@ type ClientInput = {
 export class CrmService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
+  private async getCompanyId() {
+    const company = await this.prisma.company.findFirst({
+      orderBy: { createdAt: "asc" },
+    });
+
+    return company?.id;
+  }
+
+  async findAll() {
+    const companyId = await this.getCompanyId();
+
     return this.prisma.client.findMany({
+      where: companyId ? { companyId } : undefined,
       orderBy: { createdAt: "desc" },
     });
   }
@@ -31,10 +42,13 @@ export class CrmService {
     return client;
   }
 
-  create(data: ClientInput) {
+  async create(data: ClientInput) {
+    const companyId = await this.getCompanyId();
+
     return this.prisma.client.create({
       data: {
         ...data,
+        companyId,
         revenue: data.revenue ?? 0,
       },
     });

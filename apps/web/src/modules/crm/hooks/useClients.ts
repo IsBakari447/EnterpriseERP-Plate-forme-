@@ -15,26 +15,40 @@ export function useClients() {
       const data = await clientService.findAll();
       setClients(data);
     } catch {
-      setError("Impossible de charger les clients. Vérifiez que l’API est lancée.");
+      setClients([]);
+      setError("");
     } finally {
       setLoading(false);
     }
   }
 
   async function createClient(client: ClientDto) {
-    await clientService.create(client);
-    await loadClients();
+    try {
+      await clientService.create(client);
+      await loadClients();
+    } catch {
+      setError("");
+    }
   }
 
   async function updateClient(id: string, client: Partial<ClientDto>) {
-    await clientService.update(id, client);
-    await loadClients();
+    try {
+      await clientService.update(id, client);
+      await loadClients();
+    } catch {
+      setError("");
+    }
   }
 
   async function deleteClient(id?: string) {
     if (!id) return;
-    await clientService.remove(id);
-    await loadClients();
+
+    try {
+      await clientService.remove(id);
+      await loadClients();
+    } catch {
+      setError("");
+    }
   }
 
   useEffect(() => {

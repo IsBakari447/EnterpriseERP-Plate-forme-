@@ -13,8 +13,19 @@ type ProductInput = {
 export class StockService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
+  private async getCompanyId() {
+    const company = await this.prisma.company.findFirst({
+      orderBy: { createdAt: "asc" },
+    });
+
+    return company?.id;
+  }
+
+  async findAll() {
+    const companyId = await this.getCompanyId();
+
     return this.prisma.product.findMany({
+      where: companyId ? { companyId } : undefined,
       orderBy: { createdAt: "desc" },
     });
   }
@@ -29,8 +40,15 @@ export class StockService {
     return product;
   }
 
-  create(data: ProductInput) {
-    return this.prisma.product.create({ data });
+  async create(data: ProductInput) {
+    const companyId = await this.getCompanyId();
+
+    return this.prisma.product.create({
+      data: {
+        ...data,
+        companyId,
+      },
+    });
   }
 
   async update(id: string, data: Partial<ProductInput>) {
