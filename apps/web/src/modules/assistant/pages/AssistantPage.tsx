@@ -1,55 +1,72 @@
+"use client";
+
+import Link from "next/link";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import KPICard from "@shared/components/ui/KPICard";
+import { useI18n } from "@shared/i18n/I18nProvider";
 import { assistantKpis, suggestions } from "@modules/assistant/data";
 
 export default function AssistantPage() {
+  const { t } = useI18n();
+
   return (
     <ERPLayout
-      title="Assistant IA"
-      subtitle="Posez vos questions métier et obtenez des recommandations intelligentes."
-      action="Nouveau rapport IA"
+      title={t("ai.assistantTitle")}
+      subtitle={t("ai.assistantSubtitle")}
+      action={t("ai.newReport")}
     >
-      <section className="grid grid-cols-4 gap-5">
+      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {assistantKpis.map((kpi) => (
           <KPICard key={kpi.label} {...kpi} />
         ))}
       </section>
 
-      <section className="mt-8 grid grid-cols-3 gap-5">
-        <div className="col-span-2 rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
-          <h2 className="text-xl font-bold text-night">Conversation IA</h2>
-
-          <div className="mt-6 space-y-4">
-            <div className="max-w-xl rounded-2xl bg-slate-100 p-4 text-slate-700">
-              Pourquoi les ventes ont-elles augmenté ce mois-ci ?
+      <section className="mt-8 grid gap-5 xl:grid-cols-[1.25fr_.75fr]">
+        <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <h2 className="text-2xl font-black text-night">{t("ai.conversation")}</h2>
+              <p className="mt-2 text-sm font-semibold text-slate-500">{t("ai.conversationText")}</p>
             </div>
-
-            <div className="ml-auto max-w-2xl rounded-2xl bg-gradient-to-r from-[#1E2A38] to-[#00C2A9] p-5 text-white">
-              Les ventes progressent principalement grâce aux clients récurrents,
-              à une hausse du panier moyen et à une meilleure conversion des devis.
-              Recommandation : renforcer les relances commerciales.
+            <div className="flex gap-2">
+              <Link href="/ai-sales-agent" className="rounded-xl bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
+                AI Sales Agent
+              </Link>
+              <Link href="/ai-studio" className="rounded-xl bg-[#1E2A38] px-4 py-2 text-sm font-black text-white">
+                AI Studio
+              </Link>
             </div>
           </div>
 
-          <div className="mt-8 flex gap-3">
+          <div className="mt-6 space-y-4">
+            <div className="max-w-xl rounded-2xl bg-slate-100 p-4 font-semibold text-slate-700">
+              {t("ai.sampleQuestion")}
+            </div>
+
+            <div className="ml-auto max-w-2xl rounded-2xl bg-gradient-to-r from-[#1E2A38] to-[#00C2A9] p-5 text-white">
+              {t("ai.sampleAnswer")}
+            </div>
+          </div>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <input
               className="flex-1 rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-cyan-500"
-              placeholder="Posez une question à l'assistant..."
+              placeholder={t("ai.askPlaceholder")}
             />
             <button className="rounded-xl bg-action px-6 py-3 font-semibold text-white">
-              Envoyer
+              {t("common.send")}
             </button>
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
-          <h2 className="text-xl font-bold text-night">Suggestions</h2>
+        <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
+          <h2 className="text-xl font-bold text-night">{t("ai.suggestions")}</h2>
 
           <div className="mt-5 space-y-3">
             {suggestions.map((item) => (
               <button
                 key={item}
-                className="w-full rounded-xl bg-slate-50 p-4 text-left text-sm hover:bg-cyan-50"
+                className="w-full rounded-xl bg-slate-50 p-4 text-left text-sm font-bold text-slate-700 transition hover:bg-cyan-50"
               >
                 {item}
               </button>

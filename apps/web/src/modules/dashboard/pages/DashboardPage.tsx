@@ -59,30 +59,31 @@ export default function DashboardPage() {
 
   const selectedPeriod = periodOptions.find((option) => option.key === period) ?? periodOptions[2];
   const dashboard = sectorDashboards[sectorKey] ?? sectorDashboards.general;
+  const selectedPeriodLabel = t(`dashboard.period.${selectedPeriod.key}`);
 
   const kpis = useMemo(
     () =>
       dashboard.kpis.map((kpi) => ({
         label: kpi.label,
         value: formatKpi(kpi, selectedPeriod.factor),
-        change: `${kpi.change} - ${selectedPeriod.label}`,
+        change: `${kpi.change} - ${selectedPeriodLabel}`,
       })),
-    [dashboard.kpis, selectedPeriod]
+    [dashboard.kpis, selectedPeriod.factor, selectedPeriodLabel]
   );
 
   return (
     <ERPLayout
       title={t("dashboard.title")}
-      subtitle={`${dashboard.label} - centre de decision avec priorites, tresorerie, objectifs et IA.`}
+      subtitle={`${dashboard.label} - ${t("dashboard.decisionSubtitle")}`}
       action={t("dashboard.action")}
     >
       <section className="rounded-3xl bg-white p-5 shadow ring-1 ring-slate-200">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div>
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#00A693]">Decision center</p>
-            <h2 className="mt-2 text-2xl font-black text-night">Vue dirigeant {dashboard.label}</h2>
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#00A693]">{t("dashboard.decisionCenter")}</p>
+            <h2 className="mt-2 text-2xl font-black text-night">{t("dashboard.executiveView")} {dashboard.label}</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
-              Tous les indicateurs, graphiques et alertes suivent la periode selectionnee pour repondre vite a ce qui doit etre fait aujourd'hui.
+              {t("dashboard.decisionText")}
             </p>
           </div>
 
@@ -98,7 +99,7 @@ export default function DashboardPage() {
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
-                {option.label}
+                {t(`dashboard.period.${option.key}`)}
               </button>
             ))}
           </div>
@@ -107,9 +108,9 @@ export default function DashboardPage() {
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {globalFilters.map((filter) => (
             <label key={filter.label} className="block">
-              <span className="text-xs font-black uppercase tracking-wide text-slate-400">{filter.label}</span>
+              <span className="text-xs font-black uppercase tracking-wide text-slate-400">{t(`dashboard.filter.${filter.key}`)}</span>
               <select className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-bold text-slate-700 outline-none focus:border-[#00C2A9]">
-                <option>{filter.label === "Secteur" ? dashboard.label : filter.value}</option>
+                <option>{filter.key === "sector" ? dashboard.label : filter.value}</option>
               </select>
             </label>
           ))}
@@ -125,21 +126,21 @@ export default function DashboardPage() {
       <section className="mt-8 rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
         <div className="flex flex-col justify-between gap-3 md:flex-row md:items-end">
           <div>
-            <h2 className="text-2xl font-black text-night">Actions prioritaires</h2>
-            <p className="mt-2 text-slate-500">Les points qui demandent une action directe sur la periode {selectedPeriod.label.toLowerCase()}.</p>
+            <h2 className="text-2xl font-black text-night">{t("dashboard.priorityActions")}</h2>
+            <p className="mt-2 text-slate-500">{t("dashboard.priorityText")} {selectedPeriodLabel.toLowerCase()}.</p>
           </div>
           <button
             type="button"
             onClick={() => setCustomizing((value) => !value)}
             className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black text-slate-700 transition hover:border-[#00C2A9] hover:text-[#00A693]"
           >
-            {customizing ? "Terminer la personnalisation" : "Personnaliser le dashboard"}
+            {customizing ? t("dashboard.finishCustomize") : t("dashboard.customize")}
           </button>
         </div>
 
         {customizing && (
           <div className="mt-5 rounded-2xl border border-dashed border-[#00C2A9] bg-[#00C2A9]/5 p-4 text-sm font-bold text-[#008f7d]">
-            Mode personnalisation: les prochains widgets pourront etre masques, deplaces ou adaptes par role CEO, comptable, stock ou manager.
+            {t("dashboard.customizeText")}
           </div>
         )}
 
@@ -166,14 +167,14 @@ export default function DashboardPage() {
 
       <section className="mt-8 grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
         <div className="rounded-3xl bg-[#1E2A38] p-6 text-white shadow-xl">
-          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#7df5e5]">Tresorerie previsionnelle</p>
-          <h2 className="mt-3 text-2xl font-black">Projection a 30 jours</h2>
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#7df5e5]">{t("dashboard.cashflow")}</p>
+          <h2 className="mt-3 text-2xl font-black">{t("dashboard.projection")}</h2>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {[
-              ["Solde actuel", dashboard.cashflow.balance],
-              ["Encaissements attendus", dashboard.cashflow.incoming],
-              ["Decaissements prevus", dashboard.cashflow.outgoing],
-              ["Projection", dashboard.cashflow.projection],
+              [t("dashboard.currentBalance"), dashboard.cashflow.balance],
+              [t("dashboard.incoming"), dashboard.cashflow.incoming],
+              [t("dashboard.outgoing"), dashboard.cashflow.outgoing],
+              [t("dashboard.projection"), dashboard.cashflow.projection],
             ].map(([label, value]) => (
               <div key={label} className="rounded-2xl bg-white/10 p-4">
                 <p className="text-sm text-white/65">{label}</p>
@@ -184,7 +185,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
-          <h2 className="text-2xl font-black text-night">Activite recente</h2>
+          <h2 className="text-2xl font-black text-night">{t("dashboard.recentActivity")}</h2>
           <div className="mt-5 space-y-4">
             {dashboard.activity.map((event) => (
               <div key={`${event.title}-${event.time}`} className="flex gap-4">
@@ -204,7 +205,7 @@ export default function DashboardPage() {
 
       <section className="mt-8 grid gap-5 xl:grid-cols-3">
         <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200 xl:col-span-2">
-          <h2 className="mb-5 text-xl font-bold text-night">Performance des modules</h2>
+          <h2 className="mb-5 text-xl font-bold text-night">{t("dashboard.modulePerformance")}</h2>
           <DataGrid
             columns={[
               { key: "module", label: "Module" },
@@ -218,7 +219,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
-          <h2 className="text-xl font-bold text-night">Alertes</h2>
+          <h2 className="text-xl font-bold text-night">{t("dashboard.alerts")}</h2>
           <div className="mt-5 space-y-3">
             {dashboard.alerts.map((alert) => (
               <div key={alert} className="rounded-2xl bg-slate-50 p-4 text-sm font-semibold text-slate-700">
@@ -231,18 +232,18 @@ export default function DashboardPage() {
 
       <section className="mt-8 grid gap-5 xl:grid-cols-[.95fr_1.05fr]">
         <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
-          <h2 className="text-2xl font-black text-night">Objectifs du mois</h2>
+          <h2 className="text-2xl font-black text-night">{t("dashboard.monthGoals")}</h2>
           <div className="mt-5 space-y-5">
             {dashboard.goals.map((goal) => (
               <article key={goal.label}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="font-black text-night">{goal.label}</h3>
                   <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
-                    {goal.progress}% atteint
+                    {goal.progress}% {t("dashboard.reached")}
                   </span>
                 </div>
                 <p className="mt-2 text-sm font-semibold text-slate-500">
-                  {goal.current} / objectif {goal.target}
+                  {goal.current} / {t("dashboard.objective")} {goal.target}
                 </p>
                 <ProgressBar value={goal.progress} />
               </article>
@@ -252,7 +253,7 @@ export default function DashboardPage() {
 
         <div className="rounded-3xl bg-[#101b2d] p-6 text-white shadow-xl">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#7df5e5]">Synthese IA</p>
-          <h2 className="mt-3 text-2xl font-black">Risques, opportunites et actions</h2>
+          <h2 className="mt-3 text-2xl font-black">{t("dashboard.aiStructured")}</h2>
           <div className="mt-6 grid gap-4 lg:grid-cols-3">
             {dashboard.ai.map((group) => (
               <article key={group.title} className="rounded-2xl bg-white/10 p-4">
@@ -272,11 +273,11 @@ export default function DashboardPage() {
         <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
           <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
             <div>
-              <h2 className="text-2xl font-black text-night">Usage du plan</h2>
-              <p className="mt-2 text-sm font-semibold text-slate-500">Remplace le pricing marketing dans le dashboard client connecte.</p>
+              <h2 className="text-2xl font-black text-night">{t("dashboard.planUsage")}</h2>
+              <p className="mt-2 text-sm font-semibold text-slate-500">{t("dashboard.planUsageText")}</p>
             </div>
             <button className="rounded-2xl bg-[#FF7A00] px-5 py-3 text-sm font-black text-white shadow-lg shadow-orange-500/20">
-              Gerer l'abonnement
+              {t("dashboard.manageSubscription")}
             </button>
           </div>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -293,7 +294,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
-          <h2 className="text-2xl font-black text-night">Confiance, securite et statut</h2>
+          <h2 className="text-2xl font-black text-night">{t("dashboard.securityStatus")}</h2>
           <div className="mt-5 grid gap-3">
             {trustItems.map((item) => (
               <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-700">

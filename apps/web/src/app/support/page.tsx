@@ -1,0 +1,144 @@
+"use client";
+
+import Link from "next/link";
+import { FormEvent, useMemo, useState } from "react";
+import ERPLayout from "@shared/components/layout/ERPLayout";
+import { useI18n } from "@shared/i18n/I18nProvider";
+
+const supportAnswers = [
+  {
+    keywords: ["facture", "paiement", "payer", "invoice", "payment"],
+    title: "Factures et paiements",
+    answer: "Vous pouvez consulter les factures, suivre les paiements et relancer les echeances depuis le module Facturation.",
+    links: [
+      { label: "Ouvrir Facturation", href: "/facturation" },
+      { label: "Voir Paiements", href: "/modules/paiements" },
+    ],
+  },
+  {
+    keywords: ["stock", "produit", "rupture", "sku", "inventory"],
+    title: "Stock et produits",
+    answer: "Le module Stock permet de suivre les produits, les seuils critiques et les besoins de reapprovisionnement.",
+    links: [
+      { label: "Ouvrir Stock", href: "/stock" },
+      { label: "Voir Produits", href: "/modules/produits" },
+    ],
+  },
+  {
+    keywords: ["client", "crm", "prospect", "relance", "sales"],
+    title: "CRM et ventes",
+    answer: "Pour suivre les clients, prospects, relances et opportunites, utilisez CRM ou AI Sales Agent.",
+    links: [
+      { label: "Ouvrir CRM", href: "/crm" },
+      { label: "AI Sales Agent", href: "/ai-sales-agent" },
+    ],
+  },
+  {
+    keywords: ["role", "permission", "utilisateur", "securite", "access"],
+    title: "Utilisateurs et permissions",
+    answer: "Les roles, permissions et invitations sont centralises dans Gouvernance pour securiser les acces.",
+    links: [
+      { label: "Ouvrir Gouvernance", href: "/gouvernance" },
+      { label: "Roles & permissions", href: "/modules/roles-permissions" },
+    ],
+  },
+  {
+    keywords: ["rapport", "bilan", "activite", "analyse", "dashboard"],
+    title: "Bilans et rapports",
+    answer: "Le dashboard decisionnel et les rapports vous aident a produire un bilan des ventes, activites et actions.",
+    links: [
+      { label: "Ouvrir Dashboard", href: "/dashboard" },
+      { label: "Voir Rapports", href: "/modules/rapports" },
+    ],
+  },
+];
+
+export default function SupportPage() {
+  const { t } = useI18n();
+  const [question, setQuestion] = useState("");
+  const [submittedQuestion, setSubmittedQuestion] = useState("");
+
+  const response = useMemo(() => {
+    const normalized = submittedQuestion.toLowerCase();
+
+    return (
+      supportAnswers.find((item) =>
+        item.keywords.some((keyword) => normalized.includes(keyword))
+      ) ?? {
+        title: t("support.defaultTitle"),
+        answer: t("support.defaultAnswer"),
+        links: [
+          { label: t("support.openDashboard"), href: "/dashboard" },
+          { label: "AI Studio", href: "/ai-studio" },
+        ],
+      }
+    );
+  }, [submittedQuestion, t]);
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmittedQuestion(question.trim() || t("support.defaultQuestion"));
+  }
+
+  return (
+    <ERPLayout title={t("support.title")} subtitle={t("support.subtitle")} action={t("support.action")}>
+      <section className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#1E2A38] via-[#15253a] to-[#00A990] p-7 text-white shadow-xl">
+          <div className="inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-black">
+            {t("support.robotBadge")}
+          </div>
+          <h2 className="mt-6 text-4xl font-black">{t("support.robotTitle")}</h2>
+          <p className="mt-4 leading-8 text-white/75">{t("support.robotText")}</p>
+
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            {["Facturation", "CRM", "Stock", "Permissions"].map((item) => (
+              <button
+                key={item}
+                onClick={() => {
+                  setQuestion(item);
+                  setSubmittedQuestion(item);
+                }}
+                className="rounded-2xl bg-white/10 p-4 text-left font-black transition hover:bg-white/15"
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
+          <form onSubmit={submit}>
+            <label className="block">
+              <span className="text-sm font-black text-slate-700">{t("support.questionLabel")}</span>
+              <textarea
+                value={question}
+                onChange={(event) => setQuestion(event.target.value)}
+                rows={5}
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-semibold outline-none focus:border-[#00C2A9] focus:bg-white"
+                placeholder={t("support.placeholder")}
+              />
+            </label>
+            <button className="mt-4 rounded-2xl bg-[#FF7A00] px-6 py-3 font-black text-white shadow-lg shadow-orange-500/20">
+              {t("support.ask")}
+            </button>
+          </form>
+
+          {submittedQuestion && (
+            <article className="mt-6 rounded-3xl border border-[#00C2A9]/20 bg-[#00C2A9]/5 p-5">
+              <p className="text-sm font-black uppercase tracking-[0.14em] text-[#008f7d]">AI Support</p>
+              <h3 className="mt-2 text-2xl font-black text-night">{response.title}</h3>
+              <p className="mt-3 leading-7 text-slate-600">{response.answer}</p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                {response.links.map((link) => (
+                  <Link key={link.href} href={link.href} className="rounded-xl bg-white px-4 py-2 text-sm font-black text-night shadow ring-1 ring-slate-200">
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </article>
+          )}
+        </div>
+      </section>
+    </ERPLayout>
+  );
+}

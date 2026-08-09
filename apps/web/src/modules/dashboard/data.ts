@@ -12,12 +12,12 @@ export const periodOptions: { key: PeriodKey; label: string; factor: number }[] 
 ];
 
 export const globalFilters = [
-  { label: "Entreprise", value: "EnterpriseERP" },
-  { label: "Site / magasin", value: "Tous les sites" },
-  { label: "Equipe", value: "Toutes les equipes" },
-  { label: "Commercial", value: "Tous" },
-  { label: "Devise", value: "EUR" },
-  { label: "Secteur", value: "Actuel" },
+  { key: "company", label: "Entreprise", value: "EnterpriseERP" },
+  { key: "site", label: "Site / magasin", value: "Tous les sites" },
+  { key: "team", label: "Equipe", value: "Toutes les equipes" },
+  { key: "salesperson", label: "Commercial", value: "Tous" },
+  { key: "currency", label: "Devise", value: "EUR" },
+  { key: "sector", label: "Secteur", value: "Actuel" },
 ];
 
 type KpiFormat = "currency" | "number" | "percent";

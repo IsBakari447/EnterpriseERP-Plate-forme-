@@ -12,6 +12,9 @@ const commonModules = [
   "notifications",
   "documents",
   "statistiques",
+  "support",
+  "ai-sales-agent",
+  "ai-studio",
 ] as const;
 
 export const sectorDefinitions: Record<SectorKey, SectorDefinition> = {
