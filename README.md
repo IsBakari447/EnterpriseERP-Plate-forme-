@@ -1,45 +1,133 @@
 # EnterpriseERP Cloud
 
-EnterpriseERP Cloud is the SaaS version of EnterpriseERP: a modern ERP platform for managing a business from the cloud, web and mobile.
+> **EnterpriseERP Cloud** is a modern AI-powered multi-tenant ERP platform designed for small and medium-sized businesses.
+>
+> One Platform. Every Business. Powered by AI.
 
-Project path:
+---
+
+# Overview
+
+EnterpriseERP Cloud centralizes every critical business process into a single SaaS platform.
+
+Instead of using multiple disconnected applications, companies can manage:
+
+- CRM
+- Sales
+- Products
+- Inventory
+- Purchasing
+- Invoicing
+- Payments
+- Finance
+- Human Resources
+- Analytics
+- AI Assistant
+
+from one secure cloud platform.
+
+The platform supports multiple industries through configurable business modules.
+
+---
+
+# Product Family
+
+EnterpriseERP is built as a platform.
 
 ```text
-C:\ERP_Project\enterpriseerp-cloud
+EnterpriseERP Platform
+
+├── EnterpriseERP Cloud
+├── EnterpriseERP Mobile
+├── Retail Suite
+├── Restaurant Suite
+├── Construction Suite
+├── Healthcare Suite
+├── Hospitality Suite
+├── Manufacturing Suite
+├── Education Suite
+└── Transport Suite
 ```
 
-## Positioning
+Every suite shares the same ERP Core.
 
-**Run your business everywhere, with a professional cloud ERP.**
+---
 
-EnterpriseERP Cloud is designed for SMEs that need a clear command center for CRM, sales, invoices, stock, HR, reporting and future AI automation.
+# Competitive Advantages
 
-## What Makes It Competitive
+EnterpriseERP Cloud has been designed to compete with modern cloud ERP platforms.
 
-- Professional executive dashboard with KPIs, charts, alerts and AI recommendations.
-- API-first architecture for web, mobile and integrations.
-- SaaS-ready offer structure: free trial, Business plan and Enterprise plan.
-- PostgreSQL and Prisma migrations for a serious cloud database foundation.
-- NestJS API with health, readiness, modules, pricing and roadmap endpoints.
-- Market-ready pages for solutions, pricing, trust center, integrations and onboarding.
-- Responsive Next.js interface aligned with the EnterpriseERP visual identity.
-- Prepared roadmap for multi-tenant, audit logs, SSO, workflows and mobile sync.
-- Official SaaS professional roadmap documented and visible on the `/roadmap` page.
+Highlights include:
 
-## MVP Scope
+- AI-powered ERP
+- Multi-tenant architecture
+- Modular business engine
+- Industry-specific suites
+- Responsive web interface
+- Mobile-ready architecture
+- Executive dashboards
+- API-first design
+- Role-based security
+- Cloud-native deployment
+- PostgreSQL + Prisma foundation
+- SaaS subscription model
+- Future Marketplace support
 
-- Authentication foundation
-- Executive dashboard
-- CRM clients
-- Products and stock
-- Sales and invoicing
-- Multi-company preparation
-- AI and mobile preparation
-- QA and deployment readiness endpoints
+---
 
-## Tech Stack
+# Current Features
 
-### Web
+## Business Modules
+
+- Dashboard
+- CRM
+- Products
+- Inventory
+- Invoices
+- Payments
+- Users
+- Roles
+- Permissions
+- Company Management
+- Authentication
+
+---
+
+## Platform Features
+
+- JWT Authentication
+- Refresh Tokens
+- Company Isolation
+- Role Catalog
+- Permission Catalog
+- Executive Dashboard
+- Health Monitoring
+- SaaS Landing Pages
+- API-first Architecture
+
+---
+
+# Supported Industries
+
+EnterpriseERP currently supports:
+
+- General Business
+- Retail
+- Restaurant
+- Construction
+- Healthcare
+- Education
+- Hospitality
+- Manufacturing
+- Transportation
+
+Each industry activates different modules while sharing the same ERP core.
+
+---
+
+# Technology Stack
+
+## Frontend
 
 - Next.js
 - React
@@ -47,233 +135,282 @@ EnterpriseERP Cloud is designed for SMEs that need a clear command center for CR
 - Tailwind CSS
 - Recharts
 
-### API
+## Backend
 
 - NestJS
-- TypeScript
 - Prisma ORM
 - PostgreSQL
-- JWT-ready architecture
+- JWT Authentication
 
-### Infrastructure
+## Infrastructure
 
 - Docker
-- PostgreSQL
 - Redis
+- PostgreSQL
 
-## Project Structure
+---
+
+# Product Architecture
+
+```text
+Users
+
+↓
+
+Next.js Web
+
+↓
+
+NestJS API
+
+↓
+
+Authentication
+Tenant Resolution
+RBAC
+Business Modules
+Audit Logs
+
+↓
+
+Prisma ORM
+
+↓
+
+PostgreSQL
+```
+
+Future services:
+
+- Redis
+- Background Workers
+- Object Storage
+- Email Service
+- Billing
+- AI Services
+- Monitoring
+
+---
+
+# Multi-Tenant Architecture
+
+EnterpriseERP Cloud is designed around complete company isolation.
+
+Core rules:
+
+- every record belongs to a company
+- authenticated users work inside one company
+- all queries are filtered by companyId
+- no cross-company access
+- isolation is enforced server-side
+
+Current tenant-aware modules:
+
+- CRM
+- Products
+- Inventory
+- Invoices
+
+Upcoming:
+
+- Finance
+- HR
+- Suppliers
+- Reports
+
+---
+
+# Industry Engine
+
+EnterpriseERP uses one ERP Core for every industry.
+
+Current industries:
+
+- General
+- Retail
+- Restaurant
+- Construction
+- Healthcare
+- Education
+- Hospitality
+- Manufacturing
+- Transport
+
+Each sector defines:
+
+- modules
+- KPIs
+- workflows
+- navigation
+- dashboard configuration
+
+Example:
+
+```http
+GET /api/platform/sectors
+```
+
+---
+
+# Module Registry
+
+Every business module will be centrally registered.
+
+Example:
+
+```ts
+{
+  key: "inventory",
+  label: "Inventory",
+  route: "/inventory",
+  api: "/api/products",
+  permission: "inventory.read",
+  status: "active"
+}
+```
+
+The registry powers:
+
+- navigation
+- permissions
+- dashboards
+- mobile
+- API
+- documentation
+
+---
+
+# Project Structure
 
 ```text
 enterpriseerp-cloud/
-+-- apps/
-�   +-- web/              Next.js SaaS frontend
-+-- services/
-�   +-- api/              Active NestJS API service
-+-- docs/                 Product and strategy documentation
-+-- docker/               Docker assets
-+-- packages/             Future shared packages
-+-- scripts/              Setup scripts
+
+apps/
+    web/
+    mobile/
+    marketing/
+
+services/
+    api/
+    worker/
+
+packages/
+    ui/
+    sdk/
+    types/
+    utils/
+    config/
+
+docs/
+
+docker/
+
+scripts/
 ```
 
-## Quick Start
+---
 
-Start infrastructure:
+# Quick Start
+
+Clone the project
 
 ```bash
-cp .env.example .env
+git clone https://github.com/your-org/enterpriseerp-cloud.git
+cd enterpriseerp-cloud
+```
+
+Install
+
+```bash
+npm install
+```
+
+Start infrastructure
+
+```bash
 docker compose up -d
 ```
 
-Run the active API:
+Run API
 
 ```bash
 cd services/api
+
 npm install
+
 npm run prisma:generate
+
 npm run prisma:deploy
+
 npm run dev
 ```
 
-Run the web app:
+Run Web
 
 ```bash
 cd apps/web
+
 npm install
+
 npm run dev
 ```
 
-You can also run common commands from the project root:
+Root shortcuts
 
 ```bash
-npm run dev        # starts the web app
-npm run dev:web    # starts the web app
-npm run dev:api    # starts the API
-npm run build      # builds web and API
-npm run qa         # builds and validates Prisma
-```
-
-Default URLs:
-
-```text
-Web: http://localhost:3000
-API: http://localhost:4000/api
-```
-
-The web app reads `NEXT_PUBLIC_API_URL`. You can set it with or without `/api`; the shared API client normalizes it automatically.
-
-## Cloud API Endpoints
-
-```http
-GET /api/health
-GET /api/health/ready
-GET /api/modules
-GET /api/pricing
-GET /api/roadmap
-GET /api/security
-GET /api/integrations
-GET /api/onboarding
-GET /api/competitive-position
-GET /api/demo/script
-POST /api/demo/requests
-GET /api/roi-model
-GET /api/faq
-GET /api/platform-status
-GET /api/platform/foundation
-GET /api/platform/modules
-GET /api/platform/roles
-GET /api/platform/permissions
-GET /api/platform/workflows
-GET /api/platform/roadmap
-POST /api/auth/register
-POST /api/auth/login
-POST /api/auth/refresh
-POST /api/auth/logout
-GET /api/auth/me
-GET /api/users
-GET /api/users/roles
-GET /api/users/:id
-POST /api/users
-POST /api/users/invite
-PUT /api/users/:id
-DELETE /api/users/:id
-GET /api/clients
-GET /api/products
-GET /api/invoices
-```
-
-`/health/ready` verifies that the API can connect to the database.
-
-## Demo Corrections
-
-Recent demo-focused fixes:
-
-- The `/demo` web page now submits requests to the NestJS API.
-- Added API demo endpoints on the active `services/api` service with `GET /api/demo/script` and `POST /api/demo/requests`.
-- The shared web API client now normalizes `NEXT_PUBLIC_API_URL` to include `/api`.
-- CORS accepts `CORS_ORIGIN` with comma-separated origins and supports credentials.
-- The API logs the final local URL on startup for easier demo checks.
-
-## Web Product Highlights
-
-The web dashboard includes:
-
-- Market-ready SaaS hero panel
-- Business KPIs
-- Revenue and module activity charts
-- Module performance table
-- Global alerts
-- Competitive module roadmap
-- AI executive summary
-- Pricing cards
-- Trust and deployment readiness signals
-
-Additional market pages:
-
-```text
-/cloud
-/dashboard
-/solutions
-/pricing
-/roadmap
-/demo
-/roi
-/customers
-/security
-/integrations
-/onboarding
-/status
-/faq
-```
-
-## Quality Commands
-
-Web build:
-
-```bash
-cd apps/web
+npm run dev
+npm run dev:web
+npm run dev:api
 npm run build
+npm run qa
 ```
 
-API build:
+---
 
-```bash
-cd services/api
-npm run build
+# Default URLs
+
+Web
+
+```
+http://localhost:3000
 ```
 
-Prisma validation:
+API
 
-```bash
-cd services/api
-npx prisma validate
+```
+http://localhost:4000/api
 ```
 
-## User Manual and Video Tutorials
+---
 
-The complete suite user manual and the EnterpriseERP Cloud video tutorial script are available in this repository:
+# Environment Variables
 
-```text
-docs/MANUEL_UTILISATION_SUITE_ENTERPRISEERP.md
-docs/tutoriels-video/03_ENTERPRISEERP_CLOUD.md
-docs/ROADMAP_SAAS_PROFESSIONNEL.md
+API
+
+```env
+DATABASE_URL=
+JWT_SECRET=
+JWT_ACCESS_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+CORS_ORIGIN=http://localhost:3000
+PORT=4000
 ```
 
-## Visual Identity
+Web
 
-- Night blue: `#1E2A38`
-- Turquoise: `#00C2A9`
-- White: `#FFFFFF`
-- Action orange: `#FF7A00`
-- Typography: Inter or Poppins
+```env
+NEXT_PUBLIC_API_URL=http://localhost:4000/api
+```
 
-## Next Market Priorities
+---
 
-- Complete authentication and role-based access.
-- Add tenant isolation for multiple companies.
-- Add audit logs and security events.
-- Add onboarding checklist and demo data reset.
-- Connect EnterpriseERP.Mobile.
-- Add automated billing and subscription management.
+# Authentication
 
-## SaaS Foundation Added
+EnterpriseERP Cloud uses JWT Authentication.
 
-The active API in `services/api` now includes the foundation for the professional SaaS roadmap:
+Endpoints
 
-- `companyId` added to business tables for tenant isolation.
-- User, session, invitation and audit models prepared in Prisma.
-- Role and permission catalog for ERP modules.
-- Platform endpoints exposing modules, workflows, roles, permissions and roadmap phases.
-- User governance endpoints for users, invitations and role matrix.
-- Real authentication flow with register, login, access JWT, refresh JWT, sessions and logout.
-- Protected business routes with role-based permissions.
-- Central API exception filter for cleaner production responses.
-- CRM, stock and invoice services start scoping records by the current company.
-
-## Authentication
-
-The active API uses Bearer tokens:
-
-```http
+```
 POST /api/auth/register
 POST /api/auth/login
 POST /api/auth/refresh
@@ -281,7 +418,7 @@ POST /api/auth/logout
 GET /api/auth/me
 ```
 
-Successful login/register returns:
+Successful login returns
 
 ```json
 {
@@ -292,16 +429,235 @@ Successful login/register returns:
 }
 ```
 
-Use the access token on protected routes:
+---
 
-```http
-Authorization: Bearer <accessToken>
+# API
+
+Platform
+
+```
+GET /api/platform/sectors
+GET /api/platform/modules
+GET /api/platform/workflows
+GET /api/platform/roles
+GET /api/platform/permissions
+GET /api/platform/roadmap
 ```
 
-Required environment variables:
+Health
+
+```
+GET /api/health
+GET /api/health/ready
+```
+
+Business
+
+```
+GET /api/clients
+GET /api/products
+GET /api/invoices
+```
+
+---
+
+# Security
+
+Current
+
+- JWT Authentication
+- Refresh Tokens
+- RBAC
+- Tenant Isolation
+- Company Context
+- Exception Filter
+- CORS
+- Protected Routes
+
+Roadmap
+
+- MFA
+- SSO
+- Audit Logs
+- Rate Limiting
+- Helmet
+- Login Throttling
+- Secret Rotation
+- Backup Verification
+
+---
+
+# Database
+
+Development
 
 ```bash
-JWT_SECRET="change-me-in-production"
-JWT_ACCESS_EXPIRES_IN="15m"
-JWT_REFRESH_EXPIRES_IN="7d"
+npx prisma migrate dev
 ```
+
+Production
+
+```bash
+npx prisma migrate deploy
+```
+
+Validation
+
+```bash
+npx prisma validate
+```
+
+---
+
+# Testing Strategy
+
+Target coverage
+
+- Unit Tests
+- API Tests
+- Integration Tests
+- E2E Tests
+- Permission Tests
+- Tenant Tests
+
+Critical rule
+
+```
+Company A must never access Company B data.
+```
+
+---
+
+# CI/CD
+
+Pipeline
+
+```text
+Install
+
+↓
+
+Lint
+
+↓
+
+Type Check
+
+↓
+
+Tests
+
+↓
+
+Prisma Validation
+
+↓
+
+Build
+
+↓
+
+Deploy Staging
+
+↓
+
+Manual Approval
+
+↓
+
+Production
+```
+
+---
+
+# Mobile Strategy
+
+EnterpriseERP Mobile shares the same backend.
+
+```text
+EnterpriseERP Mobile
+
+↓
+
+EnterpriseERP API
+
+↓
+
+PostgreSQL
+```
+
+No duplicated business logic.
+
+---
+
+# Development Status
+
+## Completed
+
+- CRM
+- Products
+- Inventory
+- Invoices
+- Authentication
+- Roles
+- Permissions
+- Dashboard
+- Sector Registry
+
+## In Progress
+
+- Multi-Tenant
+- Audit Logs
+- Billing
+- AI Assistant
+- Mobile Sync
+
+## Planned
+
+- Marketplace
+- SDK
+- Webhooks
+- Workers
+- Redis Cache
+- Partner Portal
+
+---
+
+# Documentation
+
+Additional documentation:
+
+```
+docs/
+
+ARCHITECTURE.md
+API.md
+SECURITY.md
+MULTI_TENANT.md
+SECTOR_ENGINE.md
+ROADMAP.md
+```
+
+---
+
+# Roadmap
+
+Current priorities
+
+- Complete Tenant Isolation
+- Finish RBAC
+- Sector Engine
+- Mobile Integration
+- Billing
+- AI
+- Marketplace
+
+---
+
+# License
+
+EnterpriseERP Cloud
+
+Copyright © EnterpriseERP
+
+All rights reserved.
