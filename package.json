@@ -13,6 +13,6 @@
     "start:api": "npm --prefix services/api run start",
     "prisma:generate": "npm --prefix services/api run prisma:generate",
     "prisma:deploy": "npm --prefix services/api run prisma:deploy",
-    "qa": "npm run build && npm --prefix services/api exec prisma validate"
+    "qa": "npm run build && npm --prefix services/api exec prisma validate -- --schema services/api/prisma/schema.prisma"
   }
 }
