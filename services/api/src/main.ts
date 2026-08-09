@@ -12,7 +12,18 @@ async function bootstrap() {
     .filter(Boolean);
 
   app.enableCors({
-    origin: corsOrigins,
+    origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
+      if (!origin || corsOrigins.includes("*") || corsOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      const isLocalDevOrigin =
+        /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0|[\w-]+)(:\d+)?$/i.test(origin) ||
+        /^https?:\/\/(10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})(:\d+)?$/i.test(origin);
+
+      callback(null, isLocalDevOrigin);
+    },
     credentials: true,
   });
   app.setGlobalPrefix("api");
