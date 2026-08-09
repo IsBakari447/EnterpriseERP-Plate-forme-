@@ -40,7 +40,14 @@ export const enterprisePermissions = [
   "ai.use",
   "reports.read",
   "settings.manage",
+  "profile.read",
+  "profile.update",
+  "profile.avatar.update",
   "audit.read",
+  "audit.export",
+  "security.sessions.read",
+  "security.sessions.revoke",
+  "security.events.read",
 ] as const;
 
 export type EnterpriseRole = (typeof enterpriseRoles)[number];
@@ -52,6 +59,11 @@ export const rolePermissions: Record<EnterpriseRole, EnterprisePermission[]> = {
   ADMINISTRATOR: enterprisePermissions.filter((permission) => permission !== "roles.manage"),
   MANAGER: [
     "company.read",
+    "profile.read",
+    "profile.update",
+    "profile.avatar.update",
+    "security.sessions.read",
+    "security.sessions.revoke",
     "users.read",
     "crm.read",
     "crm.create",
@@ -67,10 +79,10 @@ export const rolePermissions: Record<EnterpriseRole, EnterprisePermission[]> = {
     "ai.use",
     "reports.read",
   ],
-  SALES: ["crm.read", "crm.create", "crm.update", "sales.read", "sales.create", "invoice.read", "ai.use"],
-  ACCOUNTING: ["invoice.read", "invoice.create", "invoice.validate", "invoice.cancel", "finance.read", "finance.export", "reports.read"],
-  INVENTORY: ["stock.read", "stock.adjust", "stock.transfer", "reports.read"],
-  HR: ["hr.read", "hr.manage", "users.read", "reports.read"],
-  EMPLOYEE: ["crm.read", "sales.read", "stock.read", "projects.read", "ai.use"],
-  VIEWER: ["company.read", "crm.read", "sales.read", "invoice.read", "stock.read", "reports.read"],
+  SALES: ["profile.read", "profile.update", "profile.avatar.update", "security.sessions.read", "security.sessions.revoke", "crm.read", "crm.create", "crm.update", "sales.read", "sales.create", "invoice.read", "ai.use"],
+  ACCOUNTING: ["profile.read", "profile.update", "profile.avatar.update", "security.sessions.read", "security.sessions.revoke", "invoice.read", "invoice.create", "invoice.validate", "invoice.cancel", "finance.read", "finance.export", "reports.read"],
+  INVENTORY: ["profile.read", "profile.update", "profile.avatar.update", "security.sessions.read", "security.sessions.revoke", "stock.read", "stock.adjust", "stock.transfer", "reports.read"],
+  HR: ["profile.read", "profile.update", "profile.avatar.update", "security.sessions.read", "security.sessions.revoke", "hr.read", "hr.manage", "users.read", "reports.read"],
+  EMPLOYEE: ["profile.read", "profile.update", "profile.avatar.update", "security.sessions.read", "security.sessions.revoke", "crm.read", "sales.read", "stock.read", "projects.read", "ai.use"],
+  VIEWER: ["profile.read", "profile.update", "profile.avatar.update", "security.sessions.read", "security.sessions.revoke", "company.read", "crm.read", "sales.read", "invoice.read", "stock.read", "reports.read"],
 };

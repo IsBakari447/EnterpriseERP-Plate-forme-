@@ -1,4 +1,5 @@
 import Button from "@shared/components/ui/Button";
+import UserMenu from "./UserMenu";
 
 export default function PageHeader({
   title,
@@ -16,7 +17,10 @@ export default function PageHeader({
         <p className="mt-1 text-slate-500">{subtitle}</p>
       </div>
 
-      {action && <Button>{action}</Button>}
+      <div className="flex items-center gap-3">
+        {action && <Button>{action}</Button>}
+        <UserMenu />
+      </div>
     </header>
   );
 }

@@ -51,6 +51,14 @@ export class AuthService {
     }
   }
 
+  private splitName(name: string) {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    const firstName = parts.shift() ?? name.trim();
+    const lastName = parts.join(" ") || null;
+
+    return { firstName, lastName };
+  }
+
   private async createTokenResponse(user: {
     id: string;
     email: string;
@@ -144,8 +152,10 @@ export class AuthService {
       data: {
         companyId: company.id,
         name: input.name,
+        ...this.splitName(input.name),
         email,
         passwordHash: this.password.hash(input.password),
+        language: input.language ?? "fr",
         role: "OWNER",
         status: "ACTIVE",
         emailVerifiedAt: new Date(),
@@ -274,9 +284,24 @@ export class AuthService {
         id: true,
         companyId: true,
         name: true,
+        firstName: true,
+        lastName: true,
         email: true,
+        phone: true,
+        jobTitle: true,
+        department: true,
+        avatarUrl: true,
+        language: true,
+        timezone: true,
+        theme: true,
+        displayCurrency: true,
+        notificationEmail: true,
+        notificationErp: true,
+        notificationImportant: true,
         role: true,
         status: true,
+        lastLoginAt: true,
+        passwordChangedAt: true,
         company: {
           select: {
             id: true,

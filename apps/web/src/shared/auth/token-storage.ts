@@ -2,7 +2,17 @@ export type AuthUser = {
   id: string;
   companyId?: string | null;
   name: string;
+  firstName?: string | null;
+  lastName?: string | null;
   email: string;
+  avatarUrl?: string | null;
+  phone?: string | null;
+  jobTitle?: string | null;
+  department?: string | null;
+  language?: string;
+  timezone?: string;
+  theme?: string;
+  displayCurrency?: string;
   role: string;
   status: string;
   company?: {

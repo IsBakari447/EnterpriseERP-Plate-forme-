@@ -81,8 +81,23 @@ model User {
   id              String        @id @default(cuid())
   companyId       String?
   name            String
+  firstName       String?
+  lastName        String?
   email           String        @unique
   passwordHash    String?
+  phone           String?
+  jobTitle        String?
+  department      String?
+  avatarUrl       String?
+  language        String        @default("fr")
+  timezone        String        @default("Europe/Stockholm")
+  theme           String        @default("system")
+  displayCurrency String        @default("EUR")
+  notificationEmail Boolean     @default(true)
+  notificationErp   Boolean     @default(true)
+  notificationImportant Boolean @default(true)
+  signature       String?
+  passwordChangedAt DateTime?
   role            UserRole      @default(OWNER)
   status          UserStatus    @default(ACTIVE)
   emailVerifiedAt DateTime?
@@ -197,9 +212,12 @@ model AuditLog {
   action     String
   entityType String?
   entityId   String?
+  before     Json?
+  after      Json?
   oldValue   Json?
   newValue   Json?
   ipAddress  String?
+  userAgent  String?
   result     String   @default("success")
   createdAt  DateTime @default(now())
   company    Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)

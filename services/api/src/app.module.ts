@@ -13,6 +13,8 @@ import { FacturationModule } from "./modules/facturation/facturation.module";
 import { CompanyModule } from "./modules/company/company.module";
 import { PlatformModule } from "./modules/platform/platform.module";
 import { UsersModule } from "./modules/users/users.module";
+import { ProfileModule } from "./modules/profile/profile.module";
+import { AuditModule } from "./modules/audit/audit.module";
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { UsersModule } from "./modules/users/users.module";
     FacturationModule,
     PlatformModule,
     UsersModule,
+    ProfileModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [

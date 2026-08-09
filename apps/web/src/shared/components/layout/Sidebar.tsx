@@ -11,12 +11,51 @@ import { useSector } from "@shared/sector/SectorProvider";
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { sector } = useSector();
+const { sector } = useSector();
   const { t } = useI18n();
 
   const visibleItems = navigationItems.filter((item) =>
     sector.modules.includes(item.key)
   );
+  const administrationKeys = new Set(["utilisateurs", "roles-permissions"]);
+  const businessItems = visibleItems.filter((item) => !administrationKeys.has(item.key));
+  const administrationItems = visibleItems.filter((item) => administrationKeys.has(item.key));
+  const accountItems = [
+    { href: "/profile", label: "Mon profil", icon: "ME" },
+    { href: "/account/security", label: "Securite", icon: "SC" },
+    { href: "/account/sessions", label: "Sessions & appareils", icon: "DV" },
+    { href: "/account/preferences", label: "Preferences", icon: "PF" },
+  ];
+  const adminExtraItems = [
+    { href: "/audit", label: "Audit", icon: "AU" },
+    { href: "/security-center", label: "Security Center", icon: "SE" },
+  ];
+
+  const renderLink = (item: { href: string; label: string; icon: string; key?: string }) => {
+    const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+
+    return (
+      <Link
+        key={item.key ?? item.href}
+        href={item.href}
+        className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
+          active
+            ? "bg-white text-night shadow-sm"
+            : "text-slate-200 hover:bg-white/10 hover:text-white"
+        }`}
+      >
+        <span
+          aria-hidden="true"
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-black leading-none ${
+            active ? "bg-night text-white" : "bg-white/10 text-turquoise"
+          }`}
+        >
+          {item.icon}
+        </span>
+        <span className="truncate">{item.label}</span>
+      </Link>
+    );
+  };
 
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-full w-64 flex-col border-r border-white/10 bg-night px-4 py-5 text-white">
@@ -35,36 +74,37 @@ export default function Sidebar() {
         <SectorSelector />
       </div>
 
-      <nav className="mt-5 flex-1 space-y-1 overflow-y-auto pr-1 enterprise-scroll">
-        {visibleItems.map((item) => {
-          const active =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(item.href);
-          const label = sector.labels?.[item.key] ?? t(`nav.${item.key}`);
+      <nav className="mt-5 flex-1 space-y-5 overflow-y-auto pr-1 enterprise-scroll">
+        <div className="space-y-1">
+          {businessItems.map((item) =>
+            renderLink({
+              key: item.key,
+              href: item.href,
+              icon: item.icon,
+              label: sector.labels?.[item.key] ?? t(`nav.${item.key}`),
+            })
+          )}
+        </div>
 
-          return (
-            <Link
-              key={item.key}
-              href={item.href}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
-                active
-                  ? "bg-white text-night shadow-sm"
-                  : "text-slate-200 hover:bg-white/10 hover:text-white"
-              }`}
-            >
-              <span
-                aria-hidden="true"
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-base font-black leading-none ${
-                  active ? "bg-night text-white" : "bg-white/10 text-turquoise"
-                }`}
-              >
-                {item.icon}
-              </span>
-              <span className="truncate">{label}</span>
-            </Link>
-          );
-        })}
+        <div>
+          <p className="mb-2 px-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Mon compte</p>
+          <div className="space-y-1">{accountItems.map(renderLink)}</div>
+        </div>
+
+        <div>
+          <p className="mb-2 px-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Administration</p>
+          <div className="space-y-1">
+            {administrationItems.map((item) =>
+              renderLink({
+                key: item.key,
+                href: item.href,
+                icon: item.icon,
+                label: sector.labels?.[item.key] ?? t(`nav.${item.key}`),
+              })
+            )}
+            {adminExtraItems.map(renderLink)}
+          </div>
+        </div>
       </nav>
     </aside>
   );

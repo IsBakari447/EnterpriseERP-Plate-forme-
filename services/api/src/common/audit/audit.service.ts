@@ -8,9 +8,12 @@ type AuditInput = {
   action: string;
   entityType?: string;
   entityId?: string;
+  before?: unknown;
+  after?: unknown;
   oldValue?: unknown;
   newValue?: unknown;
   ipAddress?: string;
+  userAgent?: string;
   result?: string;
 };
 
@@ -30,9 +33,12 @@ export class AuditService {
           action: input.action,
           entityType: input.entityType,
           entityId: input.entityId,
+          before: input.before === undefined ? undefined : JSON.parse(JSON.stringify(input.before)),
+          after: input.after === undefined ? undefined : JSON.parse(JSON.stringify(input.after)),
           oldValue: input.oldValue === undefined ? undefined : JSON.parse(JSON.stringify(input.oldValue)),
           newValue: input.newValue === undefined ? undefined : JSON.parse(JSON.stringify(input.newValue)),
           ipAddress: input.ipAddress,
+          userAgent: input.userAgent,
           result: input.result ?? "success",
         },
       });
