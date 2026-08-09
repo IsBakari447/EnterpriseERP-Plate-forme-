@@ -18,7 +18,7 @@ type ModuleView = {
   icon: string;
 };
 
-type BusinessTemplate = "admin" | "crm" | "commerce" | "finance" | "project" | "operations";
+type BusinessTemplate = "admin" | "crm" | "commerce" | "finance" | "project" | "operations" | "security";
 
 const crmModules: ModuleKey[] = ["clients", "crm", "fournisseurs"];
 const commerceModules: ModuleKey[] = ["produits", "stock", "achats", "menus", "recettes", "pharmacie", "matieres-premieres"];
@@ -50,6 +50,7 @@ const operationsModules: ModuleKey[] = [
 ];
 
 function getTemplate(module: ModuleKey): BusinessTemplate {
+  if (module === "roles-permissions") return "security";
   if (crmModules.includes(module)) return "crm";
   if (commerceModules.includes(module)) return "commerce";
   if (financeModules.includes(module)) return "finance";
@@ -57,6 +58,20 @@ function getTemplate(module: ModuleKey): BusinessTemplate {
   if (operationsModules.includes(module)) return "operations";
   return "admin";
 }
+
+const permissionMatrix = [
+  { role: "Owner", crm: "Total", finance: "Total", stock: "Total", rh: "Total", security: "Total", risk: "Controle" },
+  { role: "Manager", crm: "Modifier", finance: "Lire", stock: "Modifier", rh: "Lire", security: "Aucun", risk: "Normal" },
+  { role: "Comptable", crm: "Lire", finance: "Total", stock: "Lire", rh: "Aucun", security: "Aucun", risk: "Normal" },
+  { role: "RH", crm: "Aucun", finance: "Lire", stock: "Aucun", rh: "Total", security: "Aucun", risk: "A verifier" },
+  { role: "Employe", crm: "Lire", finance: "Aucun", stock: "Lire", rh: "Lire", security: "Aucun", risk: "Limite" },
+];
+
+const accessRequests = [
+  { reference: "REQ-014", name: "Acces facturation", owner: "Manager", amount: "Finance", status: "En attente" },
+  { reference: "REQ-015", name: "Invitation RH", owner: "Admin", amount: "RH", status: "Actif" },
+  { reference: "REQ-016", name: "Permission export", owner: "Comptable", amount: "Comptabilite", status: "Critique" },
+];
 
 function Widget({
   title,
@@ -305,6 +320,136 @@ function AdminTemplate({ module }: { module: ModuleView }) {
   );
 }
 
+function SecurityTemplate() {
+  return (
+    <>
+      <MetricGrid
+        items={[
+          { label: "Roles actifs", value: "5", change: "Owner, Manager, Comptable, RH, Employe" },
+          { label: "Permissions", value: "29", change: "Seed global" },
+          { label: "Demandes d'acces", value: "3", change: "A valider" },
+          { label: "Risque securite", value: "Moyen", change: "1 export critique" },
+        ]}
+      />
+
+      <section className="mt-8 rounded-3xl bg-gradient-to-br from-[#1E2A38] via-[#142235] to-[#00A990] p-7 text-white shadow-xl">
+        <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr] xl:items-center">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#8df8e8]">RBAC Control Center</p>
+            <h2 className="mt-4 text-4xl font-black">Controlez qui peut voir, modifier, exporter et approuver.</h2>
+            <p className="mt-4 leading-8 text-white/75">
+              Cette page n'est pas un simple CRUD. Elle sert a piloter les roles, les permissions sensibles,
+              les demandes d'acces, l'audit et la separation des responsabilites.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {[
+              ["Export financier", "1 demande critique"],
+              ["Sessions actives", "8 utilisateurs"],
+              ["Permissions admin", "2 roles autorises"],
+              ["Audit", "Journal pret"],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-2xl bg-white/10 p-4">
+                <p className="text-sm text-white/65">{label}</p>
+                <p className="mt-2 text-xl font-black">{value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-8 grid gap-5 xl:grid-cols-[1.25fr_.75fr]">
+        <Widget title="Matrice roles x permissions" eyebrow="Securite">
+          <DataGrid
+            columns={[
+              { key: "role", label: "Role" },
+              { key: "crm", label: "CRM" },
+              { key: "finance", label: "Finance" },
+              { key: "stock", label: "Stock" },
+              { key: "rh", label: "RH" },
+              { key: "security", label: "Securite" },
+              { key: "risk", label: "Risque", badge: true },
+            ]}
+            data={permissionMatrix}
+          />
+        </Widget>
+
+        <Widget title="Roles systeme" eyebrow="Acces">
+          <div className="space-y-3">
+            {[
+              ["Owner", "Acces total, facturation, roles, export"],
+              ["Manager", "Pilotage operations et validation"],
+              ["Comptable", "Finance, paiements, exports comptables"],
+              ["RH", "Employes, contrats, documents RH"],
+              ["Employe", "Lecture limitee selon module"],
+            ].map(([role, description]) => (
+              <div key={role} className="rounded-xl bg-slate-50 p-4">
+                <p className="font-black text-night">{role}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-500">{description}</p>
+              </div>
+            ))}
+          </div>
+        </Widget>
+      </section>
+
+      <section className="mt-8 grid gap-5 xl:grid-cols-[1fr_.9fr]">
+        <Widget title="Demandes d'acces" eyebrow="Validation">
+          <DataGrid
+            columns={[
+              { key: "reference", label: "Reference" },
+              { key: "name", label: "Demande" },
+              { key: "owner", label: "Demandeur" },
+              { key: "amount", label: "Module" },
+              { key: "status", label: "Statut", badge: true },
+            ]}
+            data={accessRequests}
+            actions={() => (
+              <div className="flex gap-2">
+                <button className="rounded-lg bg-[#00C2A9]/10 px-3 py-1.5 text-xs font-black text-[#008f7d]">Approuver</button>
+                <button className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-black text-red-700">Refuser</button>
+              </div>
+            )}
+          />
+        </Widget>
+
+        <Widget title="Audit securite" eyebrow="Journal">
+          <div className="space-y-3">
+            {[
+              "Owner a modifie le role Manager aujourd'hui.",
+              "Comptable a exporte un journal de facturation.",
+              "Invitation RH en attente de validation.",
+              "Tentative d'acces refusée sur module securite.",
+            ].map((item) => (
+              <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">{item}</div>
+            ))}
+          </div>
+        </Widget>
+      </section>
+
+      <section className="mt-8 grid gap-5 xl:grid-cols-3">
+        <AlertPanel
+          alerts={[
+            { title: "Export sensible", description: "Une demande d'export comptable doit etre validee par un Owner.", level: "warning" },
+            { title: "Separation des roles", description: "Aucun employe simple ne possede de permission securite.", level: "info" },
+          ]}
+        />
+        <AIRecommendation
+          text="L'IA recommande de limiter les exports financiers aux roles Owner et Comptable, puis de journaliser toute modification de permission."
+          actions={["Appliquer recommandation", "Voir audit", "Reviser roles"]}
+        />
+        <FormModal
+          title="Inviter ou modifier un role"
+          fields={[
+            { label: "Utilisateur", placeholder: "email@entreprise.com" },
+            { label: "Role", placeholder: "Manager" },
+            { label: "Module sensible", placeholder: "Finance" },
+          ]}
+        />
+      </section>
+    </>
+  );
+}
+
 function CrmTemplate({ module }: { module: ModuleView }) {
   return (
     <>
@@ -489,6 +634,7 @@ export default function GenericModulePage({ module }: { module: ModuleView }) {
     finance: "Finance",
     project: "Projet",
     operations: "Operations",
+    security: "Securite & permissions",
   }[template];
 
   return (
@@ -503,6 +649,7 @@ export default function GenericModulePage({ module }: { module: ModuleView }) {
       {template === "finance" && <FinanceTemplate module={module} />}
       {template === "project" && <ProjectTemplate module={module} />}
       {template === "operations" && <OperationsTemplate module={module} />}
+      {template === "security" && <SecurityTemplate />}
     </ERPLayout>
   );
 }
