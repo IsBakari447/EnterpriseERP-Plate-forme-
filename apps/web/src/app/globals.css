@@ -16,6 +16,18 @@ body {
   background: var(--bg);
   color: var(--night);
   font-family: Inter, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgb(0 194 169 / 0.22);
 }
 
 .bg-night {

@@ -45,8 +45,11 @@ export default function RegisterPage() {
     >
       <form onSubmit={submit} className="space-y-5">
         <div>
-          <h2 className="text-3xl font-black">{t("auth.registerTitle")}</h2>
-          <p className="mt-2 text-slate-600">{t("auth.hasAccount")}{" "}
+          <div className="inline-flex rounded-full bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
+            Start EnterpriseERP Platform
+          </div>
+          <h2 className="mt-5 text-3xl font-black leading-tight text-[#1E2A38] sm:text-4xl">{t("auth.registerTitle")}</h2>
+          <p className="mt-3 text-slate-600">{t("auth.hasAccount")}{" "}
             <Link href="/login" className="font-black text-[#00A693]">
               {t("auth.goLogin")}
             </Link>
@@ -54,32 +57,34 @@ export default function RegisterPage() {
         </div>
 
         {status === "error" && (
-          <div className="rounded-2xl bg-red-50 p-4 text-sm font-bold text-red-800">
+          <div className="rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-bold text-red-800">
             {t("auth.registerError")}
           </div>
         )}
 
-        <label className="block">
-          <span className="text-sm font-black text-slate-700">{t("auth.companyName")}</span>
-          <input
-            required
-            value={companyName}
-            onChange={(event) => setCompanyName(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 outline-none focus:border-[#00C2A9] focus:ring-4 focus:ring-[#00C2A9]/15"
-            placeholder="Entreprise SARL"
-          />
-        </label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block">
+            <span className="text-sm font-black text-slate-700">{t("auth.companyName")}</span>
+            <input
+              required
+              value={companyName}
+              onChange={(event) => setCompanyName(event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-semibold outline-none transition focus:border-[#00C2A9] focus:bg-white focus:ring-4 focus:ring-[#00C2A9]/15"
+              placeholder="Entreprise SARL"
+            />
+          </label>
 
-        <label className="block">
-          <span className="text-sm font-black text-slate-700">{t("auth.fullName")}</span>
-          <input
-            required
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 outline-none focus:border-[#00C2A9] focus:ring-4 focus:ring-[#00C2A9]/15"
-            placeholder="Issa Bakari"
-          />
-        </label>
+          <label className="block">
+            <span className="text-sm font-black text-slate-700">{t("auth.fullName")}</span>
+            <input
+              required
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-semibold outline-none transition focus:border-[#00C2A9] focus:bg-white focus:ring-4 focus:ring-[#00C2A9]/15"
+              placeholder="Issa Bakari"
+            />
+          </label>
+        </div>
 
         <label className="block">
           <span className="text-sm font-black text-slate-700">{t("auth.email")}</span>
@@ -88,7 +93,7 @@ export default function RegisterPage() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 outline-none focus:border-[#00C2A9] focus:ring-4 focus:ring-[#00C2A9]/15"
+            className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-semibold outline-none transition focus:border-[#00C2A9] focus:bg-white focus:ring-4 focus:ring-[#00C2A9]/15"
             placeholder="admin@entreprise.com"
           />
         </label>
@@ -101,7 +106,7 @@ export default function RegisterPage() {
             minLength={8}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 outline-none focus:border-[#00C2A9] focus:ring-4 focus:ring-[#00C2A9]/15"
+            className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-semibold outline-none transition focus:border-[#00C2A9] focus:bg-white focus:ring-4 focus:ring-[#00C2A9]/15"
           />
         </label>
 
@@ -110,7 +115,7 @@ export default function RegisterPage() {
           <select
             value={sector}
             onChange={(event) => setSector(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-4 font-bold outline-none focus:border-[#00C2A9] focus:ring-4 focus:ring-[#00C2A9]/15"
+            className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-bold outline-none transition focus:border-[#00C2A9] focus:bg-white focus:ring-4 focus:ring-[#00C2A9]/15"
           >
             {sectorOptions.map((option) => (
               <option key={option.key} value={option.key}>
@@ -123,10 +128,16 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={status === "loading"}
-          className="w-full rounded-2xl bg-[#FF7A00] px-6 py-4 font-black text-white shadow-sm disabled:opacity-60"
+          className="w-full rounded-2xl bg-[#FF7A00] px-6 py-4 font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-[#e66e00] hover:shadow-xl disabled:opacity-60"
         >
           {status === "loading" ? t("auth.creating") : t("auth.register")}
         </button>
+
+        <div className="grid gap-3 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-600 sm:grid-cols-3">
+          <span>Multi-tenant</span>
+          <span>RBAC</span>
+          <span>Sector engine</span>
+        </div>
       </form>
     </AuthShell>
   );

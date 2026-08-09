@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useI18n } from "@shared/i18n/I18nProvider";
 
 export default function MarketingFooter() {
@@ -9,7 +10,12 @@ export default function MarketingFooter() {
     <footer className="bg-[#101A26] text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-4">
         <div className="md:col-span-2">
-          <div className="text-2xl font-bold">EnterpriseERP</div>
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-white">
+              <Image src="/enterpriseerp-icon.png" alt="EnterpriseERP" width={42} height={42} className="h-10 w-10 object-contain" />
+            </span>
+            <div className="text-2xl font-bold">EnterpriseERP</div>
+          </div>
           <p className="mt-3 max-w-md text-sm leading-6 text-slate-300">
             {t("marketing.footerText")}
           </p>

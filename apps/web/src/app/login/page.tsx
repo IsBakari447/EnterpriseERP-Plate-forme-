@@ -33,10 +33,13 @@ export default function LoginPage() {
       title={t("auth.loginTitle")}
       text={t("auth.loginHero")}
     >
-      <form onSubmit={submit} className="space-y-5">
+      <form onSubmit={submit} className="space-y-6">
         <div>
-          <h2 className="text-3xl font-black">{t("auth.loginTitle")}</h2>
-          <p className="mt-2 text-slate-600">{t("auth.noAccount")}{" "}
+          <div className="inline-flex rounded-full bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
+            EnterpriseERP Account
+          </div>
+          <h2 className="mt-5 text-3xl font-black leading-tight text-[#1E2A38] sm:text-4xl">{t("auth.loginTitle")}</h2>
+          <p className="mt-3 text-slate-600">{t("auth.noAccount")}{" "}
             <Link href="/register" className="font-black text-[#00A693]">
               {t("auth.createAccount")}
             </Link>
@@ -44,7 +47,7 @@ export default function LoginPage() {
         </div>
 
         {status === "error" && (
-          <div className="rounded-2xl bg-red-50 p-4 text-sm font-bold text-red-800">
+          <div className="rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-bold text-red-800">
             {t("auth.loginError")}
           </div>
         )}
@@ -56,7 +59,7 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 outline-none focus:border-[#00C2A9] focus:ring-4 focus:ring-[#00C2A9]/15"
+            className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-semibold outline-none transition focus:border-[#00C2A9] focus:bg-white focus:ring-4 focus:ring-[#00C2A9]/15"
             placeholder="admin@entreprise.com"
           />
         </label>
@@ -69,7 +72,7 @@ export default function LoginPage() {
             minLength={8}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 outline-none focus:border-[#00C2A9] focus:ring-4 focus:ring-[#00C2A9]/15"
+            className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-semibold outline-none transition focus:border-[#00C2A9] focus:bg-white focus:ring-4 focus:ring-[#00C2A9]/15"
           />
         </label>
 
@@ -91,10 +94,14 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={status === "loading"}
-          className="w-full rounded-2xl bg-[#FF7A00] px-6 py-4 font-black text-white shadow-sm disabled:opacity-60"
+          className="w-full rounded-2xl bg-[#FF7A00] px-6 py-4 font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-[#e66e00] hover:shadow-xl disabled:opacity-60"
         >
           {status === "loading" ? t("auth.authenticating") : t("auth.login")}
         </button>
+
+        <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-600">
+          Conseil: creez votre compte pour activer automatiquement le secteur, les modules et la navigation EnterpriseERP Platform.
+        </div>
       </form>
     </AuthShell>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import LanguageSwitcher from "@shared/i18n/LanguageSwitcher";
 import { useI18n } from "@shared/i18n/I18nProvider";
@@ -11,9 +12,9 @@ export default function MarketingHeader() {
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#1E2A38] text-xl font-bold text-white">
-            E
-          </div>
+          <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+            <Image src="/enterpriseerp-icon.png" alt="EnterpriseERP" width={42} height={42} className="h-10 w-10 object-contain" priority />
+          </span>
 
           <div>
             <div className="text-xl font-bold text-[#1E2A38]">
