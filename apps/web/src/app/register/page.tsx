@@ -5,6 +5,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthShell from "@modules/auth/components/AuthShell";
 import { authService } from "@modules/auth/services/auth.service";
+import { getApiErrorMessage, isExistingAccountError } from "@shared/api/errors";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { sectorOptions } from "@config/sectors";
 
@@ -16,11 +17,13 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [sector, setSector] = useState("general");
-  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "error" | "account-exists">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("loading");
+    setErrorMessage("");
 
     try {
       await authService.register({
@@ -32,8 +35,12 @@ export default function RegisterPage() {
         language: locale,
       });
       router.push("/dashboard");
-    } catch {
-      setStatus("error");
+    } catch (error) {
+      const message = getApiErrorMessage(error, t("auth.registerError"));
+      const accountExists = isExistingAccountError(message);
+
+      setStatus(accountExists ? "account-exists" : "error");
+      setErrorMessage(accountExists ? t("auth.accountExists") : message);
     }
   }
 
@@ -56,9 +63,14 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {status === "error" && (
+        {(status === "error" || status === "account-exists") && (
           <div className="rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-bold text-red-800">
-            {t("auth.registerError")}
+            <p>{errorMessage || t("auth.registerError")}</p>
+            {status === "account-exists" && (
+              <Link href="/login" className="mt-2 inline-flex text-[#00A693] underline-offset-4 hover:underline">
+                {t("auth.useExistingAccount")}
+              </Link>
+            )}
           </div>
         )}
 
@@ -111,7 +123,7 @@ export default function RegisterPage() {
         </label>
 
         <label className="block">
-          <span className="text-sm font-black text-slate-700">Secteur</span>
+          <span className="text-sm font-black text-slate-700">{t("auth.sector")}</span>
           <select
             value={sector}
             onChange={(event) => setSector(event.target.value)}
@@ -119,7 +131,7 @@ export default function RegisterPage() {
           >
             {sectorOptions.map((option) => (
               <option key={option.key} value={option.key}>
-                {option.name}
+                {t(`sector.${option.key}`)}
               </option>
             ))}
           </select>

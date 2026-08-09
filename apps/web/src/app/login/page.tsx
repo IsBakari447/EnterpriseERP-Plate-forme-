@@ -5,6 +5,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthShell from "@modules/auth/components/AuthShell";
 import { authService } from "@modules/auth/services/auth.service";
+import { getApiErrorMessage } from "@shared/api/errors";
 import { useI18n } from "@shared/i18n/I18nProvider";
 
 export default function LoginPage() {
@@ -14,16 +15,19 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("loading");
+    setErrorMessage("");
 
     try {
       await authService.login({ email, password, rememberMe });
       router.push("/dashboard");
-    } catch {
+    } catch (error) {
       setStatus("error");
+      setErrorMessage(getApiErrorMessage(error, t("auth.loginError")));
     }
   }
 
@@ -48,7 +52,7 @@ export default function LoginPage() {
 
         {status === "error" && (
           <div className="rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-bold text-red-800">
-            {t("auth.loginError")}
+            {errorMessage || t("auth.loginError")}
           </div>
         )}
 
