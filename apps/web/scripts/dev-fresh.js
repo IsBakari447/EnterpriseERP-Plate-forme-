@@ -19,7 +19,7 @@ if (fs.existsSync(nextCache)) {
 
 const nextBin = path.join(root, "node_modules", "next", "dist", "bin", "next");
 const port = process.env.PORT || "3000";
-const host = process.env.HOSTNAME || process.env.HOST || "0.0.0.0";
+const host = process.env.NEXT_HOST || process.env.HOST || "0.0.0.0";
 const child = spawn(process.execPath, [nextBin, "dev", "--hostname", host, "--port", port], {
   cwd: root,
   env: process.env,
