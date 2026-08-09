@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Param } from "@nestjs/common";
 import { Public } from "../../common/auth/public.decorator";
 import { PlatformService } from "./platform.service";
 
@@ -20,6 +20,16 @@ export class PlatformController {
   @Get("sectors")
   sectors() {
     return this.platformService.getSectors();
+  }
+
+  @Get("sectors/:sector")
+  sector(@Param("sector") sector: string) {
+    return this.platformService.getSector(sector);
+  }
+
+  @Get("sectors/:sector/navigation")
+  sectorNavigation(@Param("sector") sector: string) {
+    return this.platformService.getSectorNavigation(sector);
   }
 
   @Get("roles")

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { sectorDefinitions } from "../../common/platform/sector-engine";
+import { getSectorDefinition, getSectorNavigation, sectorDefinitions } from "../../common/platform/sector-engine";
 import { enterprisePermissions, enterpriseRoles, rolePermissions } from "../../common/security/permissions";
 
 @Injectable()
@@ -34,6 +34,20 @@ export class PlatformService {
 
   getSectors() {
     return Object.values(sectorDefinitions);
+  }
+
+  getSector(sector: string) {
+    return getSectorDefinition(sector);
+  }
+
+  getSectorNavigation(sector: string) {
+    const definition = getSectorDefinition(sector);
+
+    return {
+      sector: definition.key,
+      dashboardLabel: definition.dashboardLabel,
+      navigation: getSectorNavigation(sector),
+    };
   }
 
   getRoles() {
