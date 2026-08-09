@@ -6,13 +6,11 @@ const root = path.resolve(__dirname, "..");
 const nextCache = path.join(root, ".next");
 
 if (fs.existsSync(nextCache)) {
-  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-  const archivedCache = path.join(root, `.next-dev-cache-${stamp}`);
   try {
-    fs.renameSync(nextCache, archivedCache);
-    console.log(`Archived stale Next cache: ${path.basename(archivedCache)}`);
+    fs.rmSync(nextCache, { recursive: true, force: true });
+    console.log("Removed stale Next cache.");
   } catch (error) {
-    console.warn("Could not archive .next. If the page shows a runtime cache error, stop the old dev server and run npm run dev again.");
+    console.warn("Could not remove .next. If the page shows a runtime cache error, stop the old dev server and run npm run dev again.");
     console.warn(error instanceof Error ? error.message : error);
   }
 }
