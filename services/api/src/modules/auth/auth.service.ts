@@ -113,6 +113,15 @@ export class AuthService {
         language: input.language ?? "fr",
       },
     });
+    const ownerRole = await this.prisma.role.create({
+      data: {
+        companyId: company.id,
+        key: "OWNER",
+        name: "Owner",
+        description: "Full company owner access",
+        system: true,
+      },
+    });
     const user = await this.prisma.user.create({
       data: {
         companyId: company.id,
@@ -122,6 +131,15 @@ export class AuthService {
         role: "OWNER",
         status: "ACTIVE",
         emailVerifiedAt: new Date(),
+      },
+    });
+    await this.prisma.membership.create({
+      data: {
+        companyId: company.id,
+        userId: user.id,
+        roleId: ownerRole.id,
+        legacyRole: "OWNER",
+        status: "ACTIVE",
       },
     });
 
@@ -246,8 +264,23 @@ export class AuthService {
             id: true,
             name: true,
             sector: true,
+            enabledModules: true,
             language: true,
             currency: true,
+          },
+        },
+        memberships: {
+          select: {
+            companyId: true,
+            legacyRole: true,
+            status: true,
+            role: {
+              select: {
+                id: true,
+                key: true,
+                name: true,
+              },
+            },
           },
         },
       },

@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { sectorDefinitions } from "../../common/platform/sector-engine";
 import { enterprisePermissions, enterpriseRoles, rolePermissions } from "../../common/security/permissions";
 
 @Injectable()
@@ -29,6 +30,10 @@ export class PlatformService {
       { key: "reports", label: "Reports", status: "planned", permissions: ["reports.read"] },
       { key: "settings", label: "Settings", status: "active", permissions: ["settings.manage"] },
     ];
+  }
+
+  getSectors() {
+    return Object.values(sectorDefinitions);
   }
 
   getRoles() {

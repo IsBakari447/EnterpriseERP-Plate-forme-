@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { CurrentUser, AuthenticatedUser } from "../../common/auth/current-user.decorator";
 import { Permissions } from "../../common/security/permissions.decorator";
 import { FacturationService } from "./facturation.service";
 
@@ -16,31 +17,31 @@ export class FacturationController {
 
   @Get()
   @Permissions("invoice.read")
-  findAll() {
-    return this.facturationService.findAll();
+  findAll(@CurrentUser() user: AuthenticatedUser) {
+    return this.facturationService.findAll(user);
   }
 
   @Get(":id")
   @Permissions("invoice.read")
-  findOne(@Param("id") id: string) {
-    return this.facturationService.findOne(id);
+  findOne(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
+    return this.facturationService.findOne(user, id);
   }
 
   @Post()
   @Permissions("invoice.create")
-  create(@Body() body: InvoiceInput) {
-    return this.facturationService.create(body);
+  create(@CurrentUser() user: AuthenticatedUser, @Body() body: InvoiceInput) {
+    return this.facturationService.create(user, body);
   }
 
   @Put(":id")
   @Permissions("invoice.create")
-  update(@Param("id") id: string, @Body() body: Partial<InvoiceInput>) {
-    return this.facturationService.update(id, body);
+  update(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string, @Body() body: Partial<InvoiceInput>) {
+    return this.facturationService.update(user, id, body);
   }
 
   @Delete(":id")
   @Permissions("invoice.cancel")
-  remove(@Param("id") id: string) {
-    return this.facturationService.remove(id);
+  remove(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
+    return this.facturationService.remove(user, id);
   }
 }

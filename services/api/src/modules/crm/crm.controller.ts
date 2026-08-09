@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { CurrentUser, AuthenticatedUser } from "../../common/auth/current-user.decorator";
 import { Permissions } from "../../common/security/permissions.decorator";
 import { CrmService } from "./crm.service";
 
@@ -16,31 +17,31 @@ export class CrmController {
 
   @Get()
   @Permissions("crm.read")
-  findAll() {
-    return this.crmService.findAll();
+  findAll(@CurrentUser() user: AuthenticatedUser) {
+    return this.crmService.findAll(user);
   }
 
   @Get(":id")
   @Permissions("crm.read")
-  findOne(@Param("id") id: string) {
-    return this.crmService.findOne(id);
+  findOne(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
+    return this.crmService.findOne(user, id);
   }
 
   @Post()
   @Permissions("crm.create")
-  create(@Body() body: ClientInput) {
-    return this.crmService.create(body);
+  create(@CurrentUser() user: AuthenticatedUser, @Body() body: ClientInput) {
+    return this.crmService.create(user, body);
   }
 
   @Put(":id")
   @Permissions("crm.update")
-  update(@Param("id") id: string, @Body() body: Partial<ClientInput>) {
-    return this.crmService.update(id, body);
+  update(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string, @Body() body: Partial<ClientInput>) {
+    return this.crmService.update(user, id, body);
   }
 
   @Delete(":id")
   @Permissions("crm.delete")
-  remove(@Param("id") id: string) {
-    return this.crmService.remove(id);
+  remove(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
+    return this.crmService.remove(user, id);
   }
 }

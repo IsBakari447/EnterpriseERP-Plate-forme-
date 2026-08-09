@@ -17,6 +17,11 @@ export class PlatformController {
     return this.platformService.getModules();
   }
 
+  @Get("sectors")
+  sectors() {
+    return this.platformService.getSectors();
+  }
+
   @Get("roles")
   roles() {
     return this.platformService.getRoles();

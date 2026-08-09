@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
 import { PrismaService } from "../../prisma.service";
 
 type ClientInput = {
@@ -13,26 +14,19 @@ type ClientInput = {
 export class CrmService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async getCompanyId() {
-    const company = await this.prisma.company.findFirst({
-      orderBy: { createdAt: "asc" },
-    });
-
-    return company?.id;
-  }
-
-  async findAll() {
-    const companyId = await this.getCompanyId();
+  async findAll(user: AuthenticatedUser) {
+    const companyId = requireTenant(user);
 
     return this.prisma.client.findMany({
-      where: companyId ? { companyId } : undefined,
+      where: { companyId },
       orderBy: { createdAt: "desc" },
     });
   }
 
-  async findOne(id: string) {
-    const client = await this.prisma.client.findUnique({
-      where: { id },
+  async findOne(user: AuthenticatedUser, id: string) {
+    const companyId = requireTenant(user);
+    const client = await this.prisma.client.findFirst({
+      where: { id, companyId },
     });
 
     if (!client) {
@@ -42,8 +36,8 @@ export class CrmService {
     return client;
   }
 
-  async create(data: ClientInput) {
-    const companyId = await this.getCompanyId();
+  async create(user: AuthenticatedUser, data: ClientInput) {
+    const companyId = requireTenant(user);
 
     return this.prisma.client.create({
       data: {
@@ -54,8 +48,8 @@ export class CrmService {
     });
   }
 
-  async update(id: string, data: Partial<ClientInput>) {
-    await this.findOne(id);
+  async update(user: AuthenticatedUser, id: string, data: Partial<ClientInput>) {
+    await this.findOne(user, id);
 
     return this.prisma.client.update({
       where: { id },
@@ -63,8 +57,8 @@ export class CrmService {
     });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(user: AuthenticatedUser, id: string) {
+    await this.findOne(user, id);
 
     return this.prisma.client.delete({
       where: { id },

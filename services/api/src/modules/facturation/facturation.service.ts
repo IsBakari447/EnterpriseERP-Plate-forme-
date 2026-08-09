@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
 import { PrismaService } from "../../prisma.service";
 
 type InvoiceInput = {
@@ -13,25 +14,20 @@ type InvoiceInput = {
 export class FacturationService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async getCompanyId() {
-    const company = await this.prisma.company.findFirst({
-      orderBy: { createdAt: "asc" },
-    });
-
-    return company?.id;
-  }
-
-  async findAll() {
-    const companyId = await this.getCompanyId();
+  async findAll(user: AuthenticatedUser) {
+    const companyId = requireTenant(user);
 
     return this.prisma.invoice.findMany({
-      where: companyId ? { companyId } : undefined,
+      where: { companyId },
       orderBy: { createdAt: "desc" },
     });
   }
 
-  async findOne(id: string) {
-    const invoice = await this.prisma.invoice.findUnique({ where: { id } });
+  async findOne(user: AuthenticatedUser, id: string) {
+    const companyId = requireTenant(user);
+    const invoice = await this.prisma.invoice.findFirst({
+      where: { id, companyId },
+    });
 
     if (!invoice) {
       throw new NotFoundException("Facture introuvable");
@@ -40,8 +36,8 @@ export class FacturationService {
     return invoice;
   }
 
-  async create(data: InvoiceInput) {
-    const companyId = await this.getCompanyId();
+  async create(user: AuthenticatedUser, data: InvoiceInput) {
+    const companyId = requireTenant(user);
 
     return this.prisma.invoice.create({
       data: {
@@ -53,8 +49,9 @@ export class FacturationService {
     });
   }
 
-  async update(id: string, data: Partial<InvoiceInput>) {
-    await this.findOne(id);
+  async update(user: AuthenticatedUser, id: string, data: Partial<InvoiceInput>) {
+    await this.findOne(user, id);
+
     return this.prisma.invoice.update({
       where: { id },
       data: {
@@ -64,8 +61,9 @@ export class FacturationService {
     });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(user: AuthenticatedUser, id: string) {
+    await this.findOne(user, id);
+
     return this.prisma.invoice.delete({ where: { id } });
   }
 }
