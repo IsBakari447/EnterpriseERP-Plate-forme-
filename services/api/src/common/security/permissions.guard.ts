@@ -1,10 +1,13 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+import { PrismaService } from "../../prisma.service";
 import { PERMISSIONS_KEY } from "./permissions.decorator";
 import { EnterprisePermission, EnterpriseRole, rolePermissions } from "./permissions";
 
 type RequestWithUser = {
   user?: {
+    sub?: string;
+    companyId?: string | null;
     role?: EnterpriseRole;
     permissions?: EnterprisePermission[];
   };
@@ -12,9 +15,12 @@ type RequestWithUser = {
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly prisma: PrismaService
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredPermissions =
       this.reflector.getAllAndOverride<EnterprisePermission[]>(PERMISSIONS_KEY, [
         context.getHandler(),
@@ -26,14 +32,20 @@ export class PermissionsGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<RequestWithUser>();
-    if (!request.user?.role) {
+    const user = request.user;
+
+    if (!user?.role || !user.sub) {
       throw new UnauthorizedException("Authentification requise");
     }
 
-    const role = request.user.role;
-    const explicitPermissions = request.user?.permissions ?? [];
-    const inheritedPermissions = rolePermissions[role] ?? [];
-    const effectivePermissions = new Set([...inheritedPermissions, ...explicitPermissions]);
+    const explicitPermissions = user.permissions ?? [];
+    const inheritedPermissions = rolePermissions[user.role] ?? [];
+    const databasePermissions = await this.loadDatabasePermissions(user.sub, user.companyId);
+    const effectivePermissions = new Set([
+      ...inheritedPermissions,
+      ...explicitPermissions,
+      ...databasePermissions,
+    ]);
 
     const allowed = requiredPermissions.every((permission) => effectivePermissions.has(permission));
 
@@ -42,5 +54,40 @@ export class PermissionsGuard implements CanActivate {
     }
 
     return true;
+  }
+
+  private async loadDatabasePermissions(userId: string, companyId?: string | null): Promise<EnterprisePermission[]> {
+    if (!companyId) {
+      return [];
+    }
+
+    const membership = await this.prisma.membership.findFirst({
+      where: {
+        userId,
+        companyId,
+        status: "ACTIVE",
+      },
+      select: {
+        role: {
+          select: {
+            permissions: {
+              select: {
+                permission: {
+                  select: {
+                    key: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return (
+      membership?.role?.permissions
+        .map((item) => item.permission.key)
+        .filter((key): key is EnterprisePermission => Boolean(key)) ?? []
+    );
   }
 }

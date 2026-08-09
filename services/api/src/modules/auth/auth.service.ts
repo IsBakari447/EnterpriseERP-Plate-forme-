@@ -4,6 +4,7 @@ import { UserRole } from "@prisma/client";
 import { JwtService } from "../../common/auth/jwt.service";
 import { PasswordService } from "../../common/auth/password.service";
 import { AuditService } from "../../common/audit/audit.service";
+import { rolePermissions } from "../../common/security/permissions";
 import { PrismaService } from "../../prisma.service";
 
 type RegisterInput = {
@@ -122,6 +123,23 @@ export class AuthService {
         system: true,
       },
     });
+    const ownerPermissions = await this.prisma.permission.findMany({
+      where: {
+        key: {
+          in: rolePermissions.OWNER,
+        },
+      },
+      select: { id: true },
+    });
+    if (ownerPermissions.length > 0) {
+      await this.prisma.rolePermission.createMany({
+        data: ownerPermissions.map((permission) => ({
+          roleId: ownerRole.id,
+          permissionId: permission.id,
+        })),
+        skipDuplicates: true,
+      });
+    }
     const user = await this.prisma.user.create({
       data: {
         companyId: company.id,
