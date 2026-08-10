@@ -8,47 +8,47 @@ import { useI18n } from "@shared/i18n/I18nProvider";
 const supportAnswers = [
   {
     keywords: ["facture", "paiement", "payer", "invoice", "payment"],
-    title: "Factures et paiements",
-    answer: "Vous pouvez consulter les factures, suivre les paiements et relancer les echeances depuis le module Facturation.",
+    titleKey: "support.answer.billing.title",
+    answerKey: "support.answer.billing.text",
     links: [
-      { label: "Ouvrir Facturation", href: "/facturation" },
-      { label: "Voir Paiements", href: "/modules/paiements" },
+      { labelKey: "support.link.billing", href: "/facturation" },
+      { labelKey: "support.link.payments", href: "/modules/paiements" },
     ],
   },
   {
     keywords: ["stock", "produit", "rupture", "sku", "inventory"],
-    title: "Stock et produits",
-    answer: "Le module Stock permet de suivre les produits, les seuils critiques et les besoins de reapprovisionnement.",
+    titleKey: "support.answer.stock.title",
+    answerKey: "support.answer.stock.text",
     links: [
-      { label: "Ouvrir Stock", href: "/stock" },
-      { label: "Voir Produits", href: "/modules/produits" },
+      { labelKey: "support.link.stock", href: "/stock" },
+      { labelKey: "support.link.products", href: "/modules/produits" },
     ],
   },
   {
     keywords: ["client", "crm", "prospect", "relance", "sales"],
-    title: "CRM et ventes",
-    answer: "Pour suivre les clients, prospects, relances et opportunites, utilisez CRM ou AI Sales Agent.",
+    titleKey: "support.answer.crm.title",
+    answerKey: "support.answer.crm.text",
     links: [
-      { label: "Ouvrir CRM", href: "/crm" },
-      { label: "AI Sales Agent", href: "/ai-sales-agent" },
+      { labelKey: "support.link.crm", href: "/crm" },
+      { labelKey: "support.link.salesAgent", href: "/ai-sales-agent" },
     ],
   },
   {
     keywords: ["role", "permission", "utilisateur", "securite", "access"],
-    title: "Utilisateurs et permissions",
-    answer: "Les roles, permissions et invitations sont centralises dans Gouvernance pour securiser les acces.",
+    titleKey: "support.answer.permissions.title",
+    answerKey: "support.answer.permissions.text",
     links: [
-      { label: "Ouvrir Gouvernance", href: "/gouvernance" },
-      { label: "Roles & permissions", href: "/modules/roles-permissions" },
+      { labelKey: "support.link.governance", href: "/gouvernance" },
+      { labelKey: "support.link.roles", href: "/modules/roles-permissions" },
     ],
   },
   {
     keywords: ["rapport", "bilan", "activite", "analyse", "dashboard"],
-    title: "Bilans et rapports",
-    answer: "Le dashboard decisionnel et les rapports vous aident a produire un bilan des ventes, activites et actions.",
+    titleKey: "support.answer.reports.title",
+    answerKey: "support.answer.reports.text",
     links: [
-      { label: "Ouvrir Dashboard", href: "/dashboard" },
-      { label: "Voir Rapports", href: "/modules/rapports" },
+      { labelKey: "support.link.dashboard", href: "/dashboard" },
+      { labelKey: "support.link.reports", href: "/modules/rapports" },
     ],
   },
 ];
@@ -65,11 +65,11 @@ export default function SupportPage() {
       supportAnswers.find((item) =>
         item.keywords.some((keyword) => normalized.includes(keyword))
       ) ?? {
-        title: t("support.defaultTitle"),
-        answer: t("support.defaultAnswer"),
+        titleKey: "support.defaultTitle",
+        answerKey: "support.defaultAnswer",
         links: [
-          { label: t("support.openDashboard"), href: "/dashboard" },
-          { label: "AI Studio", href: "/ai-studio" },
+          { labelKey: "support.openDashboard", href: "/dashboard" },
+          { labelKey: "support.link.aiStudio", href: "/ai-studio" },
         ],
       }
     );
@@ -91,16 +91,21 @@ export default function SupportPage() {
           <p className="mt-4 leading-8 text-white/75">{t("support.robotText")}</p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
-            {["Facturation", "CRM", "Stock", "Permissions"].map((item) => (
+            {[
+              ["support.quick.billing", "facture"],
+              ["support.quick.crm", "crm"],
+              ["support.quick.stock", "stock"],
+              ["support.quick.permissions", "permission"],
+            ].map(([labelKey, value]) => (
               <button
-                key={item}
+                key={labelKey}
                 onClick={() => {
-                  setQuestion(item);
-                  setSubmittedQuestion(item);
+                  setQuestion(t(labelKey));
+                  setSubmittedQuestion(value);
                 }}
                 className="rounded-2xl bg-white/10 p-4 text-left font-black transition hover:bg-white/15"
               >
-                {item}
+                {t(labelKey)}
               </button>
             ))}
           </div>
@@ -126,12 +131,12 @@ export default function SupportPage() {
           {submittedQuestion && (
             <article className="mt-6 rounded-3xl border border-[#00C2A9]/20 bg-[#00C2A9]/5 p-5">
               <p className="text-sm font-black uppercase tracking-[0.14em] text-[#008f7d]">AI Support</p>
-              <h3 className="mt-2 text-2xl font-black text-night">{response.title}</h3>
-              <p className="mt-3 leading-7 text-slate-600">{response.answer}</p>
+              <h3 className="mt-2 text-2xl font-black text-night">{t(response.titleKey)}</h3>
+              <p className="mt-3 leading-7 text-slate-600">{t(response.answerKey)}</p>
               <div className="mt-5 flex flex-wrap gap-3">
                 {response.links.map((link) => (
                   <Link key={link.href} href={link.href} className="rounded-xl bg-white px-4 py-2 text-sm font-black text-night shadow ring-1 ring-slate-200">
-                    {link.label}
+                    {t(link.labelKey)}
                   </Link>
                 ))}
               </div>

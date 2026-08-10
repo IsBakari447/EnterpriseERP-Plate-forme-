@@ -11,7 +11,7 @@ import { useSector } from "@shared/sector/SectorProvider";
 
 export default function Sidebar() {
   const pathname = usePathname();
-const { sector } = useSector();
+  const { sector } = useSector();
   const { t } = useI18n();
 
   const visibleItems = navigationItems.filter((item) =>
@@ -21,14 +21,14 @@ const { sector } = useSector();
   const businessItems = visibleItems.filter((item) => !administrationKeys.has(item.key));
   const administrationItems = visibleItems.filter((item) => administrationKeys.has(item.key));
   const accountItems = [
-    { href: "/profile", label: "Mon profil", icon: "ME" },
-    { href: "/account/security", label: "Securite", icon: "SC" },
-    { href: "/account/sessions", label: "Sessions & appareils", icon: "DV" },
-    { href: "/account/preferences", label: "Preferences", icon: "PF" },
+    { href: "/profile", label: t("account.profile"), icon: "ME" },
+    { href: "/account/security", label: t("account.security"), icon: "SC" },
+    { href: "/account/sessions", label: t("account.sessions"), icon: "DV" },
+    { href: "/account/preferences", label: t("account.preferences"), icon: "PF" },
   ];
   const adminExtraItems = [
-    { href: "/audit", label: "Audit", icon: "AU" },
-    { href: "/security-center", label: "Security Center", icon: "SE" },
+    { href: "/audit", label: t("account.audit"), icon: "AU" },
+    { href: "/security-center", label: t("account.securityCenter"), icon: "SE" },
   ];
 
   const renderLink = (item: { href: string; label: string; icon: string; key?: string }) => {
@@ -81,25 +81,25 @@ const { sector } = useSector();
               key: item.key,
               href: item.href,
               icon: item.icon,
-              label: sector.labels?.[item.key] ?? t(`nav.${item.key}`),
+              label: t(`nav.${item.key}`),
             })
           )}
         </div>
 
         <div>
-          <p className="mb-2 px-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Mon compte</p>
+          <p className="mb-2 px-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">{t("account.section")}</p>
           <div className="space-y-1">{accountItems.map(renderLink)}</div>
         </div>
 
         <div>
-          <p className="mb-2 px-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Administration</p>
+          <p className="mb-2 px-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">{t("admin.section")}</p>
           <div className="space-y-1">
             {administrationItems.map((item) =>
               renderLink({
                 key: item.key,
                 href: item.href,
                 icon: item.icon,
-                label: sector.labels?.[item.key] ?? t(`nav.${item.key}`),
+                label: t(`nav.${item.key}`),
               })
             )}
             {adminExtraItems.map(renderLink)}

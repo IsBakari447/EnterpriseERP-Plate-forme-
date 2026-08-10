@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { authService } from "@modules/auth/services/auth.service";
 import { tokenStorage, type AuthUser } from "@shared/auth/token-storage";
+import { useI18n } from "@shared/i18n/I18nProvider";
 
 export default function UserMenu() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
+  const { t } = useI18n();
 
   useEffect(() => {
     setUser(tokenStorage.get()?.user ?? null);
@@ -36,24 +38,24 @@ export default function UserMenu() {
           {user?.avatarUrl ? <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" /> : initials}
         </span>
         <span className="hidden text-left md:block">
-          <span className="block text-sm font-black text-night">{user?.name ?? "Utilisateur"}</span>
-          <span className="block text-xs font-bold text-slate-400">{user?.role ?? "Role"}</span>
+          <span className="block text-sm font-black text-night">{user?.name ?? t("common.user")}</span>
+          <span className="block text-xs font-bold text-slate-400">{user?.role ?? t("common.role")}</span>
         </span>
       </button>
 
       {open && (
         <div className="absolute right-0 z-50 mt-3 w-72 rounded-3xl bg-white p-3 shadow-xl ring-1 ring-slate-200">
           <div className="rounded-2xl bg-slate-50 p-4">
-            <p className="font-black text-night">{user?.name ?? "Utilisateur"}</p>
+            <p className="font-black text-night">{user?.name ?? t("common.user")}</p>
             <p className="text-sm font-semibold text-slate-500">{user?.email}</p>
-            <p className="mt-1 text-xs font-black uppercase tracking-wide text-[#00A693]">{user?.role ?? "Role"}</p>
+            <p className="mt-1 text-xs font-black uppercase tracking-wide text-[#00A693]">{user?.role ?? t("common.role")}</p>
           </div>
           <div className="mt-3 space-y-1">
             {[
-              ["Mon profil", "/profile"],
-              ["Securite", "/account/security"],
-              ["Mes sessions", "/account/sessions"],
-              ["Preferences", "/account/preferences"],
+              [t("account.profile"), "/profile"],
+              [t("account.security"), "/account/security"],
+              [t("account.sessions"), "/account/sessions"],
+              [t("account.preferences"), "/account/preferences"],
             ].map(([label, href]) => (
               <Link key={href} href={href} className="block rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50">
                 {label}
@@ -66,7 +68,7 @@ export default function UserMenu() {
             onClick={logout}
             className="w-full rounded-xl px-4 py-2.5 text-left text-sm font-black text-red-600 hover:bg-red-50"
           >
-            Se deconnecter
+            {t("auth.logout")}
           </button>
         </div>
       )}

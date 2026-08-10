@@ -10,6 +10,7 @@ import FilterBar from "@shared/components/ui/FilterBar";
 import FormModal from "@shared/components/ui/FormModal";
 import Kanban from "@shared/components/ui/Kanban";
 import KPICard from "@shared/components/ui/KPICard";
+import { useI18n } from "@shared/i18n/I18nProvider";
 import type { ModuleKey } from "@shared/sector/types";
 
 type ModuleView = {
@@ -626,7 +627,9 @@ function OperationsTemplate({ module }: { module: ModuleView }) {
 }
 
 export default function GenericModulePage({ module }: { module: ModuleView }) {
+  const { t } = useI18n();
   const template = getTemplate(module.key);
+  const localizedModule = { ...module, name: t(`nav.${module.key}`) };
   const templateLabel = {
     admin: "Administration",
     crm: "CRM 360",
@@ -639,16 +642,16 @@ export default function GenericModulePage({ module }: { module: ModuleView }) {
 
   return (
     <ERPLayout
-      title={`${module.icon} ${module.name}`}
+      title={`${module.icon} ${localizedModule.name}`}
       subtitle={`${templateLabel}: une interface adaptee au metier, assemblee avec des widgets reutilisables.`}
       action="Creer"
     >
-      {template === "admin" && <AdminTemplate module={module} />}
-      {template === "crm" && <CrmTemplate module={module} />}
-      {template === "commerce" && <CommerceTemplate module={module} />}
-      {template === "finance" && <FinanceTemplate module={module} />}
-      {template === "project" && <ProjectTemplate module={module} />}
-      {template === "operations" && <OperationsTemplate module={module} />}
+      {template === "admin" && <AdminTemplate module={localizedModule} />}
+      {template === "crm" && <CrmTemplate module={localizedModule} />}
+      {template === "commerce" && <CommerceTemplate module={localizedModule} />}
+      {template === "finance" && <FinanceTemplate module={localizedModule} />}
+      {template === "project" && <ProjectTemplate module={localizedModule} />}
+      {template === "operations" && <OperationsTemplate module={localizedModule} />}
       {template === "security" && <SecurityTemplate />}
     </ERPLayout>
   );
