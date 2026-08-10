@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import { RequestMethod } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ApiExceptionFilter } from "./common/filters/api-exception.filter";
@@ -26,7 +27,27 @@ async function bootstrap() {
     },
     credentials: true,
   });
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix("api", {
+    exclude: [
+      { path: "", method: RequestMethod.GET },
+      { path: "health", method: RequestMethod.GET },
+      { path: "health/ready", method: RequestMethod.GET },
+      { path: "modules", method: RequestMethod.GET },
+      { path: "pricing", method: RequestMethod.GET },
+      { path: "roadmap", method: RequestMethod.GET },
+      { path: "security", method: RequestMethod.GET },
+      { path: "integrations", method: RequestMethod.GET },
+      { path: "onboarding", method: RequestMethod.GET },
+      { path: "competitive-position", method: RequestMethod.GET },
+      { path: "demo-script", method: RequestMethod.GET },
+      { path: "roi-model", method: RequestMethod.GET },
+      { path: "faq", method: RequestMethod.GET },
+      { path: "platform-status", method: RequestMethod.GET },
+      { path: "login", method: RequestMethod.GET },
+      { path: "register", method: RequestMethod.GET },
+      { path: "dashboard", method: RequestMethod.GET },
+    ],
+  });
   app.useGlobalFilters(new ApiExceptionFilter());
 
   await app.listen(port);

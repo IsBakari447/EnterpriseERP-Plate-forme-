@@ -44,9 +44,9 @@ export class AppController {
                 <p>Priorite : connecter le web et le mobile.</p>
               </div>
               <div class="dash-grid">
-                <div class="mini">Clients<strong>/clients</strong></div>
-                <div class="mini">Produits<strong>/products</strong></div>
-                <div class="mini">Factures<strong>/invoices</strong></div>
+                <div class="mini">Clients<strong>/api/clients</strong></div>
+                <div class="mini">Produits<strong>/api/products</strong></div>
+                <div class="mini">Factures<strong>/api/invoices</strong></div>
                 <div class="mini">Health<strong>/health</strong></div>
               </div>
             </div>
@@ -320,9 +320,9 @@ export class AppController {
               <p>Bienvenue dans votre espace EnterpriseERP Cloud. Pilotez les modules CRM, stock et facturation depuis une base API propre.</p>
             </div>
             <div class="hero-buttons">
-              <a class="btn btn-primary" href="/clients">Clients API</a>
-              <a class="btn btn-dark" href="/products">Produits API</a>
-              <a class="btn btn-dark" href="/invoices">Factures API</a>
+              <a class="btn btn-primary" href="/api/clients">Clients API</a>
+              <a class="btn btn-dark" href="/api/products">Produits API</a>
+              <a class="btn btn-dark" href="/api/invoices">Factures API</a>
             </div>
           </div>
 
@@ -337,9 +337,9 @@ export class AppController {
             <div class="panel">
               <h2>Actions rapides</h2>
               <div class="cards dashboard-actions">
-                <a class="card" href="/clients"><div class="icon">CRM</div><h3>Voir les clients</h3><p>Ouvrir la liste JSON des clients.</p></a>
-                <a class="card" href="/products"><div class="icon">STK</div><h3>Voir le stock</h3><p>Ouvrir la liste JSON des produits.</p></a>
-                <a class="card" href="/invoices"><div class="icon">INV</div><h3>Voir les factures</h3><p>Ouvrir la liste JSON des factures.</p></a>
+                <a class="card" href="/api/clients"><div class="icon">CRM</div><h3>Voir les clients</h3><p>Ouvrir la liste JSON des clients.</p></a>
+                <a class="card" href="/api/products"><div class="icon">STK</div><h3>Voir le stock</h3><p>Ouvrir la liste JSON des produits.</p></a>
+                <a class="card" href="/api/invoices"><div class="icon">INV</div><h3>Voir les factures</h3><p>Ouvrir la liste JSON des factures.</p></a>
               </div>
             </div>
 
@@ -682,9 +682,9 @@ function renderPage(options: PageOptions) {
     <a class="brand" href="/">Enterprise<span>ERP</span></a>
     <nav class="nav-links">
       <a class="${isActive("home")}" href="/">Accueil</a>
-      <a href="/clients">Clients API</a>
-      <a href="/products">Produits API</a>
-      <a href="/invoices">Factures API</a>
+      <a href="/api/clients">Clients API</a>
+      <a href="/api/products">Produits API</a>
+      <a href="/api/invoices">Factures API</a>
       <a class="${isActive("dashboard")}" href="/dashboard">Dashboard</a>
       <a href="/health">Health</a>
     </nav>
