@@ -33,14 +33,14 @@ export default function LoginPage() {
 
   return (
     <AuthShell
-      eyebrow="EnterpriseERP Secure Access"
+      eyebrow={t("auth.secureAccess")}
       title={t("auth.loginTitle")}
       text={t("auth.loginHero")}
     >
       <form onSubmit={submit} className="space-y-6">
         <div>
           <div className="inline-flex rounded-full bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
-            EnterpriseERP Account
+            {t("auth.accountBadge")}
           </div>
           <h2 className="mt-5 text-3xl font-black leading-tight text-[#1E2A38] sm:text-4xl">{t("auth.loginTitle")}</h2>
           <p className="mt-3 text-slate-600">{t("auth.noAccount")}{" "}
@@ -104,7 +104,7 @@ export default function LoginPage() {
         </button>
 
         <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-600">
-          Conseil: creez votre compte pour activer automatiquement le secteur, les modules et la navigation EnterpriseERP Platform.
+          {t("auth.loginTip")}
         </div>
       </form>
     </AuthShell>

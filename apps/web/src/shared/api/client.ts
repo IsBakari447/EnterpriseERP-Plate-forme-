@@ -1,7 +1,15 @@
 import axios from "axios";
 import { tokenStorage, type AuthSession } from "@shared/auth/token-storage";
 
-const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+function getDefaultApiUrl() {
+  if (typeof window !== "undefined" && window.location.hostname.includes("enterpriseerp-web.onrender.com")) {
+    return "https://enterpriseerp-api.onrender.com";
+  }
+
+  return "http://localhost:4000";
+}
+
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL || getDefaultApiUrl();
 const apiBaseUrl = configuredApiUrl.replace(/\/$/, "").endsWith("/api")
   ? configuredApiUrl.replace(/\/$/, "")
   : `${configuredApiUrl.replace(/\/$/, "")}/api`;

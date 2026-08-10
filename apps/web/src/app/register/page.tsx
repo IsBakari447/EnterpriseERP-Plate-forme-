@@ -53,7 +53,7 @@ export default function RegisterPage() {
       <form onSubmit={submit} className="space-y-5">
         <div>
           <div className="inline-flex rounded-full bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
-            Start EnterpriseERP Platform
+            {t("auth.startPlatform")}
           </div>
           <h2 className="mt-5 text-3xl font-black leading-tight text-[#1E2A38] sm:text-4xl">{t("auth.registerTitle")}</h2>
           <p className="mt-3 text-slate-600">{t("auth.hasAccount")}{" "}
@@ -146,9 +146,9 @@ export default function RegisterPage() {
         </button>
 
         <div className="grid gap-3 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-600 sm:grid-cols-3">
-          <span>Multi-tenant</span>
-          <span>RBAC</span>
-          <span>Sector engine</span>
+          <span>{t("auth.multiTenant")}</span>
+          <span>{t("auth.rbac")}</span>
+          <span>{t("auth.sectorEngine")}</span>
         </div>
       </form>
     </AuthShell>

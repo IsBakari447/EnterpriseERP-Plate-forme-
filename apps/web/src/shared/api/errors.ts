@@ -20,6 +20,10 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
     return fallback;
   }
 
+  if (!error.response) {
+    return fallback;
+  }
+
   const payload = error.response?.data;
   const message =
     firstMessage(payload?.message) ??

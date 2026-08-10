@@ -1,4 +1,4 @@
-export type Locale = "fr" | "en" | "sv";
+﻿export type Locale = "fr" | "en" | "sv";
 
 export const locales: Locale[] = ["fr", "en", "sv"];
 
@@ -12,7 +12,7 @@ export const defaultLocale: Locale = "fr";
 
 export const dictionaries: Record<Locale, Record<string, string>> = {
   fr: {
-    "app.tagline": "Cloud · Mobile · IA",
+    "app.tagline": "Cloud - Mobile - IA",
     "language.label": "Langue",
     "common.loading": "Chargement...",
     "common.refresh": "Actualiser",
@@ -263,6 +263,20 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "auth.loginHero": "Connectez-vous a votre espace EnterpriseERP Cloud.",
     "auth.registerTitle": "Creer un compte",
     "auth.registerHero": "Demarrez votre espace SaaS avec une entreprise, un owner et une session securisee.",
+    "auth.secureAccess": "Acces securise EnterpriseERP",
+    "auth.accountBadge": "Compte EnterpriseERP",
+    "auth.startPlatform": "Demarrer EnterpriseERP Platform",
+    "auth.featureJwt": "Acces securise",
+    "auth.featureRbac": "Roles et permissions",
+    "auth.featureAiLabel": "IA",
+    "auth.featureAi": "Suite metier intelligente",
+    "auth.commandCenter": "Centre de commande Cloud",
+    "auth.commandCenterText": "CRM, ventes, stock, finance, RH et IA dans une seule plateforme.",
+    "auth.enterpriseReady": "Pret pour l'entreprise",
+    "auth.multiTenant": "Multi-tenant",
+    "auth.rbac": "RBAC",
+    "auth.sectorEngine": "Moteur sectoriel",
+    "auth.loginTip": "Conseil : creez votre compte pour activer automatiquement le secteur, les modules et la navigation EnterpriseERP Platform.",
     "auth.companyName": "Nom de l'entreprise",
     "auth.fullName": "Nom complet",
     "auth.password": "Mot de passe",
@@ -365,7 +379,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
 
 dictionaries.en = {
   ...dictionaries.fr,
-  "app.tagline": "Cloud · Mobile · AI",
+  "app.tagline": "Cloud - Mobile - IA",
   "language.label": "Language",
   "common.loading": "Loading...",
   "common.refresh": "Refresh",
@@ -526,6 +540,20 @@ dictionaries.en = {
   "auth.loginHero": "Sign in to your EnterpriseERP Cloud workspace.",
   "auth.registerTitle": "Create account",
   "auth.registerHero": "Start your SaaS workspace with a company, an owner and a secure session.",
+  "auth.secureAccess": "EnterpriseERP secure access",
+  "auth.accountBadge": "EnterpriseERP account",
+  "auth.startPlatform": "Start EnterpriseERP Platform",
+  "auth.featureJwt": "Secure access",
+  "auth.featureRbac": "Roles and permissions",
+  "auth.featureAiLabel": "AI",
+  "auth.featureAi": "Smart business suite",
+  "auth.commandCenter": "Cloud Command Center",
+  "auth.commandCenterText": "CRM, sales, inventory, finance, HR and AI in one platform.",
+  "auth.enterpriseReady": "Enterprise ready",
+  "auth.multiTenant": "Multi-tenant",
+  "auth.rbac": "RBAC",
+  "auth.sectorEngine": "Sector engine",
+  "auth.loginTip": "Tip: create your account to automatically activate the sector, modules and EnterpriseERP Platform navigation.",
   "auth.companyName": "Company name",
   "auth.fullName": "Full name",
   "auth.password": "Password",
@@ -627,7 +655,7 @@ dictionaries.en = {
 
 dictionaries.sv = {
   ...dictionaries.fr,
-  "app.tagline": "Cloud · Mobil · AI",
+  "app.tagline": "Cloud - Mobile - IA",
   "language.label": "Sprak",
   "common.loading": "Laddar...",
   "common.refresh": "Uppdatera",
@@ -772,6 +800,20 @@ dictionaries.sv = {
   "auth.loginHero": "Logga in pa din EnterpriseERP Cloud-arbetsyta.",
   "auth.registerTitle": "Skapa konto",
   "auth.registerHero": "Starta din SaaS-arbetsyta med foretag, owner och saker session.",
+  "auth.secureAccess": "Saker atkomst till EnterpriseERP",
+  "auth.accountBadge": "EnterpriseERP-konto",
+  "auth.startPlatform": "Starta EnterpriseERP Platform",
+  "auth.featureJwt": "Saker atkomst",
+  "auth.featureRbac": "Roller och behorigheter",
+  "auth.featureAiLabel": "AI",
+  "auth.featureAi": "Smart affarssvit",
+  "auth.commandCenter": "Cloud Command Center",
+  "auth.commandCenterText": "CRM, forsaljning, lager, ekonomi, HR och AI i en plattform.",
+  "auth.enterpriseReady": "Redo for foretag",
+  "auth.multiTenant": "Multi-tenant",
+  "auth.rbac": "RBAC",
+  "auth.sectorEngine": "Sektormotor",
+  "auth.loginTip": "Tips: skapa ditt konto for att automatiskt aktivera sektor, moduler och EnterpriseERP Platform-navigation.",
   "auth.companyName": "Foretagsnamn",
   "auth.fullName": "Fullstandigt namn",
   "auth.password": "Losenord",
@@ -866,3 +908,4 @@ dictionaries.sv = {
   "aiStudio.placeholder": "Exempel: sammanfatta saljrapporten och foresla tre prioriterade atgarder...",
   "aiStudio.output": "AI-resultat"
 };
+

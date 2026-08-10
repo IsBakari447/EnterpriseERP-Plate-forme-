@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import LanguageSwitcher from "@shared/i18n/LanguageSwitcher";
+import { useI18n } from "@shared/i18n/I18nProvider";
 
 export default function AuthShell({
   eyebrow,
@@ -15,6 +16,8 @@ export default function AuthShell({
   text: string;
   children: React.ReactNode;
 }) {
+  const { t } = useI18n();
+
   return (
     <main className="min-h-screen bg-[#F4F7FB] text-[#1E2A38]">
       <div className="mx-auto grid min-h-screen max-w-7xl items-center gap-8 px-6 py-8 lg:grid-cols-[1.02fr_.98fr] lg:px-10">
@@ -28,7 +31,7 @@ export default function AuthShell({
                 </span>
                 <span>
                   <span className="block text-2xl font-black">EnterpriseERP</span>
-                  <span className="text-xs font-bold uppercase tracking-[.18em] text-[#99f6e4]">Cloud · Mobile · IA</span>
+                  <span className="text-xs font-bold uppercase tracking-[.18em] text-[#99f6e4]">{t("app.tagline")}</span>
                 </span>
               </Link>
               <LanguageSwitcher compact />
@@ -47,9 +50,9 @@ export default function AuthShell({
 
               <div className="mt-10 grid gap-3 sm:grid-cols-3">
                 {[
-                  ["JWT", "Secure access"],
-                  ["RBAC", "Roles & permissions"],
-                  ["AI", "Smart business suite"],
+                  ["JWT", t("auth.featureJwt")],
+                  ["RBAC", t("auth.featureRbac")],
+                  [t("auth.featureAiLabel"), t("auth.featureAi")],
                 ].map(([label, detail]) => (
                   <div key={label} className="rounded-2xl border border-white/10 bg-white/10 p-4">
                     <div className="text-lg font-black">{label}</div>
@@ -62,10 +65,10 @@ export default function AuthShell({
             <div className="rounded-3xl border border-white/10 bg-[#0f172a]/70 p-5 backdrop-blur">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <div className="font-black">Cloud Command Center</div>
-                  <p className="mt-1 text-sm text-white/65">CRM, ventes, stock, finance, RH et IA dans une seule plateforme.</p>
+                  <div className="font-black">{t("auth.commandCenter")}</div>
+                  <p className="mt-1 text-sm text-white/65">{t("auth.commandCenterText")}</p>
                 </div>
-                <div className="rounded-full bg-white px-4 py-2 text-sm font-black text-[#1E2A38]">Enterprise ready</div>
+                <div className="rounded-full bg-white px-4 py-2 text-sm font-black text-[#1E2A38]">{t("auth.enterpriseReady")}</div>
               </div>
             </div>
           </div>
