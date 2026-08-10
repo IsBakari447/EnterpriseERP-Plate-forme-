@@ -48,7 +48,7 @@ export function CloudMarketPage() {
 
           <div className="rounded-3xl border border-white/15 bg-white/10 p-5 shadow-2xl">
             <div className="rounded-2xl bg-[#0f172a] p-6">
-              <h2 className="text-2xl font-black">Cloud Command Center</h2>
+              <h2 className="text-2xl font-black">{t("auth.commandCenter")}</h2>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 {["CRM", "Stock", "Factures", "IA", "Mobile", "API"].map((item) => (
                   <div key={item} className="rounded-2xl border border-white/10 bg-white/5 p-4 font-black">
@@ -90,15 +90,15 @@ export function CloudMarketPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-16">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {solutionCards.map((card) => (
+          {solutionCards.map((card, index) => (
             <article key={card.title} className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
               <span className="rounded-full bg-[#00C2A9]/10 px-3 py-1 text-xs font-black text-[#008f7d]">
-                {card.tag}
+                {t(`market.solution.${index}.tag`)}
               </span>
-              <h2 className="mt-4 text-2xl font-black">{card.title}</h2>
-              <p className="mt-3 leading-7 text-slate-600">{card.description}</p>
+              <h2 className="mt-4 text-2xl font-black">{t(`market.solution.${index}.title`)}</h2>
+              <p className="mt-3 leading-7 text-slate-600">{t(`market.solution.${index}.description`)}</p>
               <ul className="mt-5 space-y-2 text-sm font-bold text-slate-700">
-                {card.points.map((point) => <li key={point}>- {point}</li>)}
+                {card.points.map((point, pointIndex) => <li key={point}>- {t(`market.solution.${index}.point.${pointIndex}`)}</li>)}
               </ul>
             </article>
           ))}
@@ -113,9 +113,9 @@ export function CloudMarketPage() {
           </p>
         </div>
         <div className="grid gap-3 md:grid-cols-2">
-          {competitorSignals.map((signal) => (
+          {competitorSignals.map((signal, index) => (
             <div key={signal} className="rounded-2xl bg-white p-5 font-bold text-slate-700 shadow ring-1 ring-slate-200">
-              {signal}
+              {t(`market.signal.${index}`)}
             </div>
           ))}
         </div>
@@ -124,10 +124,10 @@ export function CloudMarketPage() {
       <section className="mx-auto max-w-7xl px-6 pb-16 lg:px-16">
         <h2 className="text-3xl font-black">{t("market.onboarding")}</h2>
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {onboardingSteps.map((step) => (
+          {onboardingSteps.map((step, index) => (
             <article key={step.title} className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
-              <h3 className="text-xl font-black">{step.title}</h3>
-              <p className="mt-3 leading-7 text-slate-600">{step.description}</p>
+              <h3 className="text-xl font-black">{t(`market.onboarding.${index}.title`)}</h3>
+              <p className="mt-3 leading-7 text-slate-600">{t(`market.onboarding.${index}.description`)}</p>
             </article>
           ))}
         </div>
@@ -135,26 +135,26 @@ export function CloudMarketPage() {
 
       <section className="mx-auto grid max-w-7xl gap-5 px-6 pb-16 lg:grid-cols-4 lg:px-16">
         {[
-          { href: "/demo", label: "Demo guidee", text: "Transformer un visiteur en prospect qualifie." },
-          { href: "/roi", label: "ROI", text: "Montrer la valeur business avant l'achat." },
-          { href: "/status", label: "Status", text: "Rassurer sur la disponibilite Cloud." },
-          { href: "/faq", label: "FAQ", text: "Lever les objections avant contact commercial." },
+          { href: "/demo", key: "demo" },
+          { href: "/roi", key: "roi" },
+          { href: "/status", key: "status" },
+          { href: "/faq", key: "faq" },
         ].map((item) => (
           <a key={item.href} href={item.href} className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200 transition hover:-translate-y-1 hover:shadow-xl">
-            <h2 className="text-xl font-black">{item.label}</h2>
-            <p className="mt-3 leading-7 text-slate-600">{item.text}</p>
+            <h2 className="text-xl font-black">{t(`market.link.${item.key}.label`)}</h2>
+            <p className="mt-3 leading-7 text-slate-600">{t(`market.link.${item.key}.text`)}</p>
           </a>
         ))}
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-5 px-6 pb-16 lg:grid-cols-3 lg:px-16">
-        {pricingPlans.map((plan) => (
+        {pricingPlans.map((plan, index) => (
           <article key={plan.name} className="rounded-3xl bg-white p-7 shadow ring-1 ring-slate-200">
-            <h2 className="text-2xl font-black">{plan.name}</h2>
-            <p className="mt-3 text-3xl font-black text-[#00A693]">{plan.price}</p>
-            <p className="mt-3 leading-7 text-slate-600">{plan.highlight}</p>
+            <h2 className="text-2xl font-black">{t(`market.plan.${index}.name`)}</h2>
+            <p className="mt-3 text-3xl font-black text-[#00A693]">{t(`market.plan.${index}.price`)}</p>
+            <p className="mt-3 leading-7 text-slate-600">{t(`market.plan.${index}.highlight`)}</p>
             <ul className="mt-6 space-y-2 text-sm font-bold text-slate-700">
-              {plan.features.map((feature) => <li key={feature}>- {feature}</li>)}
+              {plan.features.map((feature, featureIndex) => <li key={feature}>- {t(`market.plan.${index}.feature.${featureIndex}`)}</li>)}
             </ul>
           </article>
         ))}
@@ -164,10 +164,10 @@ export function CloudMarketPage() {
         <div className="rounded-3xl bg-white p-7 shadow ring-1 ring-slate-200">
           <h2 className="text-3xl font-black">{t("market.cloudSecurity")}</h2>
           <div className="mt-5 space-y-4">
-            {securityItems.map((item) => (
+            {securityItems.map((item, index) => (
               <div key={item.title} className="rounded-2xl bg-slate-50 p-5">
-                <h3 className="font-black">{item.title}</h3>
-                <p className="mt-2 text-slate-600">{item.description}</p>
+                <h3 className="font-black">{t(`market.security.${index}.title`)}</h3>
+                <p className="mt-2 text-slate-600">{t(`market.security.${index}.description`)}</p>
               </div>
             ))}
           </div>
@@ -176,9 +176,9 @@ export function CloudMarketPage() {
         <div className="rounded-3xl bg-white p-7 shadow ring-1 ring-slate-200">
           <h2 className="text-3xl font-black">{t("market.integrations")}</h2>
           <div className="mt-5 flex flex-wrap gap-3">
-            {integrationItems.map((item) => (
+            {integrationItems.map((item, index) => (
               <span key={item} className="rounded-full bg-slate-100 px-4 py-2 text-sm font-black text-slate-700">
-                {item}
+                {t(`market.integration.${index}`)}
               </span>
             ))}
           </div>
