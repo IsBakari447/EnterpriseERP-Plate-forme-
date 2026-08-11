@@ -10,9 +10,10 @@ function getDefaultApiUrl() {
 }
 
 const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL || getDefaultApiUrl();
-const apiBaseUrl = configuredApiUrl.replace(/\/$/, "").endsWith("/api")
-  ? configuredApiUrl.replace(/\/$/, "")
-  : `${configuredApiUrl.replace(/\/$/, "")}/api`;
+export const apiOriginUrl = configuredApiUrl.replace(/\/$/, "").endsWith("/api")
+  ? configuredApiUrl.replace(/\/$/, "").slice(0, -4)
+  : configuredApiUrl.replace(/\/$/, "");
+const apiBaseUrl = `${apiOriginUrl}/api`;
 
 export const apiClient = axios.create({
   baseURL: apiBaseUrl,

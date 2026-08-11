@@ -14,6 +14,7 @@ import {
 
 export function CloudMarketPage() {
   const { t } = useI18n();
+  const solutionStatuses = ["available", "available", "available", "available", "beta", "planned"];
 
   return (
     <main className="min-h-screen bg-[#F4F7FB] text-night">
@@ -94,6 +95,15 @@ export function CloudMarketPage() {
             <article key={card.title} className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
               <span className="rounded-full bg-[#00C2A9]/10 px-3 py-1 text-xs font-black text-[#008f7d]">
                 {t(`market.solution.${index}.tag`)}
+              </span>
+              <span className={`ml-2 rounded-full px-3 py-1 text-xs font-black ${
+                solutionStatuses[index] === "available"
+                  ? "bg-emerald-50 text-emerald-700"
+                  : solutionStatuses[index] === "beta"
+                    ? "bg-cyan-50 text-cyan-700"
+                    : "bg-slate-100 text-slate-600"
+              }`}>
+                {t(`market.status.${solutionStatuses[index]}`)}
               </span>
               <h2 className="mt-4 text-2xl font-black">{t(`market.solution.${index}.title`)}</h2>
               <p className="mt-3 leading-7 text-slate-600">{t(`market.solution.${index}.description`)}</p>
