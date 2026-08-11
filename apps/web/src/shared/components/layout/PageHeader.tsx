@@ -1,4 +1,6 @@
 import Button from "@shared/components/ui/Button";
+import CommandPalette from "./CommandPalette";
+import NotificationCenter from "./NotificationCenter";
 import UserMenu from "./UserMenu";
 
 export default function PageHeader({
@@ -18,6 +20,8 @@ export default function PageHeader({
       </div>
 
       <div className="flex items-center gap-3">
+        <CommandPalette />
+        <NotificationCenter />
         {action && <Button>{action}</Button>}
         <UserMenu />
       </div>
