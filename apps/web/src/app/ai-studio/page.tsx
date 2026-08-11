@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import KPICard from "@shared/components/ui/KPICard";
 import { useI18n } from "@shared/i18n/I18nProvider";
@@ -15,6 +16,13 @@ const studioTools = [
 
 export default function AiStudioPage() {
   const { t } = useI18n();
+  const [prompt, setPrompt] = useState("");
+  const [output, setOutput] = useState(t("aiStudio.outputText"));
+
+  function runTool(tool: (typeof studioTools)[number]) {
+    setPrompt(t(`aiStudio.tool.${tool}.text`));
+    setOutput(`${t(`aiStudio.tool.${tool}.title`)} - ${t("aiStudio.outputText")}`);
+  }
 
   return (
     <ERPLayout title="AI Studio" subtitle={t("aiStudio.subtitle")} action={t("aiStudio.action")}>
@@ -42,7 +50,7 @@ export default function AiStudioPage() {
           <article key={tool} className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
             <h3 className="text-xl font-black text-night">{t(`aiStudio.tool.${tool}.title`)}</h3>
             <p className="mt-3 min-h-20 leading-7 text-slate-500">{t(`aiStudio.tool.${tool}.text`)}</p>
-            <button className="mt-5 rounded-xl bg-[#1E2A38] px-4 py-2 text-sm font-black text-white">
+            <button type="button" onClick={() => runTool(tool)} className="mt-5 rounded-xl bg-[#1E2A38] px-4 py-2 text-sm font-black text-white">
               {t(`aiStudio.tool.${tool}.action`)}
             </button>
           </article>
@@ -54,13 +62,15 @@ export default function AiStudioPage() {
         <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_.8fr]">
           <textarea
             rows={8}
+            value={prompt}
+            onChange={(event) => setPrompt(event.target.value)}
             className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-semibold outline-none focus:border-[#00C2A9]"
             placeholder={t("aiStudio.placeholder")}
           />
           <div className="rounded-2xl bg-slate-50 p-5">
             <h3 className="font-black text-night">{t("aiStudio.output")}</h3>
             <p className="mt-3 leading-7 text-slate-600">
-              {t("aiStudio.outputText")}
+              {output}
             </p>
           </div>
         </div>

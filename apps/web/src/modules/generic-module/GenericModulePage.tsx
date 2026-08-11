@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import AIRecommendation from "@shared/components/ui/AIRecommendation";
 import ActivityTimeline from "@shared/components/ui/ActivityTimeline";
@@ -268,12 +269,14 @@ function MapWidget() {
 }
 
 function PosWidget() {
+  const [selected, setSelected] = useState("Ticket #128");
+
   return (
     <Widget title="POS / Tickets" eyebrow="Encaissement">
       <div className="grid gap-3 sm:grid-cols-3">
         {["Table 4", "Ticket #128", "Paiement CB", "Livraison", "Click & Collect", "Addition"].map((item) => (
-          <button key={item} className="rounded-2xl bg-[#1E2A38] p-4 text-left font-black text-white transition hover:bg-[#00A693]">
-            {item}
+          <button key={item} type="button" onClick={() => setSelected(item)} className="rounded-2xl bg-[#1E2A38] p-4 text-left font-black text-white transition hover:bg-[#00A693]">
+            {selected === item ? `${item} - actif` : item}
           </button>
         ))}
       </div>
@@ -322,6 +325,8 @@ function AdminTemplate({ module }: { module: ModuleView }) {
 }
 
 function SecurityTemplate() {
+  const [decision, setDecision] = useState("");
+
   return (
     <>
       <MetricGrid
@@ -406,11 +411,12 @@ function SecurityTemplate() {
             data={accessRequests}
             actions={() => (
               <div className="flex gap-2">
-                <button className="rounded-lg bg-[#00C2A9]/10 px-3 py-1.5 text-xs font-black text-[#008f7d]">Approuver</button>
-                <button className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-black text-red-700">Refuser</button>
+                <button type="button" onClick={() => setDecision("Demande approuvee.")} className="rounded-lg bg-[#00C2A9]/10 px-3 py-1.5 text-xs font-black text-[#008f7d]">Approuver</button>
+                <button type="button" onClick={() => setDecision("Demande refusee.")} className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-black text-red-700">Refuser</button>
               </div>
             )}
           />
+          {decision && <p className="mt-3 rounded-xl bg-slate-50 p-3 text-sm font-black text-[#00A693]">{decision}</p>}
         </Widget>
 
         <Widget title="Audit securite" eyebrow="Journal">

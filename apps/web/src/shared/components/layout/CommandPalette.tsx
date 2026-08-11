@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { navigationItems } from "@config/navigation";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { useSector } from "@shared/sector/SectorProvider";
@@ -20,6 +20,13 @@ export default function CommandPalette() {
   const { sector } = useSector();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    const openPalette = () => setOpen(true);
+
+    window.addEventListener("enterpriseerp:open-command-palette", openPalette);
+    return () => window.removeEventListener("enterpriseerp:open-command-palette", openPalette);
+  }, []);
 
   const moduleResults = useMemo(
     () =>

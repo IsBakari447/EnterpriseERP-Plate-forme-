@@ -99,6 +99,7 @@ export default function SupportPage() {
             ].map(([labelKey, value]) => (
               <button
                 key={labelKey}
+                type="button"
                 onClick={() => {
                   setQuestion(t(labelKey));
                   setSubmittedQuestion(value);
@@ -123,7 +124,7 @@ export default function SupportPage() {
                 placeholder={t("support.placeholder")}
               />
             </label>
-            <button className="mt-4 rounded-2xl bg-[#FF7A00] px-6 py-3 font-black text-white shadow-lg shadow-orange-500/20">
+            <button type="submit" className="mt-4 rounded-2xl bg-[#FF7A00] px-6 py-3 font-black text-white shadow-lg shadow-orange-500/20">
               {t("support.ask")}
             </button>
           </form>

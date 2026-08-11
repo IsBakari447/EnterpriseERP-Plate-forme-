@@ -34,6 +34,7 @@ export default function OnboardingPage() {
   const [country, setCountry] = useState("Suede");
   const [currency, setCurrency] = useState("EUR");
   const [invites, setInvites] = useState("manager@entreprise.com");
+  const [importStatus, setImportStatus] = useState("");
   const [selectedModules, setSelectedModules] = useState<ModuleKey[]>(() =>
     sectorDefinitions[getInitialSector()].modules.slice(0, 8)
   );
@@ -210,11 +211,12 @@ export default function OnboardingPage() {
                     <div key={title} className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-6">
                       <h3 className="text-xl font-black">{title}</h3>
                       <p className="mt-2 text-sm font-semibold text-slate-500">{text}</p>
-                      <button className="mt-5 rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-700 shadow ring-1 ring-slate-200">
+                      <button type="button" onClick={() => setImportStatus(`${title}: fichier pret a importer.`)} className="mt-5 rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-700 shadow ring-1 ring-slate-200">
                         {t("onboarding.chooseFile")}
                       </button>
                     </div>
                   ))}
+                  {importStatus && <p className="md:col-span-3 rounded-2xl bg-[#00C2A9]/10 p-4 font-black text-[#008f7d]">{importStatus}</p>}
                 </div>
               )}
             </div>

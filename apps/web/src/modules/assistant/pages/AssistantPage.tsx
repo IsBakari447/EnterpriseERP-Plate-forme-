@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { FormEvent, useState } from "react";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import KPICard from "@shared/components/ui/KPICard";
 import { useI18n } from "@shared/i18n/I18nProvider";
@@ -8,6 +9,21 @@ import { assistantKpis, suggestions } from "@modules/assistant/data";
 
 export default function AssistantPage() {
   const { t } = useI18n();
+  const [question, setQuestion] = useState("");
+  const [conversation, setConversation] = useState({
+    question: t("ai.sampleQuestion"),
+    answer: t("ai.sampleAnswer"),
+  });
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!question.trim()) return;
+    setConversation({
+      question,
+      answer: `${t("ai.sampleAnswer")} ${question}`,
+    });
+    setQuestion("");
+  }
 
   return (
     <ERPLayout
@@ -40,23 +56,25 @@ export default function AssistantPage() {
 
           <div className="mt-6 space-y-4">
             <div className="max-w-xl rounded-2xl bg-slate-100 p-4 font-semibold text-slate-700">
-              {t("ai.sampleQuestion")}
+              {conversation.question}
             </div>
 
             <div className="ml-auto max-w-2xl rounded-2xl bg-gradient-to-r from-[#1E2A38] to-[#00C2A9] p-5 text-white">
-              {t("ai.sampleAnswer")}
+              {conversation.answer}
             </div>
           </div>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <form onSubmit={submit} className="mt-8 flex flex-col gap-3 sm:flex-row">
             <input
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
               className="flex-1 rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-cyan-500"
               placeholder={t("ai.askPlaceholder")}
             />
-            <button className="rounded-xl bg-action px-6 py-3 font-semibold text-white">
+            <button type="submit" className="rounded-xl bg-action px-6 py-3 font-semibold text-white">
               {t("common.send")}
             </button>
-          </div>
+          </form>
         </div>
 
         <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
@@ -66,6 +84,11 @@ export default function AssistantPage() {
             {suggestions.map((item) => (
               <button
                 key={item}
+                type="button"
+                onClick={() => {
+                  setQuestion(item);
+                  setConversation({ question: item, answer: `${t("ai.sampleAnswer")} ${item}` });
+                }}
                 className="w-full rounded-xl bg-slate-50 p-4 text-left text-sm font-bold text-slate-700 transition hover:bg-cyan-50"
               >
                 {item}

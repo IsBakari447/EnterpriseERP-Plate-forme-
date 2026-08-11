@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import KPICard from "@shared/components/ui/KPICard";
@@ -49,6 +50,19 @@ function ProgressBar({ value }: { value: number }) {
       <div className="h-full rounded-full bg-[#00C2A9]" style={{ width: `${Math.min(value, 100)}%` }} />
     </div>
   );
+}
+
+function priorityHref(action: PriorityAction) {
+  const text = `${action.title} ${action.detail} ${action.action}`.toLowerCase();
+
+  if (text.includes("facture") || text.includes("paiement") || text.includes("encaisser")) return "/facturation";
+  if (text.includes("stock") || text.includes("produit") || text.includes("sku")) return "/stock";
+  if (text.includes("devis") || text.includes("vente") || text.includes("commande")) return "/ventes";
+  if (text.includes("utilisateur") || text.includes("role") || text.includes("permission")) return "/modules/roles-permissions";
+  if (text.includes("reservation") || text.includes("rendez")) return "/modules/reservations";
+  if (text.includes("maintenance") || text.includes("vehicule")) return "/modules/maintenance";
+
+  return "/modules/notifications";
 }
 
 export default function DashboardPage() {
@@ -152,9 +166,9 @@ export default function DashboardPage() {
                 <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-black">{item.impact}</span>
               </div>
               <p className="mt-3 text-sm font-semibold opacity-80">{item.detail}</p>
-              <button className="mt-5 rounded-xl bg-white px-4 py-2 text-sm font-black text-night shadow-sm">
+              <Link href={priorityHref(item)} className="mt-5 inline-flex rounded-xl bg-white px-4 py-2 text-sm font-black text-night shadow-sm">
                 {item.action}
-              </button>
+              </Link>
             </article>
           ))}
         </div>
@@ -276,9 +290,9 @@ export default function DashboardPage() {
               <h2 className="text-2xl font-black text-night">{t("dashboard.planUsage")}</h2>
               <p className="mt-2 text-sm font-semibold text-slate-500">{t("dashboard.planUsageText")}</p>
             </div>
-            <button className="rounded-2xl bg-[#FF7A00] px-5 py-3 text-sm font-black text-white shadow-lg shadow-orange-500/20">
+            <Link href="/pricing" className="rounded-2xl bg-[#FF7A00] px-5 py-3 text-sm font-black text-white shadow-lg shadow-orange-500/20">
               {t("dashboard.manageSubscription")}
-            </button>
+            </Link>
           </div>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             {planUsage.map((usage) => (

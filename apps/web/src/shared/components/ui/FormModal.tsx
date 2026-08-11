@@ -1,5 +1,7 @@
 "use client";
 
+import { FormEvent, useState } from "react";
+
 export type FormField = {
   label: string;
   placeholder?: string;
@@ -15,6 +17,13 @@ export default function FormModal({
   fields: FormField[];
   submitLabel?: string;
 }) {
+  const [saved, setSaved] = useState(false);
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSaved(true);
+  }
+
   return (
     <section className="rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
       <div className="mb-5 flex items-center justify-between gap-4">
@@ -24,7 +33,7 @@ export default function FormModal({
         </span>
       </div>
 
-      <form className="grid gap-4 md:grid-cols-2">
+      <form onSubmit={submit} className="grid gap-4 md:grid-cols-2">
         {fields.map((field) => (
           <label key={field.label} className="block">
             <span className="text-sm font-black text-slate-700">{field.label}</span>
@@ -37,9 +46,10 @@ export default function FormModal({
         ))}
 
         <div className="md:col-span-2">
-          <button type="button" className="rounded-xl bg-[#FF7A00] px-6 py-3 font-black text-white shadow">
+          <button type="submit" className="rounded-xl bg-[#FF7A00] px-6 py-3 font-black text-white shadow">
             {submitLabel}
           </button>
+          {saved && <span className="ml-3 text-sm font-black text-[#00A693]">Enregistre.</span>}
         </div>
       </form>
     </section>

@@ -50,7 +50,7 @@ export default function AccountSecurityPage() {
           <section className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
             <h2 className="text-2xl font-black text-night">{t("security.twoFactor")}</h2>
             <p className="mt-2 text-sm font-semibold text-slate-500">{t("common.status")}: {t("security.disabled")}</p>
-            <button className="mt-5 rounded-2xl bg-[#00C2A9]/10 px-5 py-3 font-black text-[#008f7d]">
+            <button type="button" onClick={() => setStatus("2FA: configuration prevue dans le Security Center.")} className="mt-5 rounded-2xl bg-[#00C2A9]/10 px-5 py-3 font-black text-[#008f7d]">
               {t("security.enable2fa")}
             </button>
           </section>
