@@ -34,7 +34,7 @@ export default function RegisterPage() {
         sector,
         language: locale,
       });
-      router.push("/dashboard");
+      router.push(`/onboarding?sector=${sector}`);
     } catch (error) {
       const message = getApiErrorMessage(error, t("auth.registerError"));
       const accountExists = isExistingAccountError(message);
