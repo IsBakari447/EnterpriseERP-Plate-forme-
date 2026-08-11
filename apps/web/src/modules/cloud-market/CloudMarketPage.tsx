@@ -62,7 +62,7 @@ export function CloudMarketPage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-14 lg:px-16">
+      <section id="demo" className="scroll-mt-28 bg-white px-6 py-14 lg:px-16">
         <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[.72fr_1.28fr]">
           <div>
             <span className="inline-flex rounded-full bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
@@ -89,7 +89,7 @@ export function CloudMarketPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-16">
+      <section id="modules" className="mx-auto max-w-7xl scroll-mt-28 px-6 py-14 lg:px-16">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {solutionCards.map((card, index) => (
             <article key={card.title} className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
@@ -115,7 +115,7 @@ export function CloudMarketPage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-5 px-6 pb-16 lg:grid-cols-[.8fr_1.2fr] lg:px-16">
+      <section id="problemes" className="mx-auto grid max-w-7xl scroll-mt-28 gap-5 px-6 pb-16 lg:grid-cols-[.8fr_1.2fr] lg:px-16">
         <div className="rounded-3xl bg-[#1E2A38] p-7 text-white">
           <h2 className="text-3xl font-black">{t("market.expectedSignals")}</h2>
           <p className="mt-4 leading-8 text-white/75">
@@ -157,7 +157,7 @@ export function CloudMarketPage() {
         ))}
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-5 px-6 pb-16 lg:grid-cols-3 lg:px-16">
+      <section id="tarifs" className="mx-auto grid max-w-7xl scroll-mt-28 gap-5 px-6 pb-16 lg:grid-cols-3 lg:px-16">
         {pricingPlans.map((plan, index) => (
           <article key={plan.name} className="rounded-3xl bg-white p-7 shadow ring-1 ring-slate-200">
             <h2 className="text-2xl font-black">{t(`market.plan.${index}.name`)}</h2>
@@ -168,6 +168,31 @@ export function CloudMarketPage() {
             </ul>
           </article>
         ))}
+      </section>
+
+      <section id="roadmap" className="mx-auto max-w-7xl scroll-mt-28 px-6 pb-16 lg:px-16">
+        <div className="rounded-3xl bg-[#101b2d] p-8 text-white shadow-xl">
+          <div className="grid gap-8 lg:grid-cols-[.75fr_1.25fr] lg:items-center">
+            <div>
+              <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-black text-[#7df5e5]">
+                {t("marketing.roadmap")}
+              </span>
+              <h2 className="mt-5 text-3xl font-black lg:text-4xl">{t("market.roadmapTitle")}</h2>
+              <p className="mt-4 leading-8 text-white/70">{t("market.roadmapText")}</p>
+              <a href="/roadmap" className="mt-6 inline-flex rounded-2xl bg-white px-5 py-3 font-black text-night">
+                {t("market.roadmapOpen")}
+              </a>
+            </div>
+            <div className="grid gap-3 md:grid-cols-3">
+              {["foundation", "automation", "ecosystem"].map((item) => (
+                <article key={item} className="rounded-2xl bg-white/10 p-5">
+                  <h3 className="font-black">{t(`market.roadmap.${item}.title`)}</h3>
+                  <p className="mt-3 text-sm font-semibold leading-6 text-white/65">{t(`market.roadmap.${item}.text`)}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-5 px-6 pb-20 lg:grid-cols-2 lg:px-16">

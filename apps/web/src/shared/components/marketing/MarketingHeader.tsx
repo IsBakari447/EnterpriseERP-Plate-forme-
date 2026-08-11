@@ -39,9 +39,9 @@ export default function MarketingHeader() {
           <a href="#tarifs" className="transition hover:text-[#00A990]">
             {t("marketing.pricing")}
           </a>
-          <Link href="/roadmap" className="transition hover:text-[#00A990]">
+          <a href="#roadmap" className="transition hover:text-[#00A990]">
             {t("marketing.roadmap")}
-          </Link>
+          </a>
         </nav>
 
         <div className="flex items-center gap-3">
