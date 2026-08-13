@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 
 export type AttachmentItem = {
@@ -14,7 +15,7 @@ export default function AttachmentManager({ attachments }: { attachments: Attach
   const { locale } = useI18n();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [localAttachments, setLocalAttachments] = useState(attachments);
-  const tFixed = (value: string) => translateFixedLabel(value, locale);
+  const tFixed = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
 
   return (
     <section className="rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">

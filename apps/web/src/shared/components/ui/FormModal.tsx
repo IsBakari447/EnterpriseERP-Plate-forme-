@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 
 export type FormField = {
@@ -21,7 +22,7 @@ export default function FormModal({
 }) {
   const { locale } = useI18n();
   const [saved, setSaved] = useState(false);
-  const tFixed = (value: string) => translateFixedLabel(value, locale);
+  const tFixed = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,7 +34,7 @@ export default function FormModal({
       <div className="mb-5 flex items-center justify-between gap-4">
         <h2 className="text-xl font-black text-night">{tFixed(title)}</h2>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-500">
-          FormModal
+          {tFixed("FormModal")}
         </span>
       </div>
 

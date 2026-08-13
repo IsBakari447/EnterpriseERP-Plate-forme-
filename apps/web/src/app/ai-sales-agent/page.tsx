@@ -5,6 +5,8 @@ import { useState } from "react";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import KPICard from "@shared/components/ui/KPICard";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
+import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 
 const emailTemplates = [
   "Commerce: relance apres visite boutique",
@@ -23,18 +25,19 @@ const scripts = [
 ];
 
 export default function AiSalesAgentPage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
   const [sector, setSector] = useState("Commerce");
   const [channel, setChannel] = useState("Email");
   const [context, setContext] = useState("");
   const [output, setOutput] = useState(
-    "Bonjour, je vous contacte car beaucoup de PME perdent du temps entre CRM, factures, stock et relances. EnterpriseERP centralise ces operations dans une plateforme Cloud avec assistant IA. Seriez-vous disponible pour une courte demonstration cette semaine ?"
+    tx("Bonjour, je vous contacte car beaucoup de PME perdent du temps entre CRM, factures, stock et relances. EnterpriseERP centralise ces operations dans une plateforme Cloud avec assistant IA. Seriez-vous disponible pour une courte demonstration cette semaine ?")
   );
   const [copied, setCopied] = useState(false);
 
   function generate() {
     setOutput(
-      `Canal ${channel} - secteur ${sector}: EnterpriseERP aide votre organisation a centraliser CRM, ventes, facturation et priorites IA. ${context || "Je vous propose une courte demonstration adaptee a votre activite cette semaine."}`
+      `${tx("Canal")} ${tx(channel)} - ${tx("secteur")} ${tx(sector)}: ${tx("EnterpriseERP aide votre organisation a centraliser CRM, ventes, facturation et priorites IA.")} ${context || tx("Je vous propose une courte demonstration adaptee a votre activite cette semaine.")}`
     );
   }
 
@@ -44,7 +47,7 @@ export default function AiSalesAgentPage() {
   }
 
   return (
-    <ERPLayout title="AI Sales Agent" subtitle={t("salesAgent.subtitle")} action={t("salesAgent.action")}>
+    <ERPLayout title={t("nav.ai-sales-agent")} subtitle={t("salesAgent.subtitle")} action={t("salesAgent.action")}>
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {[
           { label: t("salesAgent.generatedEmails"), value: "126", change: "+24%" },
@@ -58,7 +61,7 @@ export default function AiSalesAgentPage() {
 
       <section className="mt-8 grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
         <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
-          <p className="text-sm font-black uppercase tracking-[0.16em] text-[#00A693]">Prospection IA</p>
+          <p className="text-sm font-black uppercase tracking-[0.16em] text-[#00A693]">{tx("Prospection IA")}</p>
           <h2 className="mt-3 text-3xl font-black text-night">{t("salesAgent.generatorTitle")}</h2>
           <p className="mt-3 leading-7 text-slate-500">{t("salesAgent.generatorText")}</p>
 
@@ -66,21 +69,17 @@ export default function AiSalesAgentPage() {
             <label>
               <span className="text-sm font-black text-slate-700">{t("salesAgent.sector")}</span>
               <select value={sector} onChange={(event) => setSector(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-bold outline-none focus:border-[#00C2A9]">
-                <option>Commerce</option>
-                <option>Restauration</option>
-                <option>Services</option>
-                <option>Construction</option>
-                <option>Sante</option>
-                <option>Education</option>
+                {["Commerce", "Restauration", "Services", "Construction", "Sante", "Education"].map((option) => (
+                  <option key={option} value={option}>{tx(option)}</option>
+                ))}
               </select>
             </label>
             <label>
               <span className="text-sm font-black text-slate-700">{t("salesAgent.channel")}</span>
               <select value={channel} onChange={(event) => setChannel(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-bold outline-none focus:border-[#00C2A9]">
-                <option>Email</option>
-                <option>LinkedIn</option>
-                <option>WhatsApp</option>
-                <option>Telephone</option>
+                {["Email", "LinkedIn", "WhatsApp", "Telephone"].map((option) => (
+                  <option key={option} value={option}>{tx(option)}</option>
+                ))}
               </select>
             </label>
           </div>
@@ -104,13 +103,13 @@ export default function AiSalesAgentPage() {
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
             <button type="button" onClick={copyOutput} className="rounded-xl bg-white px-4 py-2 text-sm font-black text-night">
-              {copied ? "Copie" : "Copier"}
+              {copied ? tx("Copie") : tx("Copier")}
             </button>
             <Link href="/modules/notifications" className="rounded-xl bg-white px-4 py-2 text-sm font-black text-night">
-              Creer relance
+              {tx("Creer relance")}
             </Link>
             <Link href="/crm" className="rounded-xl bg-white px-4 py-2 text-sm font-black text-night">
-              Envoyer au CRM
+              {tx("Envoyer au CRM")}
             </Link>
           </div>
         </div>
@@ -122,7 +121,7 @@ export default function AiSalesAgentPage() {
           <div className="mt-5 grid gap-3">
             {emailTemplates.map((template) => (
               <button key={template} type="button" onClick={() => setContext(template)} className="rounded-2xl bg-slate-50 p-4 text-left font-bold text-slate-700 transition hover:bg-cyan-50">
-                {template}
+                {tx(template)}
               </button>
             ))}
           </div>
@@ -133,7 +132,7 @@ export default function AiSalesAgentPage() {
           <div className="mt-5 grid gap-3">
             {scripts.map((script) => (
               <button key={script} type="button" onClick={() => setContext(script)} className="rounded-2xl bg-slate-50 p-4 text-left font-bold text-slate-700 transition hover:bg-cyan-50">
-                {script}
+                {tx(script)}
               </button>
             ))}
           </div>

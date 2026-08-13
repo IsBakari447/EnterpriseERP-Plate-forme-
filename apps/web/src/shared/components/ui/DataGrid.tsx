@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Badge from "@shared/components/ui/Badge";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 
 type Column<T> = {
@@ -23,7 +24,7 @@ export default function DataGrid<T extends Record<string, string | number | unde
   const { locale } = useI18n();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("Tous");
-  const tFixed = (value: string) => translateFixedLabel(value, locale);
+  const tFixed = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
 
   const statusColumn = columns.find((column) => String(column.key) === "status");
 
@@ -79,7 +80,7 @@ export default function DataGrid<T extends Record<string, string | number | unde
           <thead className="bg-slate-50 text-left text-sm text-slate-500">
             <tr>
               {columns.map((column) => (
-                <th key={String(column.key)} className="p-4">{column.label}</th>
+                <th key={String(column.key)} className="p-4">{tFixed(column.label)}</th>
               ))}
               {actions && <th className="p-4">{tFixed("Actions")}</th>}
             </tr>
@@ -96,7 +97,7 @@ export default function DataGrid<T extends Record<string, string | number | unde
                       {column.badge ? (
                         <Badge color={badgeColor(String(value))}>{tFixed(String(value))}</Badge>
                       ) : (
-                        <span className="font-medium text-slate-700">{String(value ?? "")}</span>
+                        <span className="font-medium text-slate-700">{tFixed(String(value ?? ""))}</span>
                       )}
                     </td>
                   );

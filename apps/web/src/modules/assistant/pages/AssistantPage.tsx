@@ -46,10 +46,10 @@ export default function AssistantPage() {
             </div>
             <div className="flex gap-2">
               <Link href="/ai-sales-agent" className="rounded-xl bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
-                AI Sales Agent
+                {t("nav.ai-sales-agent")}
               </Link>
               <Link href="/ai-studio" className="rounded-xl bg-[#1E2A38] px-4 py-2 text-sm font-black text-white">
-                AI Studio
+                {t("nav.ai-studio")}
               </Link>
             </div>
           </div>

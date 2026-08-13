@@ -68,7 +68,7 @@ export const securityItems = [
     description: "Endpoints health/readiness, configuration par environnement et base PostgreSQL.",
   },
   {
-    title: "Audit et traçabilite",
+    title: "Audit et tracabilite",
     description: "Roadmap audit log pour suivre actions sensibles, connexions et changements de donnees.",
   },
   {
@@ -148,19 +148,19 @@ export const roiCards = [
 
 export const faqs = [
   {
-    question: "EnterpriseERP Cloud est-il different de EnterpriseERP classique ?",
+    question: "EnterpriseERP Cloud est-il different de EnterpriseERP classique EUR",
     answer: "Oui. EnterpriseERP Cloud est la version SaaS API-first, pensee pour web, mobile, integrations, multi-entreprise et deploiement cloud.",
   },
   {
-    question: "L'essai gratuit demande-t-il une carte bancaire ?",
+    question: "L'essai gratuit demande-t-il une carte bancaire EUR",
     answer: "La proposition produit recommande un essai de 14 jours sans friction, avec limites claires et lecture seule en fin d'essai.",
   },
   {
-    question: "Peut-on connecter l'application mobile ?",
+    question: "Peut-on connecter l'application mobile EUR",
     answer: "Oui, l'architecture Cloud expose une API REST et une roadmap de synchronisation avec EnterpriseERP.Mobile.",
   },
   {
-    question: "Le produit est-il pret pour les integrations ?",
+    question: "Le produit est-il pret pour les integrations EUR",
     answer: "La base API-first existe deja. Les webhooks, paiement, email, calendrier et connecteurs comptables sont positionnes dans la roadmap.",
   },
 ];

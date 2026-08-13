@@ -25,7 +25,7 @@ export default function AiStudioPage() {
   }
 
   return (
-    <ERPLayout title="AI Studio" subtitle={t("aiStudio.subtitle")} action={t("aiStudio.action")}>
+    <ERPLayout title={t("nav.ai-studio")} subtitle={t("aiStudio.subtitle")} action={t("aiStudio.action")}>
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {[
           { label: t("aiStudio.tools"), value: "6", change: t("auth.enterpriseReady") },

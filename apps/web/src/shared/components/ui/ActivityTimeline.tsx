@@ -1,6 +1,7 @@
 "use client";
 
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 
 export type ActivityItem = {
@@ -11,7 +12,7 @@ export type ActivityItem = {
 
 export default function ActivityTimeline({ items }: { items: ActivityItem[] }) {
   const { locale } = useI18n();
-  const tFixed = (value: string) => translateFixedLabel(value, locale);
+  const tFixed = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
 
   return (
     <section className="rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">

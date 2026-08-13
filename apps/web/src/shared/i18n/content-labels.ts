@@ -1,0 +1,646 @@
+import type { Locale } from "./dictionaries";
+
+const labelTranslations: Partial<Record<Locale, Record<string, string>>> = {
+  en: {
+    "la restauration": "restaurants",
+    "le commerce": "retail",
+    "la construction": "construction",
+    "la sante": "healthcare",
+    "l'education": "education",
+    "le transport": "transport",
+    "l'industrie": "industry",
+    "l'hotellerie": "hospitality",
+    restaurant: "restaurant",
+    commerce: "retail business",
+    "entreprise de construction": "construction company",
+    "organisation de sante": "healthcare organization",
+    etablissement: "education organization",
+    "activite logistique": "logistics operation",
+    production: "production",
+    hotel: "hotel",
+  },
+  sv: {
+    "la restauration": "restaurang",
+    "le commerce": "handel",
+    "la construction": "bygg",
+    "la sante": "vard",
+    "l'education": "utbildning",
+    "le transport": "transport",
+    "l'industrie": "industri",
+    "l'hotellerie": "hotell",
+    restaurant: "restaurang",
+    commerce: "handelsverksamhet",
+    "entreprise de construction": "byggforetag",
+    "organisation de sante": "vardorganisation",
+    etablissement: "utbildningsorganisation",
+    "activite logistique": "logistikverksamhet",
+    production: "produktion",
+    hotel: "hotell",
+  },
+};
+
+const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
+  en: {
+    "Centralisez vos clients, ventes, factures, stock, equipe et indicateurs dans une plateforme SaaS moderne.":
+      "Centralize customers, sales, invoices, inventory, teams and KPIs in a modern SaaS platform.",
+    "Visualisez les indicateurs essentiels, les alertes, les performances et les actions prioritaires depuis une seule interface.":
+      "View essential KPIs, alerts, performance and priority actions from one interface.",
+    "L'IA recommande de prioriser les relances, le suivi du stock et les opportunites commerciales a fort impact.":
+      "AI recommends prioritizing follow-ups, inventory tracking and high-impact sales opportunities.",
+    "Quand les donnees sont dispersees, les equipes perdent du temps et les decisions deviennent plus lentes.":
+      "When data is scattered, teams lose time and decisions become slower.",
+    "Donnees dispersees": "Scattered data",
+    "Clients, ventes, stock et factures sont souvent suivis dans plusieurs outils.":
+      "Customers, sales, inventory and invoices are often tracked in multiple tools.",
+    "Taches manuelles": "Manual tasks",
+    "Les doubles saisies et controles repetitifs ralentissent les equipes.":
+      "Duplicate entry and repetitive checks slow teams down.",
+    "Manque de visibilite": "Lack of visibility",
+    "Les dirigeants manquent d'indicateurs fiables pour decider rapidement.":
+      "Leaders lack reliable indicators to make fast decisions.",
+    "Alertes tardives": "Late alerts",
+    "Les retards de paiement, ruptures et priorites sont identifies trop tard.":
+      "Late payments, stockouts and priorities are identified too late.",
+    "CRM clients": "Customer CRM",
+    "Centralisez clients, prospects, historique commercial et relances.":
+      "Centralize customers, prospects, sales history and follow-ups.",
+    "Ventes et devis": "Sales and quotes",
+    "Suivez les opportunites, commandes, devis et conversions.":
+      "Track opportunities, orders, quotes and conversions.",
+    "Stock intelligent": "Smart inventory",
+    "Controlez quantites, seuils critiques et reapprovisionnements.":
+      "Control quantities, critical thresholds and replenishment.",
+    "Creez les factures, suivez paiements et echeances.":
+      "Create invoices and track payments and due dates.",
+    "Recevez des syntheses, alertes et recommandations operationnelles.":
+      "Receive summaries, alerts and operational recommendations.",
+    "Mobile ready": "Mobile ready",
+    "Travaillez depuis le cloud avec une base preparee pour le mobile.":
+      "Work from the cloud with a foundation ready for mobile.",
+    "Une vision unique": "One unified view",
+    "Toutes les informations importantes sont regroupees dans un tableau de bord clair.":
+      "All important information is grouped in a clear dashboard.",
+    "Moins de pertes de temps": "Less wasted time",
+    "Les processus courants deviennent plus simples, rapides et faciles a suivre.":
+      "Daily processes become simpler, faster and easier to track.",
+    "Des decisions plus rapides": "Faster decisions",
+    "Les alertes et recommandations aident a prioriser les bonnes actions.":
+      "Alerts and recommendations help prioritize the right actions.",
+    "Demandez une demonstration et voyez comment EnterpriseERP Cloud peut simplifier vos operations.":
+      "Request a demo and see how EnterpriseERP Cloud can simplify your operations.",
+    Starter: "Starter",
+    "Pour demarrer avec les fonctions essentielles.": "Start with essential features.",
+    "14 jours gratuits": "14 free days",
+    Business: "Business",
+    "Pour une activite en croissance.": "For a growing business.",
+    "Sur devis": "Custom quote",
+    "Tous les modules": "All modules",
+    "Multi-utilisateurs": "Multi-user",
+    Exports: "Exports",
+    Enterprise: "Enterprise",
+    "Pour organisations multi-sites et exigences avancees.": "For multi-site organizations and advanced requirements.",
+    "Sur mesure": "Tailored",
+    Integrations: "Integrations",
+    "Permissions avancees": "Advanced permissions",
+    "Support prioritaire": "Priority support",
+    "Ventes du mois": "Monthly sales",
+    Commandes: "Orders",
+    "Panier moyen": "Average basket",
+    "CA Clients": "Customer revenue",
+    "Taux de fidelisation": "Retention rate",
+    "Prospects chauds": "Warm prospects",
+    "Clients a relancer": "Customers to follow up",
+    "Stock total": "Total inventory",
+    Alertes: "Alerts",
+    "Valeur stock": "Inventory value",
+    "Rotation stock": "Inventory turnover",
+    "Ruptures prevues": "Expected stockouts",
+    "Entrepots actifs": "Active warehouses",
+    "CA facture": "Invoiced revenue",
+    "A encaisser": "To collect",
+    Retards: "Delays",
+    "Taux paiement": "Payment rate",
+    "Delai moyen": "Average delay",
+    "Factures en retard": "Overdue invoices",
+    Employes: "Employees",
+    Presents: "Present",
+    Conges: "Leaves",
+    "Masse salariale": "Payroll",
+    Recettes: "Income",
+    Depenses: "Expenses",
+    "Resultat net": "Net result",
+    "TVA a declarer": "VAT to declare",
+    "Vente Kamyla Group": "Kamyla Group sale",
+    "Achat materiel": "Equipment purchase",
+    "TVA collectee": "Collected VAT",
+    "Audit & Activity": "Audit & Activity",
+    "Console d'investigation pour connexions, actions sensibles, exports, roles et activites.":
+      "Investigation console for logins, sensitive actions, exports, roles and activities.",
+    Exporter: "Export",
+    "Actions aujourd'hui": "Actions today",
+    Connexions: "Logins",
+    "Echecs de connexion": "Failed logins",
+    "Actions sensibles": "Sensitive actions",
+    "Alertes securite": "Security alerts",
+    Actives: "Active",
+    "A verifier": "To review",
+    "Roles / exports": "Roles / exports",
+    Moyen: "Medium",
+    Filtres: "Filters",
+    Utilisateur: "User",
+    Resultat: "Result",
+    "Adresse IP": "IP address",
+    Journal: "Log",
+    Objet: "Object",
+    Details: "Details",
+    success: "Success",
+    warning: "Warning",
+    "Mot de passe modifie": "Password changed",
+    "Permission finance ajoutee": "Finance permission added",
+    "Export comptable CSV": "Accounting CSV export",
+    "Ajustement inventaire": "Inventory adjustment",
+    "Security Center": "Security Center",
+    "Vue administrateur pour sessions, evenements, permissions sensibles et posture SaaS.":
+      "Administrator view for sessions, events, sensitive permissions and SaaS security posture.",
+    "Lancer controle": "Run check",
+    "Score securite": "Security score",
+    "Sessions actives": "Active sessions",
+    "Permissions sensibles": "Sensitive permissions",
+    Evenements: "Events",
+    Bon: "Good",
+    "2 appareils mobiles": "2 mobile devices",
+    "Finance / roles": "Finance / roles",
+    "Security posture": "Security posture",
+    "Protegez les roles, exports, sessions et evenements sensibles.":
+      "Protect roles, exports, sessions and sensitive events.",
+    "2FA: planifie": "2FA: planned",
+    "Logs sans tokens": "Logs without tokens",
+    "RBAC actif": "Active RBAC",
+    "Audit entreprise": "Company audit",
+    "2FA recommande": "2FA recommended",
+    "Activez progressivement le 2FA pour Owner, Admin et Comptable.":
+      "Gradually enable 2FA for Owner, Admin and Accountant roles.",
+    "Exports financiers": "Financial exports",
+    "Limiter audit.export aux roles Owner et Comptable.": "Limit audit.export to Owner and Accountant roles.",
+    "Sessions mobiles": "Mobile sessions",
+    "Deux sessions Android restent actives depuis plus de 14 jours.": "Two Android sessions have been active for more than 14 days.",
+    "Voir et revoquer les appareils suspects.": "View and revoke suspicious devices.",
+    "Evenements securite": "Security events",
+    "Lire les changements de roles, exports et connexions.": "Review role changes, exports and logins.",
+    "Controler finance.export, audit.export et roles.manage.": "Control finance.export, audit.export and roles.manage.",
+    "Preparation de l'activation prochaine.": "Preparing upcoming activation.",
+    Sauvegardes: "Backups",
+    "Suivre les backups et restaurations.": "Track backups and restores.",
+    Conformite: "Compliance",
+    "Journaliser les changements de configuration.": "Log configuration changes.",
+    "Sessions et appareils": "Sessions and devices",
+    "Consultez les appareils connectes et revoquez les sessions inutiles.":
+      "Review connected devices and revoke unused sessions.",
+    Sessions: "Sessions",
+    "EnterpriseERP Web": "EnterpriseERP Web",
+    "Navigateur inconnu": "Unknown browser",
+    inconnue: "unknown",
+    Creation: "Created",
+    Revoquee: "Revoked",
+    Active: "Active",
+    Deconnecter: "Disconnect",
+    Collaboration: "Collaboration",
+    "Notes & emails": "Notes & emails",
+    "Vue metier": "Business view",
+    "Fiche produit enrichie": "Enhanced product record",
+    Catalogue: "Catalog",
+    "operationnel": "operational",
+    Finance: "Finance",
+    "Temps reel": "Real time",
+    Projet: "Project",
+    "Planning Gantt": "Gantt planning",
+    "Reapprovisionnement IA": "AI replenishment",
+    "Carte operationnelle": "Operational map",
+    Terrain: "Field",
+    "POS / Tickets": "POS / tickets",
+    Encaissement: "Checkout",
+    "Matrice roles x permissions": "Roles x permissions matrix",
+    Securite: "Security",
+    "Roles systeme": "System roles",
+    Acces: "Access",
+    "Demandes d'acces": "Access requests",
+    Validation: "Validation",
+    "Audit securite": "Security audit",
+    "Inviter ou modifier un role": "Invite or edit a role",
+    "Achats / ventes": "Purchasing / sales",
+    "Paiements & relances": "Payments and follow-ups",
+    Tresorerie: "Cashflow",
+    "Budget & risques": "Budget and risks",
+    "Tables, cuisine et service": "Tables, kitchen and service",
+    "Calendrier operationnel": "Operational calendar",
+    "Workflow temps reel": "Real-time workflow",
+    Administration: "Administration",
+    "Table": "Table",
+    Import: "Import",
+    "Controle admin": "Admin control",
+    Referentiel: "Reference data",
+    "Element exemple": "Sample item",
+    "Suivi operationnel": "Operational tracking",
+    "Rapport automatique": "Automated report",
+    Equipe: "Team",
+    Manager: "Manager",
+    "Assistant IA": "AI assistant",
+    "Creer": "Create",
+    "Calculateur ROI": "ROI calculator",
+    "Estimez les economies annuelles avec EnterpriseERP.": "Estimate annual savings with EnterpriseERP.",
+    "Ajustez vos volumes et voyez rapidement l'impact potentiel sur le temps administratif, les relances et le retour sur investissement.":
+      "Adjust your volumes and quickly see the potential impact on administrative time, follow-ups and return on investment.",
+    "Vos donnees": "Your data",
+    "Nombre d'employes": "Number of employees",
+    "Heures administratives par employe / semaine": "Administrative hours per employee / week",
+    "Factures mensuelles": "Monthly invoices",
+    "Cout horaire moyen": "Average hourly cost",
+    "Projection": "Projection",
+    "Valeur business estimee": "Estimated business value",
+    "Gain temps administratif": "Administrative time savings",
+    "Encaissements recuperables": "Recoverable collections",
+    "Economies annuelles estimees": "Estimated annual savings",
+    "Delai de retour estime": "Estimated payback period",
+    "mois": "months",
+    "Prospection IA": "AI prospecting",
+    "Canal": "Channel",
+    "secteur": "sector",
+    "Restauration": "Restaurants",
+    "Services": "Services",
+    "Construction": "Construction",
+    "Sante": "Healthcare",
+    "Education": "Education",
+    "Telephone": "Phone",
+    "EnterpriseERP aide votre organisation a centraliser CRM, ventes, facturation et priorites IA.":
+      "EnterpriseERP helps your organization centralize CRM, sales, billing and AI priorities.",
+    "Je vous propose une courte demonstration adaptee a votre activite cette semaine.":
+      "I suggest a short demo tailored to your activity this week.",
+    "Bonjour, je vous contacte car beaucoup de PME perdent du temps entre CRM, factures, stock et relances. EnterpriseERP centralise ces operations dans une plateforme Cloud avec assistant IA. Seriez-vous disponible pour une courte demonstration cette semaine ?":
+      "Hello, I am contacting you because many SMEs lose time between CRM, invoices, inventory and follow-ups. EnterpriseERP centralizes these operations in a cloud platform with an AI assistant. Would you be available for a short demo this week?",
+    "Copie": "Copied",
+    "Copier": "Copy",
+    "Creer relance": "Create follow-up",
+    "Envoyer au CRM": "Send to CRM",
+    "Commerce: relance apres visite boutique": "Retail: follow-up after store visit",
+    "Services: proposition de diagnostic ERP": "Services: ERP diagnostic proposal",
+    "Restaurant: message pour reserver une demo": "Restaurant: message to book a demo",
+    "Construction: suivi devis chantier": "Construction: construction quote follow-up",
+    "Sante: presentation solution administrative": "Healthcare: administrative solution presentation",
+    "Education: automatisation frais scolaires": "Education: school fees automation",
+    "Appel de prospection en 45 secondes": "45-second prospecting call",
+    "Reponse objection prix": "Price objection response",
+    "Presentation rapide EnterpriseERP": "Quick EnterpriseERP pitch",
+    "Relance devis sans reponse": "Follow-up for unanswered quote",
+    "Commerce & stock": "Commerce & inventory",
+    "Operations": "Operations",
+    "Securite & permissions": "Security and permissions",
+    "une interface adaptee au metier, assemblee avec des widgets reutilisables.": "a business-specific interface assembled with reusable widgets.",
+    "Nom": "Name",
+    Code: "Code",
+    "Email de suivi prepare": "Follow-up email prepared",
+    "Note interne ajoutee": "Internal note added",
+    "Appel a planifier": "Call to schedule",
+    "Note ajoutee": "Note added",
+    "Le responsable a mis a jour le contexte.": "The manager updated the context.",
+    "Document joint": "Document attached",
+    "Une piece justificative a ete ajoutee.": "A supporting document was added.",
+    "Action IA": "AI action",
+    "L'assistant recommande une relance ou une verification.": "The assistant recommends a follow-up or verification.",
+    "A planifier": "To schedule",
+    Hier: "Yesterday",
+    "Aujourd'hui": "Today",
+  },
+  sv: {
+    "Centralisez vos clients, ventes, factures, stock, equipe et indicateurs dans une plateforme SaaS moderne.":
+      "Centralisera kunder, forsaljning, fakturor, lager, team och KPI:er i en modern SaaS-plattform.",
+    "Visualisez les indicateurs essentiels, les alertes, les performances et les actions prioritaires depuis une seule interface.":
+      "Se viktiga KPI:er, varningar, resultat och prioriterade atgarder fran ett enda granssnitt.",
+    "L'IA recommande de prioriser les relances, le suivi du stock et les opportunites commerciales a fort impact.":
+      "AI rekommenderar att prioritera uppfoljningar, lagerkontroll och kommersiella mojligheter med stor effekt.",
+    "Quand les donnees sont dispersees, les equipes perdent du temps et les decisions deviennent plus lentes.":
+      "Nar data ar utspridd tappar team tid och beslut blir langsammare.",
+    "Donnees dispersees": "Utspridd data",
+    "Clients, ventes, stock et factures sont souvent suivis dans plusieurs outils.":
+      "Kunder, forsaljning, lager och fakturor foljs ofta i flera verktyg.",
+    "Taches manuelles": "Manuella uppgifter",
+    "Les doubles saisies et controles repetitifs ralentissent les equipes.":
+      "Dubbelregistrering och upprepade kontroller saktar ner teamen.",
+    "Manque de visibilite": "Brist pa synlighet",
+    "Les dirigeants manquent d'indicateurs fiables pour decider rapidement.":
+      "Ledare saknar tillforlitliga indikatorer for snabba beslut.",
+    "Alertes tardives": "Sena varningar",
+    "Les retards de paiement, ruptures et priorites sont identifies trop tard.":
+      "Forsenade betalningar, lagerbrist och prioriteringar upptacks for sent.",
+    "CRM clients": "Kund-CRM",
+    "Centralisez clients, prospects, historique commercial et relances.":
+      "Centralisera kunder, prospekt, saljhistorik och uppfoljningar.",
+    "Ventes et devis": "Forsaljning och offerter",
+    "Suivez les opportunites, commandes, devis et conversions.":
+      "Folj mojligheter, order, offerter och konverteringar.",
+    "Stock intelligent": "Smart lager",
+    "Controlez quantites, seuils critiques et reapprovisionnements.":
+      "Kontrollera kvantiteter, kritiska granser och pafyllning.",
+    "Creez les factures, suivez paiements et echeances.":
+      "Skapa fakturor och folj betalningar och forfallodatum.",
+    "Recevez des syntheses, alertes et recommandations operationnelles.":
+      "Fa sammanfattningar, varningar och operativa rekommendationer.",
+    "Mobile ready": "Mobilredo",
+    "Travaillez depuis le cloud avec une base preparee pour le mobile.":
+      "Arbeta fran molnet med en grund forberedd for mobil.",
+    "Une vision unique": "En samlad vy",
+    "Toutes les informations importantes sont regroupees dans un tableau de bord clair.":
+      "All viktig information samlas i en tydlig dashboard.",
+    "Moins de pertes de temps": "Mindre tidsspill",
+    "Les processus courants deviennent plus simples, rapides et faciles a suivre.":
+      "Dagliga processer blir enklare, snabbare och lattare att folja.",
+    "Des decisions plus rapides": "Snabbare beslut",
+    "Les alertes et recommandations aident a prioriser les bonnes actions.":
+      "Varningar och rekommendationer hjalper till att prioritera ratt atgarder.",
+    "Demandez une demonstration et voyez comment EnterpriseERP Cloud peut simplifier vos operations.":
+      "Boka en demo och se hur EnterpriseERP Cloud kan forenkla din verksamhet.",
+    Starter: "Starter",
+    "Pour demarrer avec les fonctions essentielles.": "Kom igang med de viktigaste funktionerna.",
+    "14 jours gratuits": "14 dagar gratis",
+    Business: "Business",
+    "Pour une activite en croissance.": "For en vaxande verksamhet.",
+    "Sur devis": "Offert",
+    "Tous les modules": "Alla moduler",
+    "Multi-utilisateurs": "Flera anvandare",
+    Exports: "Exporter",
+    Enterprise: "Enterprise",
+    "Pour organisations multi-sites et exigences avancees.": "For organisationer med flera platser och avancerade krav.",
+    "Sur mesure": "Anpassat",
+    Integrations: "Integrationer",
+    "Permissions avancees": "Avancerade behorigheter",
+    "Support prioritaire": "Prioriterad support",
+    "Ventes du mois": "Manadens forsaljning",
+    Commandes: "Order",
+    "Panier moyen": "Snittkorg",
+    "CA Clients": "Kundomsattning",
+    "Taux de fidelisation": "Lojalitetsgrad",
+    "Prospects chauds": "Varma prospekt",
+    "Clients a relancer": "Kunder att folja upp",
+    "Stock total": "Totalt lager",
+    Alertes: "Varningar",
+    "Valeur stock": "Lagervarde",
+    "Rotation stock": "Lageromsattning",
+    "Ruptures prevues": "Forvantade lagerbrister",
+    "Entrepots actifs": "Aktiva lager",
+    "CA facture": "Fakturerad omsattning",
+    "A encaisser": "Att driva in",
+    Retards: "Forseningar",
+    "Taux paiement": "Betalningsgrad",
+    "Delai moyen": "Genomsnittlig tid",
+    "Factures en retard": "Forsenade fakturor",
+    Employes: "Anstallda",
+    Presents: "Narvarande",
+    Conges: "Ledigheter",
+    "Masse salariale": "Lonemassa",
+    Recettes: "Intakter",
+    Depenses: "Utgifter",
+    "Resultat net": "Nettoresultat",
+    "TVA a declarer": "Moms att deklarera",
+    "Vente Kamyla Group": "Forsaljning Kamyla Group",
+    "Achat materiel": "Utrustningskop",
+    "TVA collectee": "Insamlad moms",
+    "Audit & Activity": "Audit och aktivitet",
+    "Console d'investigation pour connexions, actions sensibles, exports, roles et activites.":
+      "Utredningsvy for inloggningar, kansliga atgarder, exporter, roller och aktiviteter.",
+    Exporter: "Exportera",
+    "Actions aujourd'hui": "Atgarder idag",
+    Connexions: "Inloggningar",
+    "Echecs de connexion": "Misslyckade inloggningar",
+    "Actions sensibles": "Kansliga atgarder",
+    "Alertes securite": "Sakerhetsvarningar",
+    Actives: "Aktiva",
+    "A verifier": "Att granska",
+    "Roles / exports": "Roller / exporter",
+    Moyen: "Medel",
+    Filtres: "Filter",
+    Utilisateur: "Anvandare",
+    Resultat: "Resultat",
+    "Adresse IP": "IP-adress",
+    Journal: "Logg",
+    Objet: "Objekt",
+    Details: "Detaljer",
+    success: "Lyckades",
+    warning: "Varning",
+    "Mot de passe modifie": "Losenord andrat",
+    "Permission finance ajoutee": "Ekonomibehorighet tillagd",
+    "Export comptable CSV": "Bokforingsexport CSV",
+    "Ajustement inventaire": "Lagerjustering",
+    "Security Center": "Sakerhetscenter",
+    "Vue administrateur pour sessions, evenements, permissions sensibles et posture SaaS.":
+      "Administratorsvy for sessioner, handelser, kansliga behorigheter och SaaS-sakerhet.",
+    "Lancer controle": "Kor kontroll",
+    "Score securite": "Sakerhetspoang",
+    "Sessions actives": "Aktiva sessioner",
+    "Permissions sensibles": "Kansliga behorigheter",
+    Evenements: "Handelser",
+    Bon: "Bra",
+    "2 appareils mobiles": "2 mobila enheter",
+    "Finance / roles": "Ekonomi / roller",
+    "Security posture": "Sakerhetslage",
+    "Protegez les roles, exports, sessions et evenements sensibles.":
+      "Skydda roller, exporter, sessioner och kansliga handelser.",
+    "2FA: planifie": "2FA: planerad",
+    "Logs sans tokens": "Loggar utan tokens",
+    "RBAC actif": "Aktiv RBAC",
+    "Audit entreprise": "Foretagsaudit",
+    "2FA recommande": "2FA rekommenderas",
+    "Activez progressivement le 2FA pour Owner, Admin et Comptable.":
+      "Aktivera 2FA gradvis for Owner, Admin och Bokforing.",
+    "Exports financiers": "Finansiella exporter",
+    "Limiter audit.export aux roles Owner et Comptable.": "Begransa audit.export till Owner och Bokforing.",
+    "Sessions mobiles": "Mobila sessioner",
+    "Deux sessions Android restent actives depuis plus de 14 jours.": "Tva Android-sessioner har varit aktiva i mer an 14 dagar.",
+    "Voir et revoquer les appareils suspects.": "Visa och aterkalla misstankta enheter.",
+    "Evenements securite": "Sakerhetshandelser",
+    "Lire les changements de roles, exports et connexions.": "Granska rollandringar, exporter och inloggningar.",
+    "Controler finance.export, audit.export et roles.manage.": "Kontrollera finance.export, audit.export och roles.manage.",
+    "Preparation de l'activation prochaine.": "Forbereder kommande aktivering.",
+    Sauvegardes: "Backuper",
+    "Suivre les backups et restaurations.": "Folj backuper och aterstallningar.",
+    Conformite: "Efterlevnad",
+    "Journaliser les changements de configuration.": "Logga konfigurationsandringar.",
+    "Sessions et appareils": "Sessioner och enheter",
+    "Consultez les appareils connectes et revoquez les sessions inutiles.":
+      "Granska anslutna enheter och aterkalla oanvanda sessioner.",
+    Sessions: "Sessioner",
+    "EnterpriseERP Web": "EnterpriseERP Web",
+    "Navigateur inconnu": "Okand webblasare",
+    inconnue: "okand",
+    Creation: "Skapad",
+    Revoquee: "Aterkallad",
+    Active: "Aktiv",
+    Deconnecter: "Koppla fran",
+    Collaboration: "Samarbete",
+    "Notes & emails": "Anteckningar och e-post",
+    "Vue metier": "Verksamhetsvy",
+    "Fiche produit enrichie": "Berikad produktvy",
+    Catalogue: "Katalog",
+    "operationnel": "operativ",
+    Finance: "Ekonomi",
+    "Temps reel": "Realtid",
+    Projet: "Projekt",
+    "Planning Gantt": "Gantt-planering",
+    "Reapprovisionnement IA": "AI-pafyllning",
+    "Carte operationnelle": "Operativ karta",
+    Terrain: "Falt",
+    "POS / Tickets": "POS / kvitton",
+    Encaissement: "Kassa",
+    "Matrice roles x permissions": "Roller x behorigheter",
+    Securite: "Sakerhet",
+    "Roles systeme": "Systemroller",
+    Acces: "Atkomst",
+    "Demandes d'acces": "Atkomstforfragningar",
+    Validation: "Validering",
+    "Audit securite": "Sakerhetsaudit",
+    "Inviter ou modifier un role": "Bjud in eller redigera roll",
+    "Achats / ventes": "Inkops / forsaljning",
+    "Paiements & relances": "Betalningar och uppfoljningar",
+    Tresorerie: "Kassaflode",
+    "Budget & risques": "Budget och risker",
+    "Tables, cuisine et service": "Bord, kok och service",
+    "Calendrier operationnel": "Operativ kalender",
+    "Workflow temps reel": "Workflow i realtid",
+    Administration: "Administration",
+    "Table": "Tabell",
+    Import: "Import",
+    "Controle admin": "Adminkontroll",
+    Referentiel: "Referensdata",
+    "Element exemple": "Exempelpost",
+    "Suivi operationnel": "Operativ uppfoljning",
+    "Rapport automatique": "Automatisk rapport",
+    Equipe: "Team",
+    Manager: "Manager",
+    "Assistant IA": "AI-assistent",
+    "Creer": "Skapa",
+    "Calculateur ROI": "ROI-kalkylator",
+    "Estimez les economies annuelles avec EnterpriseERP.": "Berakna arliga besparingar med EnterpriseERP.",
+    "Ajustez vos volumes et voyez rapidement l'impact potentiel sur le temps administratif, les relances et le retour sur investissement.":
+      "Justera dina volymer och se snabbt potentiell effekt pa administrationstid, uppfoljningar och avkastning.",
+    "Vos donnees": "Dina data",
+    "Nombre d'employes": "Antal anstallda",
+    "Heures administratives par employe / semaine": "Administrativa timmar per anstalld / vecka",
+    "Factures mensuelles": "Manatliga fakturor",
+    "Cout horaire moyen": "Genomsnittlig timkostnad",
+    "Projection": "Prognos",
+    "Valeur business estimee": "Uppskattat affarsvarde",
+    "Gain temps administratif": "Besparing av administrationstid",
+    "Encaissements recuperables": "Atervinningsbara inbetalningar",
+    "Economies annuelles estimees": "Uppskattade arliga besparingar",
+    "Delai de retour estime": "Uppskattad aterbetalningstid",
+    "mois": "manader",
+    "Prospection IA": "AI-prospektering",
+    "Canal": "Kanal",
+    "secteur": "sektor",
+    "Restauration": "Restaurang",
+    "Services": "Tjanster",
+    "Construction": "Bygg",
+    "Sante": "Vard",
+    "Education": "Utbildning",
+    "Telephone": "Telefon",
+    "EnterpriseERP aide votre organisation a centraliser CRM, ventes, facturation et priorites IA.":
+      "EnterpriseERP hjalper din organisation att centralisera CRM, forsaljning, fakturering och AI-prioriteringar.",
+    "Je vous propose une courte demonstration adaptee a votre activite cette semaine.":
+      "Jag foreslar en kort demo anpassad till din verksamhet den har veckan.",
+    "Bonjour, je vous contacte car beaucoup de PME perdent du temps entre CRM, factures, stock et relances. EnterpriseERP centralise ces operations dans une plateforme Cloud avec assistant IA. Seriez-vous disponible pour une courte demonstration cette semaine ?":
+      "Hej, jag kontaktar dig eftersom manga SME tappar tid mellan CRM, fakturor, lager och uppfoljningar. EnterpriseERP centraliserar dessa operationer i en molnplattform med AI-assistent. Har du mojlighet till en kort demo den har veckan?",
+    "Copie": "Kopierat",
+    "Copier": "Kopiera",
+    "Creer relance": "Skapa uppfoljning",
+    "Envoyer au CRM": "Skicka till CRM",
+    "Commerce: relance apres visite boutique": "Handel: uppfoljning efter butiksbesok",
+    "Services: proposition de diagnostic ERP": "Tjanster: forslag om ERP-diagnos",
+    "Restaurant: message pour reserver une demo": "Restaurang: meddelande for att boka demo",
+    "Construction: suivi devis chantier": "Bygg: uppfoljning av byggoffert",
+    "Sante: presentation solution administrative": "Vard: presentation av administrativ losning",
+    "Education: automatisation frais scolaires": "Utbildning: automatisering av skolavgifter",
+    "Appel de prospection en 45 secondes": "Prospekteringssamtal pa 45 sekunder",
+    "Reponse objection prix": "Svar pa prisinvandning",
+    "Presentation rapide EnterpriseERP": "Kort EnterpriseERP-pitch",
+    "Relance devis sans reponse": "Uppfoljning av obesvarad offert",
+    "Commerce & stock": "Handel och lager",
+    "Operations": "Verksamhet",
+    "Securite & permissions": "Sakerhet och behorigheter",
+    "une interface adaptee au metier, assemblee avec des widgets reutilisables.": "ett branschanpassat granssnitt sammansatt med ateranvandbara widgets.",
+    "Nom": "Namn",
+    Code: "Kod",
+    "Email de suivi prepare": "Uppfoljningsmail forberett",
+    "Note interne ajoutee": "Intern anteckning tillagd",
+    "Appel a planifier": "Samtal att planera",
+    "Note ajoutee": "Anteckning tillagd",
+    "Le responsable a mis a jour le contexte.": "Ansvarig uppdaterade kontexten.",
+    "Document joint": "Dokument bifogat",
+    "Une piece justificative a ete ajoutee.": "Ett underlag har lagts till.",
+    "Action IA": "AI-atgard",
+    "L'assistant recommande une relance ou une verification.": "Assistenten rekommenderar uppfoljning eller kontroll.",
+    "A planifier": "Att planera",
+    Hier: "Igar",
+    "Aujourd'hui": "Idag",
+  },
+};
+
+function translateLabelPart(value: string, locale: Locale) {
+  if (locale === "fr") return value;
+  return labelTranslations[locale]?.[value] ?? labelTranslations.en?.[value] ?? value;
+}
+
+export function translateContentText(value: string, locale: Locale) {
+  if (locale === "fr") return value;
+
+  const direct = contentTranslations[locale]?.[value] ?? contentTranslations.en?.[value];
+  if (direct) return direct;
+
+  const badge = value.match(/^ERP Cloud pour (.+)$/);
+  if (badge) {
+    return locale === "sv"
+      ? `Cloud ERP for ${translateLabelPart(badge[1], locale)}`
+      : `Cloud ERP for ${translateLabelPart(badge[1], locale)}`;
+  }
+
+  const title = value.match(/^Pilotez votre (.+) avec EnterpriseERP$/);
+  if (title) {
+    return locale === "sv"
+      ? `Styr din ${translateLabelPart(title[1], locale)} med EnterpriseERP`
+      : `Run your ${translateLabelPart(title[1], locale)} with EnterpriseERP`;
+  }
+
+  const dashboard = value.match(/^Dashboard (.+)$/);
+  if (dashboard) {
+    return locale === "sv"
+      ? `Dashboard ${translateLabelPart(dashboard[1], locale)}`
+      : `${translateLabelPart(dashboard[1], locale)} dashboard`;
+  }
+
+  const cta = value.match(/^Modernisez la gestion de votre (.+)$/);
+  if (cta) {
+    return locale === "sv"
+      ? `Modernisera hanteringen av din ${translateLabelPart(cta[1], locale)}`
+      : `Modernize the management of your ${translateLabelPart(cta[1], locale)}`;
+  }
+
+  const operational = value.match(/^(.+) operationnel$/);
+  if (operational) {
+    return locale === "sv"
+      ? `${operational[1]} operativ`
+      : `${operational[1]} operational`;
+  }
+
+  const form = value.match(/^Formulaire (.+)$/);
+  if (form) {
+    return locale === "sv"
+      ? `Formular ${form[1]}`
+      : `${form[1]} form`;
+  }
+
+  const history = value.match(/^(.+) - historique$/);
+  if (history) {
+    return locale === "sv"
+      ? `${history[1]} - historik`
+      : `${history[1]} - history`;
+  }
+
+  return value;
+}

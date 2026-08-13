@@ -1,6 +1,7 @@
 "use client";
 
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 
 export type KanbanCard = {
@@ -17,7 +18,7 @@ export type KanbanColumn = {
 
 export default function Kanban({ columns }: { columns: KanbanColumn[] }) {
   const { locale } = useI18n();
-  const tFixed = (value: string) => translateFixedLabel(value, locale);
+  const tFixed = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
 
   return (
     <section className="overflow-x-auto rounded-2xl bg-white p-5 shadow ring-1 ring-slate-200">
@@ -37,8 +38,8 @@ export default function Kanban({ columns }: { columns: KanbanColumn[] }) {
                   <h4 className="font-black text-night">{tFixed(card.title)}</h4>
                   {card.subtitle && <p className="mt-1 text-sm text-slate-500">{tFixed(card.subtitle)}</p>}
                   <div className="mt-3 flex items-center justify-between gap-3 text-xs font-bold text-slate-500">
-                    {card.amount && <span>{card.amount}</span>}
-                    {card.meta && <span>{card.meta}</span>}
+                    {card.amount && <span>{tFixed(card.amount)}</span>}
+                    {card.meta && <span>{tFixed(card.meta)}</span>}
                   </div>
                 </article>
               ))}

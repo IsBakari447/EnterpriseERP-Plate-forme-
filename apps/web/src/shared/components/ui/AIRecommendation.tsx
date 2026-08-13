@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 
 function actionHref(action: string) {
@@ -30,7 +31,7 @@ export default function AIRecommendation({
 }) {
   const { locale } = useI18n();
   const [applied, setApplied] = useState<string | null>(null);
-  const tFixed = (value: string) => translateFixedLabel(value, locale);
+  const tFixed = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
 
   return (
     <section className="rounded-2xl bg-[#1E2A38] p-6 text-white shadow ring-1 ring-slate-800">

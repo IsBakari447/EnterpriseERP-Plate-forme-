@@ -2,6 +2,7 @@
 
 import Badge from "./Badge";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 
 export type AlertItem = {
@@ -18,7 +19,7 @@ export default function AlertPanel({
   alerts: AlertItem[];
 }) {
   const { locale } = useI18n();
-  const tFixed = (value: string) => translateFixedLabel(value, locale);
+  const tFixed = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
   const colorByLevel = {
     info: "cyan",
     warning: "yellow",

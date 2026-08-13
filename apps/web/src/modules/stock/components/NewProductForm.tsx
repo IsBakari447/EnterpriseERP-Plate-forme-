@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 import { ProductDto } from "../services/product.service";
 
 export default function NewProductForm({
@@ -8,6 +10,8 @@ export default function NewProductForm({
 }: {
   onSubmit: (product: ProductDto) => Promise<void>;
 }) {
+  const { locale } = useI18n();
+  const tf = (value: string) => translateFixedLabel(value, locale);
   const [product, setProduct] = useState<ProductDto>({
     name: "",
     sku: "",
@@ -30,51 +34,18 @@ export default function NewProductForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-5 gap-3">
-      <input
-        placeholder="Produit"
-        value={product.name}
-        onChange={(e) => setProduct({ ...product, name: e.target.value })}
-        className="rounded-xl border px-4 py-3"
-        required
-      />
-
-      <input
-        placeholder="SKU"
-        value={product.sku}
-        onChange={(e) => setProduct({ ...product, sku: e.target.value })}
-        className="rounded-xl border px-4 py-3"
-        required
-      />
-
-      <input
-        placeholder="Quantité"
-        type="number"
-        value={product.quantity}
-        onChange={(e) => setProduct({ ...product, quantity: Number(e.target.value) })}
-        className="rounded-xl border px-4 py-3"
-      />
-
-      <select
-        value={product.status}
-        onChange={(e) => setProduct({ ...product, status: e.target.value })}
-        className="rounded-xl border px-4 py-3"
-      >
-        <option>Disponible</option>
-        <option>Stock faible</option>
-        <option>Critique</option>
+    <form onSubmit={handleSubmit} className="mt-6 grid gap-3 lg:grid-cols-5">
+      <input placeholder={tf("Produit")} value={product.name} onChange={(e) => setProduct({ ...product, name: e.target.value })} className="rounded-xl border px-4 py-3" required />
+      <input placeholder="SKU" value={product.sku} onChange={(e) => setProduct({ ...product, sku: e.target.value })} className="rounded-xl border px-4 py-3" required />
+      <input placeholder={tf("Quantite")} type="number" value={product.quantity} onChange={(e) => setProduct({ ...product, quantity: Number(e.target.value) })} className="rounded-xl border px-4 py-3" />
+      <select value={product.status} onChange={(e) => setProduct({ ...product, status: e.target.value })} className="rounded-xl border px-4 py-3">
+        <option value="Disponible">{tf("Disponible")}</option>
+        <option value="Stock faible">{tf("Stock faible")}</option>
+        <option value="Critique">{tf("Critique")}</option>
       </select>
-
-      <input
-        placeholder="Valeur"
-        type="number"
-        value={product.value}
-        onChange={(e) => setProduct({ ...product, value: Number(e.target.value) })}
-        className="rounded-xl border px-4 py-3"
-      />
-
-      <button className="col-span-5 rounded-xl bg-action px-6 py-3 font-semibold text-white">
-        Enregistrer le produit
+      <input placeholder={tf("Valeur")} type="number" value={product.value} onChange={(e) => setProduct({ ...product, value: Number(e.target.value) })} className="rounded-xl border px-4 py-3" />
+      <button className="rounded-xl bg-action px-6 py-3 font-semibold text-white lg:col-span-5">
+        {tf("Enregistrer le produit")}
       </button>
     </form>
   );

@@ -15,7 +15,7 @@ export function useInvoices() {
       const data = await invoiceService.findAll();
       setInvoices(data);
     } catch {
-      setError("Impossible de charger les factures. Vérifiez que l’API est lancée.");
+      setError("Impossible de charger les factures. Verifiez que l'API est lancee.");
     } finally {
       setLoading(false);
     }

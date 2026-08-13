@@ -12,6 +12,8 @@ import FormModal from "@shared/components/ui/FormModal";
 import Kanban from "@shared/components/ui/Kanban";
 import KPICard from "@shared/components/ui/KPICard";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
+import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 import type { ModuleKey } from "@shared/sector/types";
 
 type ModuleView = {
@@ -86,10 +88,13 @@ function Widget({
   children: React.ReactNode;
   className?: string;
 }) {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
+
   return (
     <section className={`rounded-2xl bg-white p-5 shadow ring-1 ring-slate-200 ${className}`}>
-      {eyebrow && <p className="text-xs font-black uppercase tracking-[0.16em] text-[#00A693]">{eyebrow}</p>}
-      <h2 className="mt-1 text-xl font-black text-night">{title}</h2>
+      {eyebrow && <p className="text-xs font-black uppercase tracking-[0.16em] text-[#00A693]">{tx(eyebrow)}</p>}
+      <h2 className="mt-1 text-xl font-black text-night">{tx(title)}</h2>
       <div className="mt-5">{children}</div>
     </section>
   );
@@ -425,7 +430,7 @@ function SecurityTemplate() {
               "Owner a modifie le role Manager aujourd'hui.",
               "Comptable a exporte un journal de facturation.",
               "Invitation RH en attente de validation.",
-              "Tentative d'acces refusée sur module securite.",
+              "Tentative d'acces refusee sur module securite.",
             ].map((item) => (
               <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">{item}</div>
             ))}
@@ -633,7 +638,8 @@ function OperationsTemplate({ module }: { module: ModuleView }) {
 }
 
 export default function GenericModulePage({ module }: { module: ModuleView }) {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
   const template = getTemplate(module.key);
   const localizedModule = { ...module, name: t(`nav.${module.key}`) };
   const templateLabel = {
@@ -649,8 +655,8 @@ export default function GenericModulePage({ module }: { module: ModuleView }) {
   return (
     <ERPLayout
       title={`${module.icon} ${localizedModule.name}`}
-      subtitle={`${templateLabel}: une interface adaptee au metier, assemblee avec des widgets reutilisables.`}
-      action="Creer"
+      subtitle={`${tx(templateLabel)}: ${tx("une interface adaptee au metier, assemblee avec des widgets reutilisables.")}`}
+      action={tx("Creer")}
     >
       {template === "admin" && <AdminTemplate module={localizedModule} />}
       {template === "crm" && <CrmTemplate module={localizedModule} />}

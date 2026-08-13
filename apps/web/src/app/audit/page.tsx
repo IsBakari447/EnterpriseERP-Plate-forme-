@@ -3,6 +3,8 @@
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import DataGrid from "@shared/components/ui/DataGrid";
 import KPICard from "@shared/components/ui/KPICard";
+import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
 
 const auditRows = [
   { date: "2026-08-10 09:12", user: "Issa Bakari", action: "LOGIN_SUCCESS", module: "auth", object: "UserSession", ip: "192.168.1.183", result: "success", details: "Windows Edge Stockholm" },
@@ -13,8 +15,16 @@ const auditRows = [
 ];
 
 export default function AuditPage() {
+  const { locale } = useI18n();
+  const tc = (value: string) => translateContentText(value, locale);
+  const rows = auditRows.map((row) => ({
+    ...row,
+    result: tc(row.result),
+    details: tc(row.details),
+  }));
+
   return (
-    <ERPLayout title="Audit & Activity" subtitle="Console d'investigation pour connexions, actions sensibles, exports, roles et activites." action="Exporter">
+    <ERPLayout title={tc("Audit & Activity")} subtitle={tc("Console d'investigation pour connexions, actions sensibles, exports, roles et activites.")} action={tc("Exporter")}>
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-5">
         {[
           { label: "Actions aujourd'hui", value: "148", change: "+12%" },
@@ -26,28 +36,28 @@ export default function AuditPage() {
       </section>
 
       <section className="mt-8 rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
-        <h2 className="text-2xl font-black text-night">Filtres</h2>
+        <h2 className="text-2xl font-black text-night">{tc("Filtres")}</h2>
         <div className="mt-5 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
           {["Date", "Utilisateur", "Module", "Action", "Resultat", "Adresse IP"].map((filter) => (
-            <input key={filter} placeholder={filter} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-[#00C2A9]" />
+            <input key={filter} placeholder={tc(filter)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-[#00C2A9]" />
           ))}
         </div>
       </section>
 
       <section className="mt-8 rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
-        <h2 className="mb-5 text-2xl font-black text-night">Journal</h2>
+        <h2 className="mb-5 text-2xl font-black text-night">{tc("Journal")}</h2>
         <DataGrid
           columns={[
             { key: "date", label: "Date" },
-            { key: "user", label: "Utilisateur" },
+            { key: "user", label: tc("Utilisateur") },
             { key: "action", label: "Action" },
             { key: "module", label: "Module" },
-            { key: "object", label: "Objet" },
+            { key: "object", label: tc("Objet") },
             { key: "ip", label: "IP" },
-            { key: "result", label: "Resultat", badge: true },
-            { key: "details", label: "Details" },
+            { key: "result", label: tc("Resultat"), badge: true },
+            { key: "details", label: tc("Details") },
           ]}
-          data={auditRows}
+          data={rows}
         />
       </section>
     </ERPLayout>
