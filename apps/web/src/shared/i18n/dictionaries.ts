@@ -1,11 +1,16 @@
-﻿export type Locale = "fr" | "en" | "sv";
+﻿export type Locale = "fr" | "en" | "sv" | "de" | "es" | "pt" | "it" | "nl";
 
-export const locales: Locale[] = ["fr", "en", "sv"];
+export const locales: Locale[] = ["fr", "en", "sv", "de", "es", "pt", "it", "nl"];
 
 export const localeLabels: Record<Locale, string> = {
   fr: "FR - Francais",
   en: "EN - English",
   sv: "SV - Svenska",
+  de: "DE - Deutsch",
+  es: "ES - Espanol",
+  pt: "PT - Portugues",
+  it: "IT - Italiano",
+  nl: "NL - Nederlands",
 };
 
 export const defaultLocale: Locale = "fr";
@@ -652,6 +657,11 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
   },
   en: {},
   sv: {},
+  de: {},
+  es: {},
+  pt: {},
+  it: {},
+  nl: {},
 };
 
 dictionaries.en = {
@@ -1935,4 +1945,142 @@ dictionaries.sv = {
   "support.quick.stock": "Lager",
   "support.quick.permissions": "Behorigheter"
 };
+
+function buildLocale(base: Locale, overrides: Record<string, string>) {
+  return {
+    ...dictionaries[base],
+    ...overrides,
+  };
+}
+
+dictionaries.de = buildLocale("en", {
+  "language.label": "Sprache",
+  "auth.login": "Anmelden",
+  "auth.register": "Konto erstellen",
+  "auth.createAccount": "Konto erstellen",
+  "auth.email": "E-Mail-Adresse",
+  "auth.password": "Passwort",
+  "auth.companyName": "Firmenname",
+  "auth.fullName": "Vollstandiger Name",
+  "auth.sector": "Branche",
+  "marketing.challenges": "Herausforderungen",
+  "marketing.modules": "Module",
+  "marketing.demo": "Demo",
+  "marketing.pricing": "Preise",
+  "marketing.roadmap": "Roadmap",
+  "market.title": "Das moderne Cloud-ERP zum Verkaufen, Fakturieren, Steuern und Wachsen.",
+  "market.subtitle": "Eine integrierte Plattform fur CRM, Vertrieb, Lager, Finanzen, HR, mobile Nutzung und KI.",
+  "market.offers": "Angebote ansehen",
+  "nav.dashboard": "Dashboard",
+  "nav.clients": "Kunden",
+  "nav.products": "Produkte",
+  "nav.stock": "Lager",
+  "nav.facturation": "Rechnungen",
+  "nav.parametres": "Einstellungen",
+});
+
+dictionaries.es = buildLocale("en", {
+  "language.label": "Idioma",
+  "auth.login": "Iniciar sesion",
+  "auth.register": "Crear cuenta",
+  "auth.createAccount": "Crear cuenta",
+  "auth.email": "Correo electronico",
+  "auth.password": "Contrasena",
+  "auth.companyName": "Nombre de la empresa",
+  "auth.fullName": "Nombre completo",
+  "auth.sector": "Sector",
+  "marketing.challenges": "Desafios",
+  "marketing.modules": "Modulos",
+  "marketing.demo": "Demostracion",
+  "marketing.pricing": "Tarifas",
+  "marketing.roadmap": "Roadmap",
+  "market.title": "El ERP Cloud moderno para vender, facturar, dirigir y crecer.",
+  "market.subtitle": "Una plataforma integrada para CRM, ventas, stock, finanzas, RR. HH., mobile e IA.",
+  "market.offers": "Ver ofertas",
+  "nav.dashboard": "Panel",
+  "nav.clients": "Clientes",
+  "nav.products": "Productos",
+  "nav.stock": "Inventario",
+  "nav.facturation": "Facturas",
+  "nav.parametres": "Configuracion",
+});
+
+dictionaries.pt = buildLocale("en", {
+  "language.label": "Idioma",
+  "auth.login": "Entrar",
+  "auth.register": "Criar conta",
+  "auth.createAccount": "Criar conta",
+  "auth.email": "E-mail",
+  "auth.password": "Senha",
+  "auth.companyName": "Nome da empresa",
+  "auth.fullName": "Nome completo",
+  "auth.sector": "Setor",
+  "marketing.challenges": "Desafios",
+  "marketing.modules": "Modulos",
+  "marketing.demo": "Demonstracao",
+  "marketing.pricing": "Precos",
+  "marketing.roadmap": "Roadmap",
+  "market.title": "O ERP Cloud moderno para vender, faturar, gerir e crescer.",
+  "market.subtitle": "Uma plataforma integrada para CRM, vendas, estoque, financas, RH, mobile e IA.",
+  "market.offers": "Ver ofertas",
+  "nav.dashboard": "Painel",
+  "nav.clients": "Clientes",
+  "nav.products": "Produtos",
+  "nav.stock": "Estoque",
+  "nav.facturation": "Faturas",
+  "nav.parametres": "Configuracoes",
+});
+
+dictionaries.it = buildLocale("en", {
+  "language.label": "Lingua",
+  "auth.login": "Accedi",
+  "auth.register": "Crea account",
+  "auth.createAccount": "Crea account",
+  "auth.email": "Email",
+  "auth.password": "Password",
+  "auth.companyName": "Nome azienda",
+  "auth.fullName": "Nome completo",
+  "auth.sector": "Settore",
+  "marketing.challenges": "Sfide",
+  "marketing.modules": "Moduli",
+  "marketing.demo": "Dimostrazione",
+  "marketing.pricing": "Prezzi",
+  "marketing.roadmap": "Roadmap",
+  "market.title": "L'ERP Cloud moderno per vendere, fatturare, guidare e crescere.",
+  "market.subtitle": "Una piattaforma integrata per CRM, vendite, magazzino, finanza, HR, mobile e IA.",
+  "market.offers": "Vedi offerte",
+  "nav.dashboard": "Dashboard",
+  "nav.clients": "Clienti",
+  "nav.products": "Prodotti",
+  "nav.stock": "Magazzino",
+  "nav.facturation": "Fatture",
+  "nav.parametres": "Impostazioni",
+});
+
+dictionaries.nl = buildLocale("en", {
+  "language.label": "Taal",
+  "auth.login": "Inloggen",
+  "auth.register": "Account maken",
+  "auth.createAccount": "Account maken",
+  "auth.email": "E-mailadres",
+  "auth.password": "Wachtwoord",
+  "auth.companyName": "Bedrijfsnaam",
+  "auth.fullName": "Volledige naam",
+  "auth.sector": "Sector",
+  "marketing.challenges": "Uitdagingen",
+  "marketing.modules": "Modules",
+  "marketing.demo": "Demonstratie",
+  "marketing.pricing": "Prijzen",
+  "marketing.roadmap": "Roadmap",
+  "market.title": "De moderne Cloud ERP om te verkopen, factureren, sturen en groeien.",
+  "market.subtitle": "Een geintegreerd platform voor CRM, verkoop, voorraad, finance, HR, mobiel en AI.",
+  "market.offers": "Bekijk pakketten",
+  "nav.dashboard": "Dashboard",
+  "nav.clients": "Klanten",
+  "nav.products": "Producten",
+  "nav.stock": "Voorraad",
+  "nav.facturation": "Facturen",
+  "nav.parametres": "Instellingen",
+});
+
 
