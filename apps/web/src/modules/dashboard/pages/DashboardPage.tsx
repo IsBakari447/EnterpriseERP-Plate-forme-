@@ -18,6 +18,7 @@ import {
   type PeriodKey,
   type PriorityAction,
 } from "../data";
+import { translateDashboardText } from "../translations";
 
 function formatKpi(kpi: DecisionKpi, factor: number) {
   const value = kpi.format === "percent" ? kpi.baseValue : kpi.baseValue * factor;
@@ -66,7 +67,7 @@ function priorityHref(action: PriorityAction) {
 }
 
 export default function DashboardPage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const { sectorKey } = useSector();
   const [period, setPeriod] = useState<PeriodKey>("30d");
   const [customizing, setCustomizing] = useState(false);
@@ -74,28 +75,29 @@ export default function DashboardPage() {
   const selectedPeriod = periodOptions.find((option) => option.key === period) ?? periodOptions[2];
   const dashboard = sectorDashboards[sectorKey] ?? sectorDashboards.general;
   const selectedPeriodLabel = t(`dashboard.period.${selectedPeriod.key}`);
+  const dt = (value: string) => translateDashboardText(value, locale);
 
   const kpis = useMemo(
     () =>
       dashboard.kpis.map((kpi) => ({
-        label: kpi.label,
+        label: dt(kpi.label),
         value: formatKpi(kpi, selectedPeriod.factor),
         change: `${kpi.change} - ${selectedPeriodLabel}`,
       })),
-    [dashboard.kpis, selectedPeriod.factor, selectedPeriodLabel]
+    [dashboard.kpis, selectedPeriod.factor, selectedPeriodLabel, locale]
   );
 
   return (
     <ERPLayout
       title={t("dashboard.title")}
-      subtitle={`${dashboard.label} - ${t("dashboard.decisionSubtitle")}`}
+      subtitle={`${dt(dashboard.label)} - ${t("dashboard.decisionSubtitle")}`}
       action={t("dashboard.action")}
     >
       <section className="rounded-3xl bg-white p-5 shadow ring-1 ring-slate-200">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[#00A693]">{t("dashboard.decisionCenter")}</p>
-            <h2 className="mt-2 text-2xl font-black text-night">{t("dashboard.executiveView")} {dashboard.label}</h2>
+            <h2 className="mt-2 text-2xl font-black text-night">{t("dashboard.executiveView")} {dt(dashboard.label)}</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
               {t("dashboard.decisionText")}
             </p>
@@ -124,7 +126,7 @@ export default function DashboardPage() {
             <label key={filter.label} className="block">
               <span className="text-xs font-black uppercase tracking-wide text-slate-400">{t(`dashboard.filter.${filter.key}`)}</span>
               <select className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-bold text-slate-700 outline-none focus:border-[#00C2A9]">
-                <option>{filter.key === "sector" ? dashboard.label : filter.value}</option>
+                <option>{filter.key === "sector" ? dt(dashboard.label) : dt(filter.value)}</option>
               </select>
             </label>
           ))}
@@ -162,12 +164,12 @@ export default function DashboardPage() {
           {dashboard.priorities.map((item) => (
             <article key={item.title} className={`rounded-2xl border p-5 ${actionTone(item)}`}>
               <div className="flex items-start justify-between gap-4">
-                <h3 className="text-lg font-black">{item.title}</h3>
-                <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-black">{item.impact}</span>
+                <h3 className="text-lg font-black">{dt(item.title)}</h3>
+                <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-black">{dt(item.impact)}</span>
               </div>
-              <p className="mt-3 text-sm font-semibold opacity-80">{item.detail}</p>
+              <p className="mt-3 text-sm font-semibold opacity-80">{dt(item.detail)}</p>
               <Link href={priorityHref(item)} className="mt-5 inline-flex rounded-xl bg-white px-4 py-2 text-sm font-black text-night shadow-sm">
-                {item.action}
+                {dt(item.action)}
               </Link>
             </article>
           ))}
@@ -185,10 +187,10 @@ export default function DashboardPage() {
           <h2 className="mt-3 text-2xl font-black">{t("dashboard.projection")}</h2>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {[
-              [t("dashboard.currentBalance"), dashboard.cashflow.balance],
-              [t("dashboard.incoming"), dashboard.cashflow.incoming],
-              [t("dashboard.outgoing"), dashboard.cashflow.outgoing],
-              [t("dashboard.projection"), dashboard.cashflow.projection],
+              [t("dashboard.currentBalance"), dt(dashboard.cashflow.balance)],
+              [t("dashboard.incoming"), dt(dashboard.cashflow.incoming)],
+              [t("dashboard.outgoing"), dt(dashboard.cashflow.outgoing)],
+              [t("dashboard.projection"), dt(dashboard.cashflow.projection)],
             ].map(([label, value]) => (
               <div key={label} className="rounded-2xl bg-white/10 p-4">
                 <p className="text-sm text-white/65">{label}</p>
@@ -206,10 +208,10 @@ export default function DashboardPage() {
                 <div className="mt-1 h-3 w-3 rounded-full bg-[#00C2A9] shadow-[0_0_0_6px_rgba(0,194,169,.12)]" />
                 <div className="flex-1 rounded-2xl bg-slate-50 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h3 className="font-black text-night">{event.title}</h3>
-                    <span className="text-xs font-bold text-slate-400">{event.time}</span>
+                    <h3 className="font-black text-night">{dt(event.title)}</h3>
+                    <span className="text-xs font-bold text-slate-400">{dt(event.time)}</span>
                   </div>
-                  <p className="mt-1 text-sm font-semibold text-slate-500">{event.detail}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-500">{dt(event.detail)}</p>
                 </div>
               </div>
             ))}
@@ -222,13 +224,19 @@ export default function DashboardPage() {
           <h2 className="mb-5 text-xl font-bold text-night">{t("dashboard.modulePerformance")}</h2>
           <DataGrid
             columns={[
-              { key: "module", label: "Module" },
-              { key: "metric", label: "Indicateur" },
-              { key: "value", label: "Valeur" },
-              { key: "trend", label: "Tendance" },
-              { key: "status", label: "Statut", badge: true },
+              { key: "module", label: dt("Module") },
+              { key: "metric", label: dt("Indicateur") },
+              { key: "value", label: dt("Valeur") },
+              { key: "trend", label: dt("Tendance") },
+              { key: "status", label: dt("Statut"), badge: true },
             ]}
-            data={dashboard.moduleStats}
+            data={dashboard.moduleStats.map((row) => ({
+              ...row,
+              module: dt(row.module),
+              metric: dt(row.metric),
+              value: dt(row.value),
+              status: dt(row.status),
+            }))}
           />
         </div>
 
@@ -237,7 +245,7 @@ export default function DashboardPage() {
           <div className="mt-5 space-y-3">
             {dashboard.alerts.map((alert) => (
               <div key={alert} className="rounded-2xl bg-slate-50 p-4 text-sm font-semibold text-slate-700">
-                {alert}
+                {dt(alert)}
               </div>
             ))}
           </div>
@@ -251,7 +259,7 @@ export default function DashboardPage() {
             {dashboard.goals.map((goal) => (
               <article key={goal.label}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="font-black text-night">{goal.label}</h3>
+                  <h3 className="font-black text-night">{dt(goal.label)}</h3>
                   <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
                     {goal.progress}% {t("dashboard.reached")}
                   </span>
@@ -266,15 +274,15 @@ export default function DashboardPage() {
         </div>
 
         <div className="rounded-3xl bg-[#101b2d] p-6 text-white shadow-xl">
-          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#7df5e5]">Synthese IA</p>
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#7df5e5]">{t("dashboard.aiSummary")}</p>
           <h2 className="mt-3 text-2xl font-black">{t("dashboard.aiStructured")}</h2>
           <div className="mt-6 grid gap-4 lg:grid-cols-3">
             {dashboard.ai.map((group) => (
               <article key={group.title} className="rounded-2xl bg-white/10 p-4">
-                <h3 className="font-black">{group.title}</h3>
+                <h3 className="font-black">{dt(group.title)}</h3>
                 <ul className="mt-3 space-y-3 text-sm font-semibold leading-6 text-white/75">
                   {group.items.map((item) => (
-                    <li key={item}>{item}</li>
+                    <li key={item}>{dt(item)}</li>
                   ))}
                 </ul>
               </article>
@@ -298,7 +306,7 @@ export default function DashboardPage() {
             {planUsage.map((usage) => (
               <article key={usage.label} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <div className="flex items-center justify-between gap-3">
-                  <h3 className="font-black text-night">{usage.label}</h3>
+                <h3 className="font-black text-night">{dt(usage.label)}</h3>
                   <span className="text-sm font-black text-[#00A693]">{usage.value}</span>
                 </div>
                 <ProgressBar value={usage.progress} />
@@ -312,7 +320,7 @@ export default function DashboardPage() {
           <div className="mt-5 grid gap-3">
             {trustItems.map((item) => (
               <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-700">
-                {item}
+                {dt(item)}
               </div>
             ))}
           </div>
