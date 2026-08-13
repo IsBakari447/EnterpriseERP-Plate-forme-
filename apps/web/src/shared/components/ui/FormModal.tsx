@@ -1,6 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 
 export type FormField = {
   label: string;
@@ -17,7 +19,9 @@ export default function FormModal({
   fields: FormField[];
   submitLabel?: string;
 }) {
+  const { locale } = useI18n();
   const [saved, setSaved] = useState(false);
+  const tFixed = (value: string) => translateFixedLabel(value, locale);
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,7 +31,7 @@ export default function FormModal({
   return (
     <section className="rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
       <div className="mb-5 flex items-center justify-between gap-4">
-        <h2 className="text-xl font-black text-night">{title}</h2>
+        <h2 className="text-xl font-black text-night">{tFixed(title)}</h2>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-500">
           FormModal
         </span>
@@ -36,10 +40,10 @@ export default function FormModal({
       <form onSubmit={submit} className="grid gap-4 md:grid-cols-2">
         {fields.map((field) => (
           <label key={field.label} className="block">
-            <span className="text-sm font-black text-slate-700">{field.label}</span>
+            <span className="text-sm font-black text-slate-700">{tFixed(field.label)}</span>
             <input
               type={field.type ?? "text"}
-              placeholder={field.placeholder}
+              placeholder={field.placeholder ? tFixed(field.placeholder) : undefined}
               className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold outline-none focus:border-[#00C2A9] focus:ring-4 focus:ring-[#00C2A9]/15"
             />
           </label>
@@ -47,9 +51,9 @@ export default function FormModal({
 
         <div className="md:col-span-2">
           <button type="submit" className="rounded-xl bg-[#FF7A00] px-6 py-3 font-black text-white shadow">
-            {submitLabel}
+            {tFixed(submitLabel)}
           </button>
-          {saved && <span className="ml-3 text-sm font-black text-[#00A693]">Enregistre.</span>}
+          {saved && <span className="ml-3 text-sm font-black text-[#00A693]">{tFixed("Enregistre.")}</span>}
         </div>
       </form>
     </section>

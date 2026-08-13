@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Badge from "@shared/components/ui/Badge";
+import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 
 type Column<T> = {
   key: keyof T;
@@ -18,8 +20,10 @@ export default function DataGrid<T extends Record<string, string | number | unde
   data: T[];
   actions?: (row: T) => React.ReactNode;
 }) {
+  const { locale } = useI18n();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("Tous");
+  const tFixed = (value: string) => translateFixedLabel(value, locale);
 
   const statusColumn = columns.find((column) => String(column.key) === "status");
 
@@ -53,7 +57,7 @@ export default function DataGrid<T extends Record<string, string | number | unde
         <input
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Rechercher..."
+          placeholder={tFixed("Rechercher...")}
           className="w-full max-w-md rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-cyan-500"
         />
 
@@ -64,7 +68,7 @@ export default function DataGrid<T extends Record<string, string | number | unde
             className="rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-cyan-500"
           >
             {statuses.map((status) => (
-              <option key={status} value={status}>{status}</option>
+              <option key={status} value={status}>{tFixed(status)}</option>
             ))}
           </select>
         )}
@@ -77,7 +81,7 @@ export default function DataGrid<T extends Record<string, string | number | unde
               {columns.map((column) => (
                 <th key={String(column.key)} className="p-4">{column.label}</th>
               ))}
-              {actions && <th className="p-4">Actions</th>}
+              {actions && <th className="p-4">{tFixed("Actions")}</th>}
             </tr>
           </thead>
 
@@ -90,7 +94,7 @@ export default function DataGrid<T extends Record<string, string | number | unde
                   return (
                     <td key={String(column.key)} className="p-4">
                       {column.badge ? (
-                        <Badge color={badgeColor(String(value))}>{String(value)}</Badge>
+                        <Badge color={badgeColor(String(value))}>{tFixed(String(value))}</Badge>
                       ) : (
                         <span className="font-medium text-slate-700">{String(value ?? "")}</span>
                       )}
@@ -105,7 +109,7 @@ export default function DataGrid<T extends Record<string, string | number | unde
             {filteredData.length === 0 && (
               <tr>
                 <td colSpan={columns.length + (actions ? 1 : 0)} className="p-8 text-center text-slate-500">
-                  Aucun resultat trouve.
+                  {tFixed("Aucun resultat trouve.")}
                 </td>
               </tr>
             )}

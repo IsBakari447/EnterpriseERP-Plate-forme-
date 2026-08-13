@@ -235,7 +235,6 @@ export default function DashboardPage() {
               module: dt(row.module),
               metric: dt(row.metric),
               value: dt(row.value),
-              status: dt(row.status),
             }))}
           />
         </div>
