@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 import { ClientDto } from "../services/client.service";
 
 export default function EditClientForm({
@@ -12,6 +14,8 @@ export default function EditClientForm({
   onCancel: () => void;
   onSubmit: (id: string, client: Partial<ClientDto>) => Promise<void>;
 }) {
+  const { locale, t } = useI18n();
+  const tf = (value: string) => translateFixedLabel(value, locale);
   const [form, setForm] = useState<ClientDto>(client);
 
   async function handleSubmit(event: React.FormEvent) {
@@ -59,9 +63,9 @@ export default function EditClientForm({
         onChange={(e) => setForm({ ...form, status: e.target.value })}
         className="rounded-xl border px-4 py-3"
       >
-        <option>Prospect</option>
-        <option>Actif</option>
-        <option>En attente</option>
+        <option value="Prospect">{tf("Prospect")}</option>
+        <option value="Actif">{tf("Actif")}</option>
+        <option value="En attente">{tf("En attente")}</option>
       </select>
 
       <input
@@ -73,7 +77,7 @@ export default function EditClientForm({
 
       <div className="col-span-5 flex gap-3">
         <button className="rounded-xl bg-action px-6 py-3 font-semibold text-white">
-          Enregistrer les modifications
+          {t("profile.saveChanges")}
         </button>
 
         <button
@@ -81,7 +85,7 @@ export default function EditClientForm({
           onClick={onCancel}
           className="rounded-xl border px-6 py-3 font-semibold"
         >
-          Annuler
+          {t("common.cancel")}
         </button>
       </div>
     </form>

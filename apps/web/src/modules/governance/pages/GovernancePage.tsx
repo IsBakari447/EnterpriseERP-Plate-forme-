@@ -5,6 +5,8 @@ import ERPLayout from "@shared/components/layout/ERPLayout";
 import Badge from "@shared/components/ui/Badge";
 import KPICard from "@shared/components/ui/KPICard";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
+import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 import {
   governanceService,
   PlatformFoundation,
@@ -14,7 +16,8 @@ import {
 } from "../services/governance.service";
 
 export default function GovernancePage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
+  const tc = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
   const [foundation, setFoundation] = useState<PlatformFoundation | null>(null);
   const [roles, setRoles] = useState<RoleMatrixItem[]>([]);
   const [workflows, setWorkflows] = useState<WorkflowItem[]>([]);
@@ -43,7 +46,7 @@ export default function GovernancePage() {
       {
         label: t("governance.users"),
         value: users.length.toString(),
-        hint: "Multi-tenant",
+        hint: tc("Multi-tenant"),
         tone: "blue" as const,
       },
       {
@@ -55,7 +58,7 @@ export default function GovernancePage() {
       {
         label: t("governance.permissions"),
         value: roles.reduce((count, role) => count + role.permissions.length, 0).toString(),
-        hint: "Granulaire",
+        hint: tc("Granulaire"),
         tone: "orange" as const,
       },
       {
@@ -93,15 +96,15 @@ export default function GovernancePage() {
           <div className="grid gap-3 sm:grid-cols-2">
             {(foundation?.principles ?? []).map((principle) => (
               <div key={principle} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <div className="text-sm font-black text-night">{principle}</div>
+                <div className="text-sm font-black text-night">{tc(principle)}</div>
               </div>
             ))}
           </div>
 
           <div className="mt-5 rounded-xl border border-slate-200 p-4">
-            <div className="text-xs font-bold uppercase tracking-wide text-slate-400">Tenant isolation</div>
+            <div className="text-xs font-bold uppercase tracking-wide text-slate-400">{tc("Tenant isolation")}</div>
             <p className="mt-2 text-sm font-semibold text-slate-700">
-              {foundation?.tenantIsolation.strategy ?? "companyId on business tables"}
+              {tc(foundation?.tenantIsolation.strategy ?? "companyId on business tables")}
             </p>
           </div>
         </article>
@@ -113,8 +116,8 @@ export default function GovernancePage() {
               <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
                   <th className="px-4 py-3">{t("common.name")}</th>
-                  <th className="px-4 py-3">Email</th>
-                  <th className="px-4 py-3">Role</th>
+                  <th className="px-4 py-3">{t("profile.email")}</th>
+                  <th className="px-4 py-3">{t("common.role")}</th>
                   <th className="px-4 py-3">{t("common.status")}</th>
                 </tr>
               </thead>
@@ -130,8 +133,8 @@ export default function GovernancePage() {
                     <tr key={user.id} className="border-t border-slate-100">
                       <td className="px-4 py-3 font-bold text-night">{user.name}</td>
                       <td className="px-4 py-3 text-slate-600">{user.email}</td>
-                      <td className="px-4 py-3"><Badge color="cyan">{user.role}</Badge></td>
-                      <td className="px-4 py-3">{user.status}</td>
+                      <td className="px-4 py-3"><Badge color="cyan">{tc(user.role)}</Badge></td>
+                      <td className="px-4 py-3">{tc(user.status)}</td>
                     </tr>
                   ))
                 )}
@@ -149,7 +152,7 @@ export default function GovernancePage() {
               <div key={role.role} className="rounded-xl border border-slate-200 p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="font-black text-night">{role.role}</span>
-                  <Badge color="green">{role.permissions.length} permissions</Badge>
+                  <Badge color="green">{role.permissions.length} {tc("permissions")}</Badge>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {role.permissions.slice(0, 8).map((permission) => (
@@ -168,11 +171,11 @@ export default function GovernancePage() {
           <div className="mt-5 space-y-4">
             {workflows.map((workflow) => (
               <div key={workflow.key} className="rounded-xl border border-slate-200 p-4">
-                <div className="font-black text-night">{workflow.label}</div>
+                <div className="font-black text-night">{tc(workflow.label)}</div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {workflow.steps.map((step, index) => (
                     <span key={`${workflow.key}-${step}`} className="rounded-full bg-[#1E2A38] px-3 py-1 text-xs font-bold text-white">
-                      {index + 1}. {step}
+                      {index + 1}. {tc(step)}
                     </span>
                   ))}
                 </div>

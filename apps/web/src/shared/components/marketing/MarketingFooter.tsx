@@ -24,18 +24,18 @@ export default function MarketingFooter() {
         <div>
           <h3 className="font-semibold">{t("marketing.solutions")}</h3>
           <div className="mt-4 space-y-2 text-sm text-slate-300">
-            <p>Restaurant</p>
-            <p>Commerce</p>
-            <p>Services</p>
-            <p>PME</p>
+            <p>{t("sector.restaurant")}</p>
+            <p>{t("sector.commerce")}</p>
+            <p>{t("marketing.services")}</p>
+            <p>{t("marketing.sme")}</p>
           </div>
         </div>
 
         <div>
           <h3 className="font-semibold">{t("marketing.product")}</h3>
           <div className="mt-4 space-y-2 text-sm text-slate-300">
-            <p>CRM</p>
-            <p>Stock</p>
+            <p>{t("nav.crm")}</p>
+            <p>{t("nav.stock")}</p>
             <p>{t("nav.facturation")}</p>
             <p>{t("nav.assistant")}</p>
           </div>
@@ -43,7 +43,7 @@ export default function MarketingFooter() {
       </div>
 
       <div className="border-t border-white/10 px-6 py-5 text-center text-sm text-slate-400">
-        © 2026 EnterpriseERP. Smart business. One platform.
+        © 2026 EnterpriseERP. {t("marketing.footerSignature")}
       </div>
     </footer>
   );

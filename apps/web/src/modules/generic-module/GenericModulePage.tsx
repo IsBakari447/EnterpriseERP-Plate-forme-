@@ -288,12 +288,15 @@ function ReplenishmentWidget() {
 }
 
 function MapWidget() {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
+
   return (
     <Widget title="Carte operationnelle" eyebrow="Terrain">
       <div className="relative h-64 overflow-hidden rounded-2xl bg-gradient-to-br from-slate-100 via-cyan-50 to-emerald-50">
-        <div className="absolute left-8 top-8 rounded-full bg-[#1E2A38] px-3 py-2 text-xs font-black text-white">Site A</div>
-        <div className="absolute right-12 top-20 rounded-full bg-[#00A693] px-3 py-2 text-xs font-black text-white">Equipe</div>
-        <div className="absolute bottom-10 left-1/2 rounded-full bg-[#FF7A00] px-3 py-2 text-xs font-black text-white">Livraison</div>
+        <div className="absolute left-8 top-8 rounded-full bg-[#1E2A38] px-3 py-2 text-xs font-black text-white">{tx("Site A")}</div>
+        <div className="absolute right-12 top-20 rounded-full bg-[#00A693] px-3 py-2 text-xs font-black text-white">{tx("Equipe")}</div>
+        <div className="absolute bottom-10 left-1/2 rounded-full bg-[#FF7A00] px-3 py-2 text-xs font-black text-white">{tx("Livraison")}</div>
         <div className="absolute left-16 top-32 h-1 w-72 rotate-12 rounded-full bg-[#00C2A9]/40" />
       </div>
     </Widget>

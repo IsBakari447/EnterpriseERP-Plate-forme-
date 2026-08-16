@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 import { ClientDto } from "../services/client.service";
 
 export default function NewClientForm({
@@ -8,6 +10,8 @@ export default function NewClientForm({
 }: {
   onSubmit: (client: ClientDto) => Promise<void>;
 }) {
+  const { locale, t } = useI18n();
+  const tf = (value: string) => translateFixedLabel(value, locale);
   const [client, setClient] = useState<ClientDto>({
     name: "",
     email: "",
@@ -32,7 +36,7 @@ export default function NewClientForm({
   return (
     <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-5 gap-3">
       <input
-        placeholder="Nom"
+        placeholder={t("common.name")}
         value={client.name}
         onChange={(e) => setClient({ ...client, name: e.target.value })}
         className="rounded-xl border px-4 py-3"
@@ -40,7 +44,7 @@ export default function NewClientForm({
       />
 
       <input
-        placeholder="Email"
+        placeholder={t("profile.email")}
         type="email"
         value={client.email}
         onChange={(e) => setClient({ ...client, email: e.target.value })}
@@ -49,7 +53,7 @@ export default function NewClientForm({
       />
 
       <input
-        placeholder="Pays"
+        placeholder={t("crm.country")}
         value={client.country}
         onChange={(e) => setClient({ ...client, country: e.target.value })}
         className="rounded-xl border px-4 py-3"
@@ -61,9 +65,9 @@ export default function NewClientForm({
         onChange={(e) => setClient({ ...client, status: e.target.value })}
         className="rounded-xl border px-4 py-3"
       >
-        <option>Prospect</option>
-        <option>Actif</option>
-        <option>En attente</option>
+        <option value="Prospect">{tf("Prospect")}</option>
+        <option value="Actif">{tf("Actif")}</option>
+        <option value="En attente">{tf("En attente")}</option>
       </select>
 
       <input
@@ -77,7 +81,7 @@ export default function NewClientForm({
       />
 
       <button className="col-span-5 rounded-xl bg-action px-6 py-3 font-semibold text-white">
-        Enregistrer le client
+        {t("crm.saveClient")}
       </button>
     </form>
   );
