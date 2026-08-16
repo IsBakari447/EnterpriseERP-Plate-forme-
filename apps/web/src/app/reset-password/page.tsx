@@ -4,9 +4,11 @@ import { FormEvent, useMemo, useState } from "react";
 import { apiClient } from "../../shared/api/client";
 import LanguageSwitcher from "@shared/i18n/LanguageSwitcher";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
 
 export default function ResetPasswordPage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
+  const tx = (value: string) => translateContentText(value, locale);
   const query = useMemo(() => {
     if (typeof window === "undefined") return new URLSearchParams();
     return new URLSearchParams(window.location.search);
@@ -31,12 +33,12 @@ export default function ResetPasswordPage() {
         confirmPassword,
       });
       setStatus("success");
-      setMessage(response.data?.message ?? "Mot de passe mis a jour avec succes.");
+      setMessage(tx(response.data?.message ?? "Mot de passe mis a jour avec succes."));
       setPassword("");
       setConfirmPassword("");
     } catch (error: any) {
       setStatus("error");
-      setMessage(error?.response?.data?.message ?? "Le code est invalide ou expire.");
+      setMessage(tx(error?.response?.data?.message ?? "Le code est invalide ou expire."));
     }
   }
 

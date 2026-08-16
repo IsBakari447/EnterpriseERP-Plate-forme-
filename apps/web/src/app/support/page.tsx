@@ -131,7 +131,7 @@ export default function SupportPage() {
 
           {submittedQuestion && (
             <article className="mt-6 rounded-3xl border border-[#00C2A9]/20 bg-[#00C2A9]/5 p-5">
-              <p className="text-sm font-black uppercase tracking-[0.14em] text-[#008f7d]">AI Support</p>
+              <p className="text-sm font-black uppercase tracking-[0.14em] text-[#008f7d]">{t("support.aiSupport")}</p>
               <h3 className="mt-2 text-2xl font-black text-night">{t(response.titleKey)}</h3>
               <p className="mt-3 leading-7 text-slate-600">{t(response.answerKey)}</p>
               <div className="mt-5 flex flex-wrap gap-3">

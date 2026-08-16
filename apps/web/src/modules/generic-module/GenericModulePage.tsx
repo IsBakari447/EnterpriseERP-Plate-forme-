@@ -330,6 +330,8 @@ function AdminTemplate({ module }: { module: ModuleView }) {
 }
 
 function SecurityTemplate() {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
   const [decision, setDecision] = useState("");
 
   return (
@@ -346,11 +348,10 @@ function SecurityTemplate() {
       <section className="mt-8 rounded-3xl bg-gradient-to-br from-[#1E2A38] via-[#142235] to-[#00A990] p-7 text-white shadow-xl">
         <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr] xl:items-center">
           <div>
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#8df8e8]">RBAC Control Center</p>
-            <h2 className="mt-4 text-4xl font-black">Controlez qui peut voir, modifier, exporter et approuver.</h2>
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#8df8e8]">{tx("RBAC Control Center")}</p>
+            <h2 className="mt-4 text-4xl font-black">{tx("Controlez qui peut voir, modifier, exporter et approuver.")}</h2>
             <p className="mt-4 leading-8 text-white/75">
-              Cette page n'est pas un simple CRUD. Elle sert a piloter les roles, les permissions sensibles,
-              les demandes d'acces, l'audit et la separation des responsabilites.
+              {tx("Cette page n'est pas un simple CRUD. Elle sert a piloter les roles, les permissions sensibles, les demandes d'acces, l'audit et la separation des responsabilites.")}
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -361,8 +362,8 @@ function SecurityTemplate() {
               ["Audit", "Journal pret"],
             ].map(([label, value]) => (
               <div key={label} className="rounded-2xl bg-white/10 p-4">
-                <p className="text-sm text-white/65">{label}</p>
-                <p className="mt-2 text-xl font-black">{value}</p>
+                <p className="text-sm text-white/65">{tx(label)}</p>
+                <p className="mt-2 text-xl font-black">{tx(value)}</p>
               </div>
             ))}
           </div>
@@ -395,8 +396,8 @@ function SecurityTemplate() {
               ["Employe", "Lecture limitee selon module"],
             ].map(([role, description]) => (
               <div key={role} className="rounded-xl bg-slate-50 p-4">
-                <p className="font-black text-night">{role}</p>
-                <p className="mt-1 text-sm font-semibold text-slate-500">{description}</p>
+                <p className="font-black text-night">{tx(role)}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-500">{tx(description)}</p>
               </div>
             ))}
           </div>
@@ -416,12 +417,12 @@ function SecurityTemplate() {
             data={accessRequests}
             actions={() => (
               <div className="flex gap-2">
-                <button type="button" onClick={() => setDecision("Demande approuvee.")} className="rounded-lg bg-[#00C2A9]/10 px-3 py-1.5 text-xs font-black text-[#008f7d]">Approuver</button>
-                <button type="button" onClick={() => setDecision("Demande refusee.")} className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-black text-red-700">Refuser</button>
+                <button type="button" onClick={() => setDecision("Demande approuvee.")} className="rounded-lg bg-[#00C2A9]/10 px-3 py-1.5 text-xs font-black text-[#008f7d]">{tx("Approuver")}</button>
+                <button type="button" onClick={() => setDecision("Demande refusee.")} className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-black text-red-700">{tx("Refuser")}</button>
               </div>
             )}
           />
-          {decision && <p className="mt-3 rounded-xl bg-slate-50 p-3 text-sm font-black text-[#00A693]">{decision}</p>}
+          {decision && <p className="mt-3 rounded-xl bg-slate-50 p-3 text-sm font-black text-[#00A693]">{tx(decision)}</p>}
         </Widget>
 
         <Widget title="Audit securite" eyebrow="Journal">
@@ -432,7 +433,7 @@ function SecurityTemplate() {
               "Invitation RH en attente de validation.",
               "Tentative d'acces refusee sur module securite.",
             ].map((item) => (
-              <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">{item}</div>
+              <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">{tx(item)}</div>
             ))}
           </div>
         </Widget>

@@ -3,6 +3,8 @@
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { apiOriginUrl } from "@shared/api/client";
+import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
 
 type CheckState = "checking" | "online" | "degraded" | "offline";
 
@@ -42,7 +44,7 @@ function badgeClass(state: CheckState) {
   return "bg-slate-100 text-slate-600";
 }
 
-function label(state: CheckState) {
+function stateLabel(state: CheckState) {
   return {
     checking: "Verification",
     online: "Operationnel",
@@ -52,6 +54,8 @@ function label(state: CheckState) {
 }
 
 export default function StatusPage() {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(value, locale);
   const [checks, setChecks] = useState<ServiceCheck[]>(initialChecks);
   const [lastUpdated, setLastUpdated] = useState<string>("");
 
@@ -100,26 +104,26 @@ export default function StatusPage() {
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <span className="rounded-full bg-[#1E2A38] px-4 py-2 text-sm font-black text-white">
-              Statut plateforme
+              {tx("Statut plateforme")}
             </span>
-            <h1 className="mt-6 text-5xl font-black">Disponibilite EnterpriseERP Cloud.</h1>
+            <h1 className="mt-6 text-5xl font-black">{tx("Disponibilite EnterpriseERP Cloud.")}</h1>
             <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-              Cette page verifie les endpoints de sante de l'API, la disponibilite des dependances et la latence observee.
+              {tx("Cette page verifie les endpoints de sante de l'API, la disponibilite des dependances et la latence observee.")}
             </p>
           </div>
           <button onClick={runChecks} className="rounded-2xl bg-[#FF7A00] px-6 py-4 font-black text-white shadow-lg shadow-orange-500/20">
-            Actualiser
+            {tx("Actualiser")}
           </button>
         </div>
 
         <section className="mt-10 rounded-3xl bg-white p-7 shadow ring-1 ring-slate-200">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h2 className="text-2xl font-black">Etat global</h2>
-              <p className="mt-2 text-slate-500">Derniere verification: {lastUpdated || "en cours"}</p>
+              <h2 className="text-2xl font-black">{tx("Etat global")}</h2>
+              <p className="mt-2 text-slate-500">{tx("Derniere verification")}: {lastUpdated || tx("en cours")}</p>
             </div>
             <span className={`rounded-full px-4 py-2 text-sm font-black ${badgeClass(globalState)}`}>
-              {label(globalState)}
+              {tx(stateLabel(globalState))}
             </span>
           </div>
         </section>
@@ -129,17 +133,17 @@ export default function StatusPage() {
             <article key={item.id} className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-black">{item.name}</h2>
-                  <p className="mt-2 text-sm font-semibold text-slate-500">{item.description}</p>
+                  <h2 className="text-xl font-black">{tx(item.name)}</h2>
+                  <p className="mt-2 text-sm font-semibold text-slate-500">{tx(item.description)}</p>
                 </div>
                 <span className={`rounded-full px-4 py-2 text-sm font-black ${badgeClass(item.state)}`}>
-                  {label(item.state)}
+                  {tx(stateLabel(item.state))}
                 </span>
               </div>
               <div className="mt-5 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-700">
-                <p>{item.detail}</p>
+                <p>{tx(item.detail)}</p>
                 <p className="mt-2">Endpoint: {item.path}</p>
-                <p className="mt-2">Latence: {item.latency ? `${item.latency} ms` : "non disponible"}</p>
+                <p className="mt-2">{tx("Latence")}: {item.latency ? `${item.latency} ms` : tx("non disponible")}</p>
               </div>
             </article>
           ))}

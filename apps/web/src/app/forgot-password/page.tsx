@@ -4,9 +4,11 @@ import { FormEvent, useState } from "react";
 import { apiClient } from "../../shared/api/client";
 import LanguageSwitcher from "@shared/i18n/LanguageSwitcher";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
 
 export default function ForgotPasswordPage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
+  const tx = (value: string) => translateContentText(value, locale);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -19,10 +21,10 @@ export default function ForgotPasswordPage() {
     try {
       const response = await apiClient.post("/auth/forgot-password", { email });
       setStatus("success");
-      setMessage(response.data?.message ?? "Un code de verification a ete envoye si le compte existe.");
+      setMessage(tx(response.data?.message ?? "Un code de verification a ete envoye si le compte existe."));
     } catch {
       setStatus("error");
-      setMessage("Impossible d'envoyer la demande pour le moment.");
+      setMessage(tx("Impossible d'envoyer la demande pour le moment."));
     }
   }
 
