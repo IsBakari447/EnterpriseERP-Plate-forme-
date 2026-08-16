@@ -1,13 +1,31 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import KPICard from "@shared/components/ui/KPICard";
 import DataGrid from "@shared/components/ui/DataGrid";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { orders, ventesKpis } from "@modules/ventes/data";
+import { salesService, type SalesKpi, type SalesOrder } from "../services/sales.service";
 
 export default function VentesPage() {
   const { t } = useI18n();
+  const [kpis, setKpis] = useState<SalesKpi[]>(ventesKpis);
+  const [salesOrders, setSalesOrders] = useState<SalesOrder[]>(orders);
+
+  useEffect(() => {
+    async function loadSales() {
+      const [nextKpis, nextOrders] = await Promise.all([
+        salesService.getKpis(),
+        salesService.getOrders(),
+      ]);
+
+      setKpis(nextKpis);
+      setSalesOrders(nextOrders);
+    }
+
+    loadSales();
+  }, []);
 
   return (
     <ERPLayout
@@ -16,7 +34,7 @@ export default function VentesPage() {
       action={t("sales.action")}
     >
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {ventesKpis.map((kpi) => (
+        {kpis.map((kpi) => (
           <KPICard key={kpi.label} {...kpi} />
         ))}
       </section>
@@ -34,7 +52,7 @@ export default function VentesPage() {
             { key: "date", label: t("common.date") },
             { key: "status", label: t("common.status"), badge: true },
           ]}
-          data={orders}
+          data={salesOrders}
         />
       </section>
     </ERPLayout>

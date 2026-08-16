@@ -1,27 +1,42 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import KPICard from "@shared/components/ui/KPICard";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { assistantKpis, suggestions } from "@modules/assistant/data";
+import { assistantService, type AssistantKpi, type AssistantSuggestion } from "../services/assistant.service";
 
 export default function AssistantPage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const [question, setQuestion] = useState("");
   const [conversation, setConversation] = useState({
     question: t("ai.sampleQuestion"),
     answer: t("ai.sampleAnswer"),
   });
+  const [kpis, setKpis] = useState<AssistantKpi[]>(assistantKpis);
+  const [suggestionRows, setSuggestionRows] = useState<AssistantSuggestion[]>(suggestions);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    async function loadAssistant() {
+      const [nextKpis, nextSuggestions] = await Promise.all([
+        assistantService.getKpis(),
+        assistantService.getSuggestions(),
+      ]);
+
+      setKpis(nextKpis);
+      setSuggestionRows(nextSuggestions);
+    }
+
+    loadAssistant();
+  }, []);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!question.trim()) return;
-    setConversation({
-      question,
-      answer: `${t("ai.sampleAnswer")} ${question}`,
-    });
+    const nextConversation = await assistantService.chat(question, t("ai.sampleAnswer"), locale);
+    setConversation(nextConversation);
     setQuestion("");
   }
 
@@ -32,7 +47,7 @@ export default function AssistantPage() {
       action={t("ai.newReport")}
     >
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {assistantKpis.map((kpi) => (
+        {kpis.map((kpi) => (
           <KPICard key={kpi.labelKey} label={t(kpi.labelKey)} value={kpi.value} change={kpi.change} />
         ))}
       </section>
@@ -81,14 +96,14 @@ export default function AssistantPage() {
           <h2 className="text-xl font-bold text-night">{t("ai.suggestions")}</h2>
 
           <div className="mt-5 space-y-3">
-            {suggestions.map((item) => (
+            {suggestionRows.map((item) => (
               <button
                 key={item.key}
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   const text = t(item.key);
                   setQuestion(text);
-                  setConversation({ question: text, answer: `${t("ai.sampleAnswer")} ${text}` });
+                  setConversation(await assistantService.chat(text, t("ai.sampleAnswer"), locale));
                 }}
                 className="w-full rounded-xl bg-slate-50 p-4 text-left text-sm font-bold text-slate-700 transition hover:bg-cyan-50"
               >

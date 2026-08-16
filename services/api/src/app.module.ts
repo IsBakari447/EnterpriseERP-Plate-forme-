@@ -11,6 +11,7 @@ import { UsersModule } from "./modules/users/users.module";
 import { ProfileModule } from "./modules/profile/profile.module";
 import { AuditModule } from "./modules/audit/audit.module";
 import { CoreModule } from "./common/core/core.module";
+import { OperationsModule } from "./modules/operations/operations.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CoreModule } from "./common/core/core.module";
     UsersModule,
     ProfileModule,
     AuditModule,
+    OperationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
