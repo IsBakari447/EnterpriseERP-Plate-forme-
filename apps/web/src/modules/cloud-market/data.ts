@@ -20,7 +20,7 @@ export const solutionCards = [
   {
     title: "Operations et stock",
     tag: "Ops",
-    description: "Catalogue produits, seuils critiques, stock faible et preparation reapprovisionnement.",
+    description: "Catalogue produits, seuils critiques, stock faible et actions de reapprovisionnement.",
     points: ["SKU", "Alertes stock", "Valeur inventaire"],
   },
   {
@@ -30,10 +30,10 @@ export const solutionCards = [
     points: ["Health checks", "Readiness", "Migrations"],
   },
   {
-    title: "Mobile et IA ready",
-    tag: "Future",
-    description: "Fondation preparee pour EnterpriseERP.Mobile, automatisations et assistant intelligent.",
-    points: ["Mobile sync", "Assistant IA", "Workflows"],
+    title: "Agents IA et mobile",
+    tag: "Beta",
+    description: "Assistant IA disponible, experience mobile et automatisations avancees en deploiement progressif.",
+    points: ["Assistant IA", "Mobile", "Workflows"],
   },
 ];
 
@@ -54,14 +54,14 @@ export const pricingPlans = [
     name: "Enterprise Cloud",
     price: "Sur mesure",
     highlight: "Pour multi-sites, integrations et exigences avancees.",
-    features: ["Multi-tenant", "SSO ready", "Audit et SLA", "Integrations dediees"],
+    features: ["Multi-tenant", "Roles avances", "Audit securite", "Integrations dediees"],
   },
 ];
 
 export const securityItems = [
   {
     title: "Acces et roles",
-    description: "Preparation RBAC pour controler les droits par utilisateur, role et entreprise.",
+    description: "Controle d'acces par role, permissions granulaires et isolation par entreprise.",
   },
   {
     title: "Cloud readiness",
@@ -69,11 +69,11 @@ export const securityItems = [
   },
   {
     title: "Audit et tracabilite",
-    description: "Roadmap audit log pour suivre actions sensibles, connexions et changements de donnees.",
+    description: "Journal d'audit pour suivre les actions sensibles, connexions et changements de donnees.",
   },
   {
     title: "Protection donnees",
-    description: "Variables d'environnement, secrets hors Git, migrations versionnees et retention planifiee.",
+    description: "Variables d'environnement, secrets hors Git, migrations versionnees et politique de retention documentee.",
   },
 ];
 
@@ -83,10 +83,10 @@ export const integrationItems = [
   "API REST produits",
   "API REST factures",
   "Exports BI",
-  "Webhooks planned",
-  "Payment providers planned",
-  "Email and calendar planned",
-  "Accounting connectors planned",
+  "Webhooks",
+  "Paiements",
+  "Email et calendrier",
+  "Connecteurs comptables",
 ];
 
 export const onboardingSteps = [
@@ -109,12 +109,12 @@ export const onboardingSteps = [
 ];
 
 export const competitorSignals = [
-  "Suite integree comme les ERP Cloud modernes",
-  "Essai gratuit visible et limites transparentes",
-  "Dashboard dirigeant oriente decision",
-  "Architecture API-first pour integrations",
-  "Mobile et IA dans la proposition de valeur",
-  "Securite et readiness presentes dans le produit",
+  "CRM, ventes, stock et finance dans une seule plateforme",
+  "Essai gratuit avec limites transparentes",
+  "Dashboard dirigeant oriente actions",
+  "Architecture API-first pour connecter l'ecosysteme",
+  "Assistant IA integre aux processus metier",
+  "Securite, roles et audit presentes clairement",
 ];
 
 export const demoHighlights = [
@@ -157,11 +157,11 @@ export const faqs = [
   },
   {
     question: "Peut-on connecter l'application mobile EUR",
-    answer: "Oui, l'architecture Cloud expose une API REST et une roadmap de synchronisation avec EnterpriseERP.Mobile.",
+    answer: "Oui, l'architecture Cloud expose une API REST. L'experience mobile avancee sera livree progressivement autour de cette API.",
   },
   {
     question: "Le produit est-il pret pour les integrations EUR",
-    answer: "La base API-first existe deja. Les webhooks, paiement, email, calendrier et connecteurs comptables sont positionnes dans la roadmap.",
+    answer: "La base API-first existe deja. Les connecteurs externes sont presentes avec un statut clair: disponible, beta ou prevu.",
   },
 ];
 
@@ -187,5 +187,5 @@ export const platformStatus = [
   { service: "Web app", status: "Operational", detail: "Next.js frontend build OK" },
   { service: "Cloud API", status: "Operational", detail: "NestJS API build OK" },
   { service: "Database", status: "Ready", detail: "Prisma schema valid" },
-  { service: "Mobile sync", status: "Planned", detail: "EnterpriseERP.Mobile integration roadmap" },
+  { service: "Mobile API", status: "Beta", detail: "EnterpriseERP.Mobile consumes the Cloud API progressively" },
 ];

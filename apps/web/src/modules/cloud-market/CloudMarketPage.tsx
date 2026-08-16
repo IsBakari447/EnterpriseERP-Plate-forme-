@@ -14,7 +14,14 @@ import {
 
 export function CloudMarketPage() {
   const { t } = useI18n();
-  const solutionStatuses = ["available", "available", "available", "available", "beta", "planned"];
+  const solutionStatuses = ["available", "available", "available", "available", "beta", "beta"];
+  const integrationStatuses = ["available", "available", "available", "available", "available", "beta", "planned", "planned", "planned"];
+  const statusClass = (status: string) =>
+    status === "available"
+      ? "bg-emerald-50 text-emerald-700"
+      : status === "beta"
+        ? "bg-cyan-50 text-cyan-700"
+        : "bg-slate-100 text-slate-600";
 
   return (
     <main className="min-h-screen bg-[#F4F7FB] text-night">
@@ -96,13 +103,7 @@ export function CloudMarketPage() {
               <span className="rounded-full bg-[#00C2A9]/10 px-3 py-1 text-xs font-black text-[#008f7d]">
                 {t(`market.solution.${index}.tag`)}
               </span>
-              <span className={`ml-2 rounded-full px-3 py-1 text-xs font-black ${
-                solutionStatuses[index] === "available"
-                  ? "bg-emerald-50 text-emerald-700"
-                  : solutionStatuses[index] === "beta"
-                    ? "bg-cyan-50 text-cyan-700"
-                    : "bg-slate-100 text-slate-600"
-              }`}>
+              <span className={`ml-2 rounded-full px-3 py-1 text-xs font-black ${statusClass(solutionStatuses[index])}`}>
                 {t(`market.status.${solutionStatuses[index]}`)}
               </span>
               <h2 className="mt-4 text-2xl font-black">{t(`market.solution.${index}.title`)}</h2>
@@ -210,11 +211,14 @@ export function CloudMarketPage() {
 
         <div className="rounded-3xl bg-white p-7 shadow ring-1 ring-slate-200">
           <h2 className="text-3xl font-black">{t("market.integrations")}</h2>
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {integrationItems.map((item, index) => (
-              <span key={item} className="rounded-full bg-slate-100 px-4 py-2 text-sm font-black text-slate-700">
-                {t(`market.integration.${index}`)}
-              </span>
+              <div key={item} className="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-3">
+                <span className="text-sm font-black text-slate-700">{t(`market.integration.${index}`)}</span>
+                <span className={`rounded-full px-3 py-1 text-xs font-black ${statusClass(integrationStatuses[index])}`}>
+                  {t(`market.status.${integrationStatuses[index]}`)}
+                </span>
+              </div>
             ))}
           </div>
         </div>
