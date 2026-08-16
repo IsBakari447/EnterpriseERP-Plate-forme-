@@ -1,441 +1,174 @@
 # EnterpriseERP Cloud
 
-> **EnterpriseERP Cloud** is a modern AI-powered multi-tenant ERP platform designed for small and medium-sized businesses.
->
-> One Platform. Every Business. Powered by AI.
+> EnterpriseERP Cloud is the web and API foundation of the EnterpriseERP Platform: a multi-tenant, multi-industry, AI-assisted SaaS ERP for small and medium businesses.
 
----
+## Product Goal
 
-# Overview
-
-EnterpriseERP Cloud centralizes every critical business process into a single SaaS platform.
-
-Instead of using multiple disconnected applications, companies can manage:
-
-- CRM
-- Sales
-- Products
-- Inventory
-- Purchasing
-- Invoicing
-- Payments
-- Finance
-- Human Resources
-- Analytics
-- AI Assistant
-
-from one secure cloud platform.
-
-The platform supports multiple industries through configurable business modules.
-
----
-
-# Product Family
-
-EnterpriseERP is built as a platform.
+EnterpriseERP must not become a collection of disconnected ERP pages. The target is a secure SaaS platform that adapts modules, navigation, dashboards, workflows, permissions and AI assistance to each company's sector.
 
 ```text
 EnterpriseERP Platform
-
-├── EnterpriseERP Cloud
-├── EnterpriseERP Mobile
-├── Retail Suite
-├── Restaurant Suite
-├── Construction Suite
-├── Healthcare Suite
-├── Hospitality Suite
-├── Manufacturing Suite
-├── Education Suite
-└── Transport Suite
+  -> EnterpriseERP Cloud
+  -> EnterpriseERP Retail Suite
+  -> EnterpriseERP Mobile
+  -> EnterpriseERP AI
+  -> EnterpriseERP API & Integrations
 ```
 
-Every suite shares the same ERP Core.
+## Current Scope
 
----
+The current repository contains:
 
-# Competitive Advantages
+- `apps/web`: Next.js web application
+- `services/api`: NestJS API with Prisma and PostgreSQL
+- `docs`: product, roadmap and usage documentation
+- `docker-compose.yml`: local PostgreSQL and infrastructure foundation
 
-EnterpriseERP Cloud has been designed to compete with modern cloud ERP platforms.
+Active application modules include dashboard, CRM, products, stock, invoices, roles, permissions, profile, audit, security center, AI assistant, AI Sales Agent, AI Studio and sector pages.
 
-Highlights include:
+## Priority Roadmap
 
-- AI-powered ERP
-- Multi-tenant architecture
-- Modular business engine
-- Industry-specific suites
-- Responsive web interface
-- Mobile-ready architecture
-- Executive dashboards
-- API-first design
-- Role-based security
-- Cloud-native deployment
-- PostgreSQL + Prisma foundation
-- SaaS subscription model
-- Future Marketplace support
+Development should follow this order:
 
----
+1. Stabilization: clean build, reproducible setup, no secrets in Git, documented commands.
+2. Multi-tenant foundation: `Company`, `User`, `CompanyMember`, `Role`, `Permission`, `Session`, `AuditLog`.
+3. Professional authentication: register, login, refresh, logout, password reset, sessions, brute-force protection.
+4. Profile and account security.
+5. RBAC enforced by the API.
+6. Audit and Security Center.
+7. Sector Engine and business templates.
+8. Dashboard 2.0, search, command palette, notifications and tasks.
+9. Workflow engine, approvals, documents, imports, reporting and finance.
+10. Integrations, public API, workers, AI agents, onboarding, subscriptions, monitoring and tests.
 
-# Current Features
+See [docs/ROADMAP_PLATFORM.md](docs/ROADMAP_PLATFORM.md) for the full platform roadmap.
 
-## Business Modules
+## Requirements
 
-- Dashboard
-- CRM
-- Products
-- Inventory
-- Invoices
-- Payments
-- Users
-- Roles
-- Permissions
-- Company Management
-- Authentication
+- Node.js 22
+- npm
+- Docker Desktop or a local PostgreSQL instance
+- PostgreSQL database available through `DATABASE_URL`
 
----
+## Environment
 
-## Platform Features
-
-- JWT Authentication
-- Refresh Tokens
-- Company Isolation
-- Role Catalog
-- Permission Catalog
-- Executive Dashboard
-- Health Monitoring
-- SaaS Landing Pages
-- API-first Architecture
-
----
-
-# Supported Industries
-
-EnterpriseERP currently supports:
-
-- General Business
-- Retail
-- Restaurant
-- Construction
-- Healthcare
-- Education
-- Hospitality
-- Manufacturing
-- Transportation
-
-Each industry activates different modules while sharing the same ERP core.
-
----
-
-# Technology Stack
-
-## Frontend
-
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-- Recharts
-
-## Backend
-
-- NestJS
-- Prisma ORM
-- PostgreSQL
-- JWT Authentication
-
-## Infrastructure
-
-- Docker
-- Redis
-- PostgreSQL
-
----
-
-# Product Architecture
-
-```text
-Users
-
-↓
-
-Next.js Web
-
-↓
-
-NestJS API
-
-↓
-
-Authentication
-Tenant Resolution
-RBAC
-Business Modules
-Audit Logs
-
-↓
-
-Prisma ORM
-
-↓
-
-PostgreSQL
-```
-
-Future services:
-
-- Redis
-- Background Workers
-- Object Storage
-- Email Service
-- Billing
-- AI Services
-- Monitoring
-
----
-
-# Multi-Tenant Architecture
-
-EnterpriseERP Cloud is designed around complete company isolation.
-
-Core rules:
-
-- every record belongs to a company
-- authenticated users work inside one company
-- all queries are filtered by companyId
-- no cross-company access
-- isolation is enforced server-side
-
-Current tenant-aware modules:
-
-- CRM
-- Products
-- Inventory
-- Invoices
-
-Upcoming:
-
-- Finance
-- HR
-- Suppliers
-- Reports
-
----
-
-# Industry Engine
-
-EnterpriseERP uses one ERP Core for every industry.
-
-Current industries:
-
-- General
-- Retail
-- Restaurant
-- Construction
-- Healthcare
-- Education
-- Hospitality
-- Manufacturing
-- Transport
-
-Each sector defines:
-
-- modules
-- KPIs
-- workflows
-- navigation
-- dashboard configuration
-
-Example:
-
-```http
-GET /api/platform/sectors
-```
-
----
-
-# Module Registry
-
-Every business module will be centrally registered.
-
-Example:
-
-```ts
-{
-  key: "inventory",
-  label: "Inventory",
-  route: "/inventory",
-  api: "/api/products",
-  permission: "inventory.read",
-  status: "active"
-}
-```
-
-The registry powers:
-
-- navigation
-- permissions
-- dashboards
-- mobile
-- API
-- documentation
-
----
-
-# Project Structure
-
-```text
-enterpriseerp-cloud/
-
-apps/
-    web/
-    mobile/
-    marketing/
-
-services/
-    api/
-    worker/
-
-packages/
-    ui/
-    sdk/
-    types/
-    utils/
-    config/
-
-docs/
-
-docker/
-
-scripts/
-```
-
----
-
-# Quick Start
-
-Clone the project
+Copy examples before running locally:
 
 ```bash
-git clone https://github.com/your-org/enterpriseerp-cloud.git
-cd enterpriseerp-cloud
+cp .env.example .env
+cp services/api/.env.example services/api/.env
+cp apps/web/.env.local.example apps/web/.env.local
 ```
 
-Install
+If `apps/web/.env.local.example` does not exist yet, create `apps/web/.env.local` with:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+Never commit real secrets. Use long random values for `JWT_SECRET` in production and configure Render environment variables outside Git.
+
+## Install
+
+Install dependencies from the repository root:
 
 ```bash
 npm install
+npm --prefix apps/web install
+npm --prefix services/api install
 ```
 
-Start infrastructure
+## Local Infrastructure
+
+Start PostgreSQL:
 
 ```bash
 docker compose up -d
 ```
 
-Run API
+Generate Prisma client and apply migrations:
 
 ```bash
-cd services/api
-
-npm install
-
 npm run prisma:generate
-
 npm run prisma:deploy
-
-npm run dev
 ```
 
-Run Web
+For local development migrations:
 
 ```bash
-cd apps/web
-
-npm install
-
-npm run dev
+npm --prefix services/api run prisma:migrate
 ```
 
-Root shortcuts
+## Run Locally
+
+Use two terminals.
+
+Terminal 1, API:
 
 ```bash
-npm run dev
-npm run dev:web
 npm run dev:api
-npm run build
-npm run qa
 ```
 
----
+API default URL:
 
-# Default URLs
-
-Web
-
+```text
+http://localhost:4000
 ```
+
+Terminal 2, web:
+
+```bash
+npm run dev:web
+```
+
+Web default URL:
+
+```text
 http://localhost:3000
 ```
 
-API
+## Build And QA
 
-```
-http://localhost:4000/api
-```
+Build everything:
 
----
-
-# Environment Variables
-
-API
-
-```env
-DATABASE_URL=
-JWT_SECRET=
-JWT_ACCESS_EXPIRES_IN=15m
-JWT_REFRESH_EXPIRES_IN=7d
-CORS_ORIGIN=http://localhost:3000
-PORT=4000
+```bash
+npm run build
 ```
 
-Web
+Run the current QA gate:
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:4000/api
+```bash
+npm run qa
 ```
 
----
+The QA command currently runs:
 
-# Authentication
+- Next.js production build
+- NestJS TypeScript build
+- Prisma schema validation
 
-EnterpriseERP Cloud uses JWT Authentication.
+## API
 
-Endpoints
+Health:
 
+```text
+GET /health
+GET /health/ready
 ```
+
+Authentication:
+
+```text
 POST /api/auth/register
 POST /api/auth/login
 POST /api/auth/refresh
 POST /api/auth/logout
-GET /api/auth/me
+GET  /api/auth/me
 ```
 
-Successful login returns
+Platform:
 
-```json
-{
-  "accessToken": "...",
-  "refreshToken": "...",
-  "tokenType": "Bearer",
-  "expiresIn": "15m"
-}
-```
-
----
-
-# API
-
-Platform
-
-```
+```text
 GET /api/platform/sectors
 GET /api/platform/modules
 GET /api/platform/workflows
@@ -444,220 +177,73 @@ GET /api/platform/permissions
 GET /api/platform/roadmap
 ```
 
-Health
+Business examples:
 
-```
-GET /api/health
-GET /api/health/ready
-```
-
-Business
-
-```
+```text
 GET /api/clients
 GET /api/products
 GET /api/invoices
 ```
 
----
+## Security Rules
 
-# Security
+Core product rules:
 
-Current
+- Every business record must belong to a company through `companyId`.
+- A user from Company A must never read or mutate Company B data.
+- Permissions must be enforced by the API, not only by React.
+- Important operations must be audit logged.
+- Secrets must remain in environment variables, never in Git.
 
-- JWT Authentication
-- Refresh Tokens
-- RBAC
-- Tenant Isolation
-- Company Context
-- Exception Filter
-- CORS
-- Protected Routes
+## Git Workflow
 
-Roadmap
-
-- MFA
-- SSO
-- Audit Logs
-- Rate Limiting
-- Helmet
-- Login Throttling
-- Secret Rotation
-- Backup Verification
-
----
-
-# Database
-
-Development
-
-```bash
-npx prisma migrate dev
-```
-
-Production
-
-```bash
-npx prisma migrate deploy
-```
-
-Validation
-
-```bash
-npx prisma validate
-```
-
----
-
-# Testing Strategy
-
-Target coverage
-
-- Unit Tests
-- API Tests
-- Integration Tests
-- E2E Tests
-- Permission Tests
-- Tenant Tests
-
-Critical rule
-
-```
-Company A must never access Company B data.
-```
-
----
-
-# CI/CD
-
-Pipeline
+Recommended workflow:
 
 ```text
-Install
-
-↓
-
-Lint
-
-↓
-
-Type Check
-
-↓
-
-Tests
-
-↓
-
-Prisma Validation
-
-↓
-
-Build
-
-↓
-
-Deploy Staging
-
-↓
-
-Manual Approval
-
-↓
-
-Production
+main        -> stable production-ready branch
+develop     -> integration branch
+feature/... -> new work
 ```
 
----
-
-# Mobile Strategy
-
-EnterpriseERP Mobile shares the same backend.
+Current active refactor branch:
 
 ```text
-EnterpriseERP Mobile
-
-↓
-
-EnterpriseERP API
-
-↓
-
-PostgreSQL
+platform-refactor
 ```
 
-No duplicated business logic.
+## Deployment
 
----
+Render services should configure environment variables in the Render dashboard:
 
-# Development Status
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `JWT_ACCESS_EXPIRES_IN`
+- `JWT_REFRESH_EXPIRES_IN`
+- `CORS_ORIGIN`
+- `NEXT_PUBLIC_API_URL`
+- SMTP variables if password reset email is enabled
 
-## Completed
+Run production database migrations with:
 
-- CRM
-- Products
-- Inventory
-- Invoices
-- Authentication
-- Roles
-- Permissions
-- Dashboard
-- Sector Registry
-
-## In Progress
-
-- Multi-Tenant
-- Audit Logs
-- Billing
-- AI Assistant
-- Mobile Sync
-
-## Planned
-
-- Marketplace
-- SDK
-- Webhooks
-- Workers
-- Redis Cache
-- Partner Portal
-
----
-
-# Documentation
-
-Additional documentation:
-
-```
-docs/
-
-ARCHITECTURE.md
-API.md
-SECURITY.md
-MULTI_TENANT.md
-SECTOR_ENGINE.md
-ROADMAP.md
+```bash
+npm --prefix services/api run prisma:deploy
 ```
 
----
+## Documentation
 
-# Roadmap
+Important files:
 
-Current priorities
+- [docs/ROADMAP_PLATFORM.md](docs/ROADMAP_PLATFORM.md)
+- [docs/ROADMAP_SAAS_PROFESSIONNEL.md](docs/ROADMAP_SAAS_PROFESSIONNEL.md)
+- [docs/i18n.md](docs/i18n.md)
+- [docs/MANUEL_UTILISATION_SUITE_ENTERPRISEERP.md](docs/MANUEL_UTILISATION_SUITE_ENTERPRISEERP.md)
 
-- Complete Tenant Isolation
-- Finish RBAC
-- Sector Engine
-- Mobile Integration
-- Billing
-- AI
-- Marketplace
+## Current Validation
 
----
+Last verified local command:
 
-# License
+```bash
+npm run qa
+```
 
-EnterpriseERP Cloud
-
-Copyright © EnterpriseERP
-
-All rights reserved.
+Result: web build, API build and Prisma validation pass.
