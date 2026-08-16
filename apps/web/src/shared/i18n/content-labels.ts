@@ -379,6 +379,74 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "A planifier": "To schedule",
     Hier: "Yesterday",
     "Aujourd'hui": "Today",
+    "Facturation operationnelle": "Billing operations",
+    "Paiements operationnels": "Payment operations",
+    "Finances operationnelles": "Finance operations",
+    "Comptabilite operationnelle": "Accounting operations",
+    "Finance operationnelle": "Finance operations",
+    "PDF signes": "Signed PDFs",
+    "Relance": "Follow-up",
+    "Paiement": "Payment",
+    "Historique": "History",
+    "Signature": "Signature",
+    "Relances": "Follow-ups",
+    "Lettrage": "Reconciliation",
+    "Paiement partiel recu": "Partial payment received",
+    "Relance automatique envoyee": "Automatic reminder sent",
+    "Signature digitale en attente": "Digital signature pending",
+    "Export comptable pret": "Accounting export ready",
+    "L'IA recommande de relancer les factures echeance J+7 et d'exporter les ecritures comptables cette semaine.":
+      "AI recommends following up invoices due in 7 days and exporting accounting entries this week.",
+    "Signer": "Sign",
+    "Relancer": "Follow up",
+    "Creer email": "Create email",
+    "Voir historique": "View history",
+    "L'IA recommande de relancer les clients sans commande depuis 60 jours et de proposer une offre adaptee a leur historique.":
+      "AI recommends following up customers with no order for 60 days and offering a proposal adapted to their history.",
+    "Impossible de charger les factures. Verifiez que l'API est lancee.":
+      "Unable to load invoices. Check that the API is running.",
+    "Impossible de charger les produits. Verifiez que l'API est lancee.":
+      "Unable to load products. Check that the API is running.",
+    "Coordonnees": "Contact details",
+    "Email, telephone, pays, responsable": "Email, phone, country, owner",
+    "42 800 EUR sur 12 mois": "42,800 EUR over 12 months",
+    "8 payees, 2 en attente": "8 paid, 2 pending",
+    "14 historiques": "14 historical orders",
+    "Produits achetes": "Purchased products",
+    "6 references principales": "6 main references",
+    "Tickets": "Tickets",
+    "2 demandes ouvertes": "2 open requests",
+    "128 unites": "128 units",
+    "Prix": "Price",
+    "Marge": "Margin",
+    "Variantes": "Variants",
+    "3 couleurs": "3 colors",
+    "Fournisseur": "Supplier",
+    "Code-barres": "Barcode",
+    "Lun": "Mon",
+    "Mar": "Tue",
+    "Mer": "Wed",
+    "Jeu": "Thu",
+    "Ven": "Fri",
+    "Sam": "Sat",
+    "Dim": "Sun",
+    "Equipe terrain": "Field team",
+    "En cours": "In progress",
+    "Preparation": "Preparation",
+    "Execution": "Execution",
+    "Commander 80 unites avant vendredi": "Order 80 units before Friday",
+    "Risque rupture sous 5 jours": "Stockout risk within 5 days",
+    "Marge haute, priorite promotion": "High margin, promotion priority",
+    "Site A": "Site A",
+    "Livraison": "Delivery",
+    "Paiement CB": "Card payment",
+    "Addition": "Bill",
+    "actif": "active",
+    "Budget consomme: 72%": "Budget consumed: 72%",
+    "Couts reels: 712 000 EUR": "Actual costs: 712,000 EUR",
+    "Sous-traitants: 6 actifs": "Subcontractors: 6 active",
+    "Risques: 4 jalons en retard": "Risks: 4 milestones late",
+    "Affectation": "Assignment",
   },
   sv: {
     "Centralisez vos clients, ventes, factures, stock, equipe et indicateurs dans une plateforme SaaS moderne.":
@@ -719,6 +787,74 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "A planifier": "Att planera",
     Hier: "Igar",
     "Aujourd'hui": "Idag",
+    "Facturation operationnelle": "Operativ fakturering",
+    "Paiements operationnels": "Operativa betalningar",
+    "Finances operationnelles": "Operativ ekonomi",
+    "Comptabilite operationnelle": "Operativ bokforing",
+    "Finance operationnelle": "Operativ ekonomi",
+    "PDF signes": "Signerade PDF:er",
+    "Relance": "Uppfoljning",
+    "Paiement": "Betalning",
+    "Historique": "Historik",
+    "Signature": "Signatur",
+    "Relances": "Uppfoljningar",
+    "Lettrage": "Avstamning",
+    "Paiement partiel recu": "Delbetalning mottagen",
+    "Relance automatique envoyee": "Automatisk paminnelse skickad",
+    "Signature digitale en attente": "Digital signatur vantar",
+    "Export comptable pret": "Bokforingsexport klar",
+    "L'IA recommande de relancer les factures echeance J+7 et d'exporter les ecritures comptables cette semaine.":
+      "AI rekommenderar att folja upp fakturor med forfallodatum J+7 och exportera bokforingsposter denna vecka.",
+    "Signer": "Signera",
+    "Relancer": "Folj upp",
+    "Creer email": "Skapa email",
+    "Voir historique": "Visa historik",
+    "L'IA recommande de relancer les clients sans commande depuis 60 jours et de proposer une offre adaptee a leur historique.":
+      "AI rekommenderar att folja upp kunder utan order pa 60 dagar och foresla ett erbjudande anpassat till deras historik.",
+    "Impossible de charger les factures. Verifiez que l'API est lancee.":
+      "Det gar inte att lasa fakturorna. Kontrollera att API:t ar startat.",
+    "Impossible de charger les produits. Verifiez que l'API est lancee.":
+      "Det gar inte att lasa produkterna. Kontrollera att API:t ar startat.",
+    "Coordonnees": "Kontaktuppgifter",
+    "Email, telephone, pays, responsable": "Email, telefon, land, ansvarig",
+    "42 800 EUR sur 12 mois": "42 800 EUR over 12 manader",
+    "8 payees, 2 en attente": "8 betalda, 2 vantande",
+    "14 historiques": "14 historiska order",
+    "Produits achetes": "Kopta produkter",
+    "6 references principales": "6 huvudreferenser",
+    "Tickets": "Arenden",
+    "2 demandes ouvertes": "2 oppna forfragningar",
+    "128 unites": "128 enheter",
+    "Prix": "Pris",
+    "Marge": "Marginal",
+    "Variantes": "Varianter",
+    "3 couleurs": "3 farger",
+    "Fournisseur": "Leverantor",
+    "Code-barres": "Streckkod",
+    "Lun": "Man",
+    "Mar": "Tis",
+    "Mer": "Ons",
+    "Jeu": "Tor",
+    "Ven": "Fre",
+    "Sam": "Lor",
+    "Dim": "Son",
+    "Equipe terrain": "Faltteam",
+    "En cours": "Pagar",
+    "Preparation": "Forberedelse",
+    "Execution": "Utforande",
+    "Commander 80 unites avant vendredi": "Bestall 80 enheter fore fredag",
+    "Risque rupture sous 5 jours": "Risk for lagerbrist inom 5 dagar",
+    "Marge haute, priorite promotion": "Hog marginal, kampanjprioritet",
+    "Site A": "Plats A",
+    "Livraison": "Leverans",
+    "Paiement CB": "Kortbetalning",
+    "Addition": "Nota",
+    "actif": "aktiv",
+    "Budget consomme: 72%": "Budget forbrukad: 72%",
+    "Couts reels: 712 000 EUR": "Faktiska kostnader: 712 000 EUR",
+    "Sous-traitants: 6 actifs": "Underleverantorer: 6 aktiva",
+    "Risques: 4 jalons en retard": "Risker: 4 milstolpar forsenade",
+    "Affectation": "Tilldelning",
   },
 };
 
@@ -750,7 +886,7 @@ export function translateContentText(value: string, locale: Locale) {
   const dashboard = value.match(/^Dashboard (.+)$/);
   if (dashboard) {
     return locale === "sv"
-      ? `Dashboard ${translateLabelPart(dashboard[1], locale)}`
+      ? `Oversikt ${translateLabelPart(dashboard[1], locale)}`
       : `${translateLabelPart(dashboard[1], locale)} dashboard`;
   }
 
@@ -764,8 +900,8 @@ export function translateContentText(value: string, locale: Locale) {
   const operational = value.match(/^(.+) operationnel$/);
   if (operational) {
     return locale === "sv"
-      ? `${operational[1]} operativ`
-      : `${operational[1]} operational`;
+      ? `${translateLabelPart(operational[1], locale)} operativ`
+      : `${translateLabelPart(operational[1], locale)} operational`;
   }
 
   const form = value.match(/^Formulaire (.+)$/);

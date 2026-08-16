@@ -123,12 +123,15 @@ function MiniTimeline() {
 }
 
 function NotesWidget() {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
+
   return (
     <Widget title="Notes & emails" eyebrow="Collaboration">
       <div className="space-y-3">
         {["Email de suivi prepare", "Note interne ajoutee", "Appel a planifier"].map((item) => (
           <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">
-            {item}
+            {tx(item)}
           </div>
         ))}
       </div>
@@ -137,6 +140,9 @@ function NotesWidget() {
 }
 
 function Client360Widget({ module }: { module: ModuleView }) {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
+
   return (
     <Widget title={`${module.name} 360`} eyebrow="Vue metier">
       <div className="grid gap-4 md:grid-cols-2">
@@ -149,8 +155,8 @@ function Client360Widget({ module }: { module: ModuleView }) {
           ["Tickets", "2 demandes ouvertes"],
         ].map(([label, value]) => (
           <div key={label} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-black uppercase text-slate-400">{label}</p>
-            <p className="mt-2 font-bold text-night">{value}</p>
+            <p className="text-xs font-black uppercase text-slate-400">{tx(label)}</p>
+            <p className="mt-2 font-bold text-night">{tx(value)}</p>
           </div>
         ))}
       </div>
@@ -159,6 +165,9 @@ function Client360Widget({ module }: { module: ModuleView }) {
 }
 
 function CatalogWidget() {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
+
   return (
     <Widget title="Fiche produit enrichie" eyebrow="Catalogue">
       <div className="grid gap-4 lg:grid-cols-[.6fr_1fr]">
@@ -175,8 +184,8 @@ function CatalogWidget() {
             ["Code-barres", "EAN-ERP-001"],
           ].map(([label, value]) => (
             <div key={label} className="rounded-xl bg-slate-50 p-4">
-              <p className="text-xs font-black uppercase text-slate-400">{label}</p>
-              <p className="mt-2 font-bold text-night">{value}</p>
+              <p className="text-xs font-black uppercase text-slate-400">{tx(label)}</p>
+              <p className="mt-2 font-bold text-night">{tx(value)}</p>
             </div>
           ))}
         </div>
@@ -186,12 +195,21 @@ function CatalogWidget() {
 }
 
 function FinanceDocumentWidget({ module }: { module: ModuleView }) {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
+  const titleByModule: Record<string, string> = {
+    facturation: "Facturation operationnelle",
+    paiements: "Paiements operationnels",
+    finances: "Finances operationnelles",
+    comptabilite: "Comptabilite operationnelle",
+  };
+
   return (
-    <Widget title={`${module.name} operationnel`} eyebrow="Finance">
+    <Widget title={titleByModule[module.key] ?? "Finance operationnelle"} eyebrow="Finance">
       <div className="grid gap-4 md:grid-cols-3">
         {["Statut", "Paiement", "PDF", "Historique", "TVA", "Signature", "Export", "Relances", "Lettrage"].map((item) => (
           <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-black text-slate-700">
-            {item}
+            {tx(item)}
           </div>
         ))}
       </div>
@@ -200,14 +218,17 @@ function FinanceDocumentWidget({ module }: { module: ModuleView }) {
 }
 
 function PlanningWidget({ title = "Planning" }: { title?: string }) {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
+
   return (
     <Widget title={title} eyebrow="Temps reel">
       <div className="grid gap-3 md:grid-cols-7">
         {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day, index) => (
           <div key={day} className="min-h-28 rounded-xl bg-slate-50 p-3">
-            <p className="font-black text-night">{day}</p>
+            <p className="font-black text-night">{tx(day)}</p>
             <div className="mt-3 rounded-lg bg-white p-2 text-xs font-bold text-slate-600 ring-1 ring-slate-200">
-              {index % 2 === 0 ? "Equipe terrain" : "Controle"}
+              {tx(index % 2 === 0 ? "Equipe terrain" : "Controle")}
             </div>
           </div>
         ))}
@@ -217,6 +238,9 @@ function PlanningWidget({ title = "Planning" }: { title?: string }) {
 }
 
 function GanttWidget() {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
+
   return (
     <Widget title="Planning Gantt" eyebrow="Projet">
       <div className="space-y-4">
@@ -228,8 +252,8 @@ function GanttWidget() {
         ].map(([label, width]) => (
           <div key={label}>
             <div className="mb-2 flex justify-between text-sm font-bold text-slate-600">
-              <span>{label}</span>
-              <span>En cours</span>
+              <span>{tx(label)}</span>
+              <span>{tx("En cours")}</span>
             </div>
             <div className="h-3 rounded-full bg-slate-100">
               <div className={`h-3 rounded-full bg-[#00C2A9] ${width}`} />
@@ -242,6 +266,9 @@ function GanttWidget() {
 }
 
 function ReplenishmentWidget() {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
+
   return (
     <Widget title="Reapprovisionnement IA" eyebrow="Stock">
       <div className="space-y-3">
@@ -252,7 +279,7 @@ function ReplenishmentWidget() {
         ].map(([sku, text]) => (
           <div key={sku} className="rounded-xl bg-cyan-50 p-4">
             <p className="font-black text-night">{sku}</p>
-            <p className="mt-1 text-sm font-semibold text-slate-600">{text}</p>
+            <p className="mt-1 text-sm font-semibold text-slate-600">{tx(text)}</p>
           </div>
         ))}
       </div>
@@ -274,6 +301,8 @@ function MapWidget() {
 }
 
 function PosWidget() {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
   const [selected, setSelected] = useState("Ticket #128");
 
   return (
@@ -281,7 +310,7 @@ function PosWidget() {
       <div className="grid gap-3 sm:grid-cols-3">
         {["Table 4", "Ticket #128", "Paiement CB", "Livraison", "Click & Collect", "Addition"].map((item) => (
           <button key={item} type="button" onClick={() => setSelected(item)} className="rounded-2xl bg-[#1E2A38] p-4 text-left font-black text-white transition hover:bg-[#00A693]">
-            {selected === item ? `${item} - actif` : item}
+            {selected === item ? `${tx(item)} - ${tx("actif")}` : tx(item)}
           </button>
         ))}
       </div>
@@ -529,6 +558,9 @@ function CommerceTemplate({ module }: { module: ModuleView }) {
 }
 
 function FinanceTemplate({ module }: { module: ModuleView }) {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
+
   return (
     <>
       <MetricGrid
@@ -544,7 +576,7 @@ function FinanceTemplate({ module }: { module: ModuleView }) {
         <Widget title="Paiements & relances" eyebrow="Tresorerie">
           <div className="space-y-3">
             {["Paiement partiel recu", "Relance automatique envoyee", "Signature digitale en attente", "Export comptable pret"].map((item) => (
-              <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">{item}</div>
+              <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">{tx(item)}</div>
             ))}
           </div>
         </Widget>
@@ -559,6 +591,9 @@ function FinanceTemplate({ module }: { module: ModuleView }) {
 }
 
 function ProjectTemplate({ module }: { module: ModuleView }) {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
+
   return (
     <>
       <MetricGrid
@@ -574,7 +609,7 @@ function ProjectTemplate({ module }: { module: ModuleView }) {
         <Widget title="Budget & risques" eyebrow="Projet">
           <div className="space-y-3">
             {["Budget consomme: 72%", "Couts reels: 712 000 EUR", "Sous-traitants: 6 actifs", "Risques: 4 jalons en retard"].map((item) => (
-              <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">{item}</div>
+              <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">{tx(item)}</div>
             ))}
           </div>
         </Widget>
@@ -597,6 +632,8 @@ function ProjectTemplate({ module }: { module: ModuleView }) {
 }
 
 function OperationsTemplate({ module }: { module: ModuleView }) {
+  const { locale } = useI18n();
+  const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
   const isRestaurantFlow = ["commandes", "reservations", "cuisine", "restaurant-hotel"].includes(module.key);
   const isTransportFlow = ["expeditions", "itineraires", "flotte", "conducteurs"].includes(module.key);
   const isHrFlow = module.key === "rh";
@@ -616,7 +653,7 @@ function OperationsTemplate({ module }: { module: ModuleView }) {
         {isRestaurantFlow ? <PosWidget /> : <Widget title="Workflow temps reel" eyebrow="Operations">
           <div className="space-y-3">
             {["Affectation", "En cours", "Validation", "Signature", "Facturation"].map((item) => (
-              <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">{item}</div>
+              <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">{tx(item)}</div>
             ))}
           </div>
         </Widget>}

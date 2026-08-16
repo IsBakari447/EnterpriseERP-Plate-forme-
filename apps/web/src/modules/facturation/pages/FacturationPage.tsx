@@ -6,9 +6,10 @@ import { useI18n } from "@shared/i18n/I18nProvider";
 import NewInvoiceForm from "../components/NewInvoiceForm";
 import InvoiceTable from "../components/InvoiceTable";
 import { useInvoices } from "../hooks/useInvoices";
+import { translateContentText } from "@shared/i18n/content-labels";
 
 export default function FacturationPage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const { invoices, loading, error, createInvoice, deleteInvoice, reload } = useInvoices();
 
   const total = invoices.reduce((sum, invoice) => sum + Number(invoice.amount || 0), 0);
@@ -32,7 +33,7 @@ export default function FacturationPage() {
         />
       </section>
 
-      {error && <div className="mt-6 rounded-xl bg-red-50 p-4 text-red-700">{error}</div>}
+      {error && <div className="mt-6 rounded-xl bg-red-50 p-4 text-red-700">{translateContentText(error, locale)}</div>}
 
       <section className="mt-8 rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
         <h2 className="text-xl font-bold text-night">{t("billing.newInvoice")}</h2>
