@@ -1,6 +1,14 @@
 import type { Locale } from "@shared/i18n/dictionaries";
 
 const translations: Partial<Record<Locale, Record<string, string>>> = {
+  fr: {
+    "Food cost": "Cout matiere",
+    "API calls": "Appels API",
+    "Food cost proche de la limite.": "Le cout matiere est proche de la limite.",
+    "Planning personnel incomplet pour samedi.": "Le planning du personnel est incomplet pour samedi.",
+    "5 produits cuisine sont sous le seuil.": "5 produits cuisine sont sous le seuil.",
+    "11 reservations doivent etre confirmees.": "11 reservations doivent etre confirmees.",
+  },
   en: {
     "Entreprise generale": "General business",
     "Chiffre d'affaires": "Revenue",
@@ -452,6 +460,8 @@ Object.assign(translations.en!, {
   "Ruptures": "Stockouts",
   "Food cost proche de la limite.": "Food cost is close to the limit.",
   "Planning personnel incomplet pour samedi.": "Staff schedule is incomplete for Saturday.",
+  "5 produits cuisine sont sous le seuil.": "5 kitchen products are below threshold.",
+  "11 reservations doivent etre confirmees.": "11 reservations must be confirmed.",
   "Ventes mensuelles": "Monthly sales",
   "Marge menu": "Menu margin",
   "Pertes reduites": "Reduced waste",
@@ -558,6 +568,8 @@ Object.assign(translations.sv!, {
   "Ruptures": "Lagerbrister",
   "Food cost proche de la limite.": "Ravarukostnaden ligger nara gransen.",
   "Planning personnel incomplet pour samedi.": "Personalplaneringen ar ofullstandig for lordag.",
+  "5 produits cuisine sont sous le seuil.": "5 kokprodukter ligger under gransvarde.",
+  "11 reservations doivent etre confirmees.": "11 bokningar maste bekraftas.",
   "Ventes mensuelles": "Manadens forsaljning",
   "Marge menu": "Menymarginal",
   "Pertes reduites": "Minskat svinn",
@@ -627,6 +639,6 @@ Object.assign(translations.sv!, {
 });
 
 export function translateDashboardText(value: string, locale: Locale) {
-  if (locale === "fr") return value;
+  if (locale === "fr") return translations.fr?.[value] ?? value;
   return translations[locale]?.[value] ?? translations.en?.[value] ?? value;
 }

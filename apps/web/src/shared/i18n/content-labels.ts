@@ -40,6 +40,48 @@ const labelTranslations: Partial<Record<Locale, Record<string, string>>> = {
 };
 
 const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
+  fr: {
+    "Critical operations are visible by status, team and priority.":
+      "Les operations critiques sont visibles par statut, equipe et priorite.",
+    "AI detects a risk on unassigned tasks.": "L'IA detecte un risque sur les taches non affectees.",
+    "AI recommends processing pending operations, assigning owners and monitoring real-time activity.":
+      "L'IA recommande de traiter les operations en attente, d'affecter les responsables et de surveiller l'activite en temps reel.",
+    "AI recommends limiting financial exports to Owner and Accountant roles, then logging every permission change.":
+      "L'IA recommande de limiter les exports financiers aux roles Owner et Comptable, puis de journaliser toute modification de permission.",
+    "AI recommends following up invoices due in 7 days and exporting accounting entries this week.":
+      "L'IA recommande de relancer les factures a echeance J+7 et d'exporter les ecritures comptables cette semaine.",
+    "AI recommends following up customers with no order for 60 days and offering a proposal adapted to their history.":
+      "L'IA recommande de relancer les clients sans commande depuis 60 jours et de proposer une offre adaptee a leur historique.",
+    "Unable to load products. Check that the API is running.":
+      "Impossible de charger les produits. Verifiez que l'API est lancee.",
+    "Unable to load invoices. Check that the API is running.":
+      "Impossible de charger les factures. Verifiez que l'API est lancee.",
+    "Inventory management": "Gestion du stock",
+    "Track products, quantities and alerts.": "Suivez les produits, les quantites et les alertes.",
+    "New product": "Nouveau produit",
+    "Products in stock": "Produits en stock",
+    "Human resources": "Ressources humaines",
+    "Manage employees, contracts, leave and attendance.": "Gerez les employes, les contrats, les conges et les presences.",
+    "Employees": "Employes",
+    "Search or run an action...": "Rechercher ou lancer une action...",
+    "PostgreSQL API active": "API PostgreSQL active",
+    "Real-time tracking": "Suivi temps reel",
+    "Possible delay": "Retard possible",
+    "Food cost is close to the limit.": "Le cout matiere est proche de la limite.",
+    "Staff schedule is incomplete for Saturday.": "Le planning du personnel est incomplet pour samedi.",
+    "Food cost": "Cout matiere",
+    "Staff schedule": "Planning du personnel",
+    "Tables, kitchen and service": "Tables, cuisine et service",
+    "POS / tickets": "POS / tickets",
+    "Card payment": "Paiement CB",
+    "Click & Collect": "Click & Collect",
+    "Field team": "Equipe terrain",
+    "Service ticket": "Ticket service",
+    "Customer support": "Support client",
+    "Sales manager": "Responsable ventes",
+    "Accountant": "Comptable",
+    "Leave": "Conge",
+  },
   en: {
     "Centralisez vos clients, ventes, factures, stock, equipe et indicateurs dans une plateforme SaaS moderne.":
       "Centralize customers, sales, invoices, inventory, teams and KPIs in a modern SaaS platform.",
@@ -952,7 +994,7 @@ function translateLabelPart(value: string, locale: Locale) {
 }
 
 export function translateContentText(value: string, locale: Locale) {
-  if (locale === "fr") return value;
+  if (locale === "fr") return contentTranslations.fr?.[value] ?? value;
 
   const direct = contentTranslations[locale]?.[value] ?? contentTranslations.en?.[value];
   if (direct) return direct;
