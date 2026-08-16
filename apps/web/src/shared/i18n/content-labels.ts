@@ -73,6 +73,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Staff schedule": "Planning du personnel",
     "Tables, kitchen and service": "Tables, cuisine et service",
     "POS / tickets": "POS / tickets",
+    "Cloud, Mobile et IA.": "Cloud, Mobile et IA.",
     "Card payment": "Paiement CB",
     "Click & Collect": "Click & Collect",
     "Field team": "Equipe terrain",
@@ -126,6 +127,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Les processus courants deviennent plus simples, rapides et faciles a suivre.":
       "Daily processes become simpler, faster and easier to track.",
     "Des decisions plus rapides": "Faster decisions",
+    "Cloud, Mobile et IA.": "Cloud, Mobile and AI.",
     "Les alertes et recommandations aident a prioriser les bonnes actions.":
       "Alerts and recommendations help prioritize the right actions.",
     "Demandez une demonstration et voyez comment EnterpriseERP Cloud peut simplifier vos operations.":
@@ -578,6 +580,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Les processus courants deviennent plus simples, rapides et faciles a suivre.":
       "Dagliga processer blir enklare, snabbare och lattare att folja.",
     "Des decisions plus rapides": "Snabbare beslut",
+    "Cloud, Mobile et IA.": "Moln, mobil och AI.",
     "Les alertes et recommandations aident a prioriser les bonnes actions.":
       "Varningar och rekommendationer hjalper till att prioritera ratt atgarder.",
     "Demandez une demonstration et voyez comment EnterpriseERP Cloud peut simplifier vos operations.":

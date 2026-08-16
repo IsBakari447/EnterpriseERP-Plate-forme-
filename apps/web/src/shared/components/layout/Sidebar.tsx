@@ -6,13 +6,17 @@ import { usePathname } from "next/navigation";
 import { navigationItems } from "@/config/navigation";
 import LanguageSwitcher from "@shared/i18n/LanguageSwitcher";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { translateContentText } from "@shared/i18n/content-labels";
+import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 import SectorSelector from "@shared/sector/SectorSelector";
 import { useSector } from "@shared/sector/SectorProvider";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { sector } = useSector();
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
+  const translateSectorLabel = (value: string) =>
+    translateContentText(translateFixedLabel(value, locale), locale);
 
   const visibleItems = navigationItems.filter((item) =>
     sector.modules.includes(item.key)
@@ -81,7 +85,7 @@ export default function Sidebar() {
               key: item.key,
               href: item.href,
               icon: item.icon,
-              label: t(`nav.${item.key}`),
+              label: sector.labels?.[item.key] ? translateSectorLabel(sector.labels[item.key]!) : t(`nav.${item.key}`),
             })
           )}
         </div>
@@ -99,7 +103,7 @@ export default function Sidebar() {
                 key: item.key,
                 href: item.href,
                 icon: item.icon,
-                label: t(`nav.${item.key}`),
+                label: sector.labels?.[item.key] ? translateSectorLabel(sector.labels[item.key]!) : t(`nav.${item.key}`),
               })
             )}
             {adminExtraItems.map(renderLink)}

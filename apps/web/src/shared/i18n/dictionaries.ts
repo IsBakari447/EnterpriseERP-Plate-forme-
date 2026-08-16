@@ -146,7 +146,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "nav.machines": "Machines",
     "nav.ordres-fabrication": "Ordres de fabrication",
     "nav.chambres": "Chambres",
-    "nav.housekeeping": "Housekeeping",
+    "nav.housekeeping": "Menage chambres",
     "nav.restaurant-hotel": "Restaurant",
     "nav.parametres": "Parametres",
     "governance.title": "Gouvernance SaaS",

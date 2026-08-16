@@ -14,6 +14,7 @@ import KPICard from "@shared/components/ui/KPICard";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
+import { useSector } from "@shared/sector/SectorProvider";
 import type { ModuleKey } from "@shared/sector/types";
 
 type ModuleView = {
@@ -680,9 +681,13 @@ function OperationsTemplate({ module }: { module: ModuleView }) {
 
 export default function GenericModulePage({ module }: { module: ModuleView }) {
   const { locale, t } = useI18n();
+  const { sector } = useSector();
   const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
   const template = getTemplate(module.key);
-  const localizedModule = { ...module, name: t(`nav.${module.key}`) };
+  const localizedModule = {
+    ...module,
+    name: sector.labels?.[module.key] ? tx(sector.labels[module.key]!) : t(`nav.${module.key}`),
+  };
   const templateLabel = {
     admin: "Administration",
     crm: "CRM 360",
