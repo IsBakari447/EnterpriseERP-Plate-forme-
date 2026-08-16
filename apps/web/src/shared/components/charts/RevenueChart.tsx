@@ -11,31 +11,38 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useI18n } from "@shared/i18n/I18nProvider";
 
 const revenueData = [
-  { month: "Jan", revenue: 62000 },
-  { month: "Fev", revenue: 74000 },
-  { month: "Mar", revenue: 81000 },
-  { month: "Avr", revenue: 96000 },
-  { month: "Mai", revenue: 112000 },
-  { month: "Juin", revenue: 128450 },
+  { monthKey: "dashboard.month.jan", revenue: 62000 },
+  { monthKey: "dashboard.month.feb", revenue: 74000 },
+  { monthKey: "dashboard.month.mar", revenue: 81000 },
+  { monthKey: "dashboard.month.apr", revenue: 96000 },
+  { monthKey: "dashboard.month.may", revenue: 112000 },
+  { monthKey: "dashboard.month.jun", revenue: 128450 },
 ];
 
 const moduleData = [
-  { module: "CRM", value: 1208 },
-  { module: "Ventes", value: 342 },
-  { module: "Stock", value: 1842 },
-  { module: "Factures", value: 524 },
-  { module: "RH", value: 48 },
+  { moduleKey: "nav.crm", value: 1208 },
+  { moduleKey: "nav.ventes", value: 342 },
+  { moduleKey: "nav.stock", value: 1842 },
+  { moduleKey: "nav.facturation", value: 524 },
+  { moduleKey: "nav.rh", value: 48 },
 ];
 
 export function RevenueChart() {
+  const { t } = useI18n();
+  const localizedRevenueData = revenueData.map((item) => ({
+    ...item,
+    month: t(item.monthKey),
+  }));
+
   return (
     <div className="h-80 rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
-      <h2 className="mb-5 text-xl font-bold text-night">Evolution du CA</h2>
+      <h2 className="mb-5 text-xl font-bold text-night">{t("dashboard.revenueEvolution")}</h2>
 
       <ResponsiveContainer width="100%" height="85%">
-        <LineChart data={revenueData}>
+        <LineChart data={localizedRevenueData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" />
           <YAxis />
@@ -48,12 +55,18 @@ export function RevenueChart() {
 }
 
 export function ModuleBarChart() {
+  const { t } = useI18n();
+  const localizedModuleData = moduleData.map((item) => ({
+    ...item,
+    module: t(item.moduleKey),
+  }));
+
   return (
     <div className="h-80 rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
-      <h2 className="mb-5 text-xl font-bold text-night">Activite par module</h2>
+      <h2 className="mb-5 text-xl font-bold text-night">{t("dashboard.moduleActivity")}</h2>
 
       <ResponsiveContainer width="100%" height="85%">
-        <BarChart data={moduleData}>
+        <BarChart data={localizedModuleData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="module" />
           <YAxis />
