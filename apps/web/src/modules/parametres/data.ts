@@ -1,13 +1,13 @@
 export const parametresKpis = [
-  { label: "Utilisateurs", value: "24" },
-  { label: "Roles", value: "6" },
-  { label: "Langues", value: "4" },
-  { label: "Securite", value: "2FA active" },
+  { labelKey: "settings.kpi.users", value: "24" },
+  { labelKey: "settings.kpi.roles", value: "6" },
+  { labelKey: "settings.kpi.languages", value: "8" },
+  { labelKey: "settings.kpi.security", value: "2FA", changeKey: "settings.kpi.securityActive" },
 ];
 
 export const settings = [
-  { label: "Nom entreprise", value: "EnterpriseERP Cloud" },
-  { label: "Langue principale", value: "Francais" },
-  { label: "Devise", value: "EUR" },
-  { label: "Fuseau horaire", value: "Europe/Paris" },
+  { labelKey: "settings.companyName", value: "EnterpriseERP Cloud" },
+  { labelKey: "settings.mainLanguage", valueKey: "locale.fr" },
+  { labelKey: "settings.currency", value: "EUR" },
+  { labelKey: "settings.timezone", value: "Europe/Paris" },
 ];

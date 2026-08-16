@@ -33,7 +33,7 @@ export default function AssistantPage() {
     >
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {assistantKpis.map((kpi) => (
-          <KPICard key={kpi.label} {...kpi} />
+          <KPICard key={kpi.labelKey} label={t(kpi.labelKey)} value={kpi.value} change={kpi.change} />
         ))}
       </section>
 
@@ -83,15 +83,16 @@ export default function AssistantPage() {
           <div className="mt-5 space-y-3">
             {suggestions.map((item) => (
               <button
-                key={item}
+                key={item.key}
                 type="button"
                 onClick={() => {
-                  setQuestion(item);
-                  setConversation({ question: item, answer: `${t("ai.sampleAnswer")} ${item}` });
+                  const text = t(item.key);
+                  setQuestion(text);
+                  setConversation({ question: text, answer: `${t("ai.sampleAnswer")} ${text}` });
                 }}
                 className="w-full rounded-xl bg-slate-50 p-4 text-left text-sm font-bold text-slate-700 transition hover:bg-cyan-50"
               >
-                {item}
+                {t(item.key)}
               </button>
             ))}
           </div>

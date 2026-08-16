@@ -125,9 +125,9 @@ const content: Record<string, RoadmapContent> = {
     title: "Produktvisionen for att gora EnterpriseERP Cloud till ett komplett SaaS ERP.",
     subtitle:
       "En tydlig roadmap for en molnbaserad, mobil, AI-redo, multi-tenant och branschanpassad plattform for SME.",
-    pillars: ["Cloud native", "Mobile first", "AI ready", "Multi-tenant", "Saker", "Skalbar"],
+    pillars: ["Molnbaserad", "Mobil forst", "AI-redo", "Multi-tenant", "Saker", "Skalbar"],
     architectureTitle: "Malarkitektur",
-    architecture: ["Landing website", "Next.js frontend", "NestJS API", "PostgreSQL", "Redis", "Object storage"],
+    architecture: ["Publik webbplats", "Next.js frontend", "NestJS API", "PostgreSQL", "Redis", "Objektlagring"],
     modulesTitle: "Strategiska moduler",
     modules: [
       "Flerforetagsstod med isolering via companyId",
@@ -143,7 +143,7 @@ const content: Record<string, RoadmapContent> = {
     phases: [
       { title: "Fas 1 - SaaS-grund", items: ["Multi-tenant", "Autentisering", "Foretag", "Roller", "Behorigheter", "Audit"] },
       { title: "Fas 2 - ERP-karna", items: ["CRM", "Produkter", "Lager", "Leverantorer", "Forsaljning", "Fakturor", "Betalningar"] },
-      { title: "Fas 3 - Cloud-produkt", items: ["Dashboard", "Rapporter", "Notifieringar", "Import / Export", "Backups"] },
+      { title: "Fas 3 - Molnprodukt", items: ["Oversikt", "Rapporter", "Notifieringar", "Import / Export", "Sakerhetskopior"] },
       { title: "Fas 4 - AI och branscher", items: ["AI-assistent", "Affarsfloden", "Branschdashboards", "Branschpaket"] },
       { title: "Fas 5 - Marknad", items: ["Landningssidor", "Interaktiv demo", "Abonnemang", "Dokumentation", "Support"] },
     ],

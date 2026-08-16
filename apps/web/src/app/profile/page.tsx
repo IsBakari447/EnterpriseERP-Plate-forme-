@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import { profileService, type UserProfile } from "@modules/profile/profile.service";
 import { useI18n } from "@shared/i18n/I18nProvider";
@@ -30,6 +30,7 @@ const emptyProfile: UserProfile = {
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile>(emptyProfile);
   const [saved, setSaved] = useState(false);
+  const [avatarStatus, setAvatarStatus] = useState("");
   const { t } = useI18n();
 
   useEffect(() => {
@@ -47,6 +48,23 @@ export default function ProfilePage() {
     setSaved(true);
   }
 
+  async function selectLocalAvatar(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const avatarUrl = await resizeAvatar(file);
+      update("avatarUrl", avatarUrl);
+      const result = await profileService.updateAvatar(avatarUrl);
+      update("avatarUrl", result.avatarUrl);
+      setAvatarStatus(t("profile.photoSaved"));
+    } catch {
+      setAvatarStatus(t("profile.photoError"));
+    } finally {
+      event.target.value = "";
+    }
+  }
+
   return (
     <ERPLayout title={t("account.profile")} subtitle={t("profile.subtitle")} action={t("account.profile")}>
       <form onSubmit={submit} className="grid gap-6 xl:grid-cols-[.7fr_1.3fr]">
@@ -56,6 +74,10 @@ export default function ProfilePage() {
             <div className="flex h-36 w-36 items-center justify-center overflow-hidden rounded-full bg-[#1E2A38] text-4xl font-black text-white">
               {profile.avatarUrl ? <img src={profile.avatarUrl} alt="" className="h-full w-full object-cover" /> : (profile.name || "U").slice(0, 2).toUpperCase()}
             </div>
+            <label className="mt-5 inline-flex cursor-pointer rounded-xl bg-[#00A693] px-4 py-2 text-sm font-black text-white shadow">
+              {t("profile.chooseFromDevice")}
+              <input type="file" accept="image/*" onChange={selectLocalAvatar} className="sr-only" />
+            </label>
             <label className="mt-5 w-full">
               <span className="text-sm font-black text-slate-700">{t("profile.avatarUrl")}</span>
               <input
@@ -66,13 +88,23 @@ export default function ProfilePage() {
               />
             </label>
             <div className="mt-4 flex gap-3">
-              <button type="button" onClick={() => profile.avatarUrl && profileService.updateAvatar(profile.avatarUrl)} className="rounded-xl bg-[#1E2A38] px-4 py-2 text-sm font-black text-white">
+              <button type="button" onClick={async () => {
+                if (!profile.avatarUrl) return;
+                try {
+                  const result = await profileService.updateAvatar(profile.avatarUrl);
+                  update("avatarUrl", result.avatarUrl);
+                  setAvatarStatus(t("profile.photoSaved"));
+                } catch {
+                  setAvatarStatus(t("profile.photoError"));
+                }
+              }} className="rounded-xl bg-[#1E2A38] px-4 py-2 text-sm font-black text-white">
                 {t("profile.changePhoto")}
               </button>
-              <button type="button" onClick={() => { update("avatarUrl", ""); profileService.deleteAvatar().catch(() => undefined); }} className="rounded-xl bg-red-50 px-4 py-2 text-sm font-black text-red-700">
+              <button type="button" onClick={() => { update("avatarUrl", ""); setAvatarStatus(""); profileService.deleteAvatar().catch(() => undefined); }} className="rounded-xl bg-red-50 px-4 py-2 text-sm font-black text-red-700">
                 {t("profile.removePhoto")}
               </button>
             </div>
+            {avatarStatus && <p className="mt-3 text-sm font-bold text-[#00A693]">{avatarStatus}</p>}
           </div>
         </section>
 
@@ -132,6 +164,40 @@ export default function ProfilePage() {
       </form>
     </ERPLayout>
   );
+}
+
+function resizeAvatar(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onerror = () => reject(new Error("read_failed"));
+    reader.onload = () => {
+      const image = new Image();
+
+      image.onerror = () => reject(new Error("image_failed"));
+      image.onload = () => {
+        const maxSize = 192;
+        const ratio = Math.min(maxSize / image.width, maxSize / image.height, 1);
+        const width = Math.max(1, Math.round(image.width * ratio));
+        const height = Math.max(1, Math.round(image.height * ratio));
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        if (!context) {
+          reject(new Error("canvas_failed"));
+          return;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        context.drawImage(image, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", 0.72));
+      };
+      image.src = String(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+  });
 }
 
 function Select({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (value: string) => void }) {

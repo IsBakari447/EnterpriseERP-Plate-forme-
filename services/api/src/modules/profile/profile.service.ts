@@ -135,8 +135,15 @@ export class ProfileService {
   }
 
   async updateAvatar(user: AuthenticatedUser, avatarUrl: string, meta: RequestMeta) {
-    if (!avatarUrl?.startsWith("http")) {
-      throw new BadRequestException("avatarUrl doit pointer vers un stockage de fichiers externe");
+    const isExternalUrl = /^https?:\/\//i.test(avatarUrl ?? "");
+    const isInlineImage = /^data:image\/(png|jpeg|jpg|webp);base64,[a-z0-9+/=]+$/i.test(avatarUrl ?? "");
+
+    if (!isExternalUrl && !isInlineImage) {
+      throw new BadRequestException("avatarUrl doit etre une URL HTTPS ou une image locale valide");
+    }
+
+    if (isInlineImage && avatarUrl.length > 120_000) {
+      throw new BadRequestException("La photo de profil est trop volumineuse");
     }
 
     const updated = await this.prisma.user.update({

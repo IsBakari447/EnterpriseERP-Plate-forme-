@@ -18,7 +18,12 @@ export default function ParametresPage() {
     >
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {parametresKpis.map((kpi) => (
-          <KPICard key={kpi.label} {...kpi} />
+          <KPICard
+            key={kpi.labelKey}
+            label={t(kpi.labelKey)}
+            value={kpi.value}
+            change={kpi.changeKey ? t(kpi.changeKey) : undefined}
+          />
         ))}
       </section>
 
@@ -32,10 +37,10 @@ export default function ParametresPage() {
 
           <div className="space-y-4">
             {settings.map((item) => (
-              <div key={item.label}>
-                <label className="text-sm text-slate-500">{item.label}</label>
+              <div key={item.labelKey}>
+                <label className="text-sm text-slate-500">{t(item.labelKey)}</label>
                 <input
-                  value={item.value}
+                  value={item.valueKey ? t(item.valueKey) : item.value}
                   readOnly
                   className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
                 />

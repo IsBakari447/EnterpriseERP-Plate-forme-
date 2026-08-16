@@ -397,6 +397,25 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Export comptable pret": "Accounting export ready",
     "L'IA recommande de relancer les factures echeance J+7 et d'exporter les ecritures comptables cette semaine.":
       "AI recommends following up invoices due in 7 days and exporting accounting entries this week.",
+    "L'IA predit une rupture sur 3 references et recommande de reapprovisionner selon les delais fournisseurs.":
+      "AI predicts a stockout on 3 items and recommends replenishment based on supplier lead times.",
+    "L'IA signale un risque de retard et recommande de replanifier materiel, equipe et sous-traitants.":
+      "AI flags a delay risk and recommends rescheduling equipment, team and subcontractors.",
+    "L'IA recommande de traiter les operations en attente, d'affecter les responsables et de surveiller les temps reels.":
+      "AI recommends processing pending operations, assigning owners and monitoring real-time activity.",
+    "L'IA recommande de limiter les exports financiers aux roles Owner et Comptable, puis de journaliser toute modification de permission.":
+      "AI recommends limiting financial exports to Owner and Accountant roles, then logging every permission change.",
+    "Appliquer recommandation": "Apply recommendation",
+    "Voir audit": "View audit",
+    "Reviser roles": "Review roles",
+    "Voir marge": "View margin",
+    "Scanner code-barres": "Scan barcode",
+    "Replanifier": "Reschedule",
+    "Voir budget": "View budget",
+    "Notifier equipe": "Notify team",
+    "Affecter": "Assign",
+    "Voir carte": "View map",
+    "Notifier": "Notify",
     "Signer": "Sign",
     "Relancer": "Follow up",
     "Creer email": "Create email",
@@ -822,6 +841,25 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Export comptable pret": "Bokforingsexport klar",
     "L'IA recommande de relancer les factures echeance J+7 et d'exporter les ecritures comptables cette semaine.":
       "AI rekommenderar att folja upp fakturor med forfallodatum J+7 och exportera bokforingsposter denna vecka.",
+    "L'IA predit une rupture sur 3 references et recommande de reapprovisionner selon les delais fournisseurs.":
+      "AI forutser lagerbrist pa 3 artiklar och rekommenderar pafyllning utifran leverantorernas ledtider.",
+    "L'IA signale un risque de retard et recommande de replanifier materiel, equipe et sous-traitants.":
+      "AI signalerar risk for forsening och rekommenderar omplanering av material, team och underleverantorer.",
+    "L'IA recommande de traiter les operations en attente, d'affecter les responsables et de surveiller les temps reels.":
+      "AI rekommenderar att hantera vantande operationer, tilldela ansvariga och bevaka realtidsfloden.",
+    "L'IA recommande de limiter les exports financiers aux roles Owner et Comptable, puis de journaliser toute modification de permission.":
+      "AI rekommenderar att begransa finansiella exporter till Owner och Redovisning, och logga varje behorighetsandring.",
+    "Appliquer recommandation": "Tillampa rekommendation",
+    "Voir audit": "Visa audit",
+    "Reviser roles": "Granska roller",
+    "Voir marge": "Visa marginal",
+    "Scanner code-barres": "Skanna streckkod",
+    "Replanifier": "Planera om",
+    "Voir budget": "Visa budget",
+    "Notifier equipe": "Notifiera teamet",
+    "Affecter": "Tilldela",
+    "Voir carte": "Visa karta",
+    "Notifier": "Notifiera",
     "Signer": "Signera",
     "Relancer": "Folj upp",
     "Creer email": "Skapa email",
