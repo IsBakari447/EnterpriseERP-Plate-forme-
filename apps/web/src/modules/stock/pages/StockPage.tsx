@@ -34,7 +34,7 @@ export default function StockPage() {
         <KPICard label={t("stock.value")} value={`${totalValue} EUR`} />
       </section>
 
-      {error && <div className="mt-6 rounded-xl bg-red-50 p-4 text-red-700">{error}</div>}
+      {error && <div className="mt-6 rounded-xl bg-red-50 p-4 text-red-700">{t(error)}</div>}
 
       <section className="mt-8 rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
         <h2 className="text-xl font-bold text-night">{t("stock.newProduct")}</h2>

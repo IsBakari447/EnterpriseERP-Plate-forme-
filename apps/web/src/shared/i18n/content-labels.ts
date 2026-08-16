@@ -379,6 +379,14 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "A planifier": "To schedule",
     Hier: "Yesterday",
     "Aujourd'hui": "Today",
+    "Les operations critiques sont visibles par statut, equipe et priorite.":
+      "Critical operations are visible by status, team and priority.",
+    "L'IA detecte un risque sur les taches non affectees.":
+      "AI detects a risk on unassigned tasks.",
+    "Une demande d'export comptable doit etre validee par un Owner.":
+      "An accounting export request must be approved by an Owner.",
+    "Aucun employe simple ne possede de permission securite.":
+      "No standard employee has security permissions.",
     "Facturation operationnelle": "Billing operations",
     "Paiements operationnels": "Payment operations",
     "Finances operationnelles": "Finance operations",
@@ -823,6 +831,14 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "A planifier": "Att planera",
     Hier: "Igar",
     "Aujourd'hui": "Idag",
+    "Les operations critiques sont visibles par statut, equipe et priorite.":
+      "Kritiska operationer visas efter status, team och prioritet.",
+    "L'IA detecte un risque sur les taches non affectees.":
+      "AI upptacker en risk i otilldelade uppgifter.",
+    "Une demande d'export comptable doit etre validee par un Owner.":
+      "En begaran om bokforingsexport maste godkannas av en Owner.",
+    "Aucun employe simple ne possede de permission securite.":
+      "Ingen vanlig anstalld har sakerhetsbehorighet.",
     "Facturation operationnelle": "Operativ fakturering",
     "Paiements operationnels": "Operativa betalningar",
     "Finances operationnelles": "Operativ ekonomi",

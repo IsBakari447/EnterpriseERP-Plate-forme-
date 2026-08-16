@@ -15,7 +15,7 @@ export function useProducts() {
       const data = await productService.findAll();
       setProducts(data);
     } catch {
-      setError("Impossible de charger les produits. Verifiez que l'API est lancee.");
+      setError("stock.loadError");
     } finally {
       setLoading(false);
     }
