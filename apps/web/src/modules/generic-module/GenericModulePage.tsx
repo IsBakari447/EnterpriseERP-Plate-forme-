@@ -183,7 +183,7 @@ function CatalogWidget() {
             ["Marge", "34%"],
             ["Variantes", "3 couleurs"],
             ["Fournisseur", "Central Supply"],
-            ["Code-barres", "EAN-ERP-001"],
+            ["Code-barres", "EAN-734001"],
           ].map(([label, value]) => (
             <div key={label} className="rounded-xl bg-slate-50 p-4">
               <p className="text-xs font-black uppercase text-slate-400">{tx(label)}</p>
@@ -324,9 +324,9 @@ function PosWidget() {
 }
 
 const tableRows = [
-  { reference: "ERP-001", name: "Element exemple", owner: "Equipe", amount: "0 EUR", status: "En attente" },
-  { reference: "ERP-002", name: "Suivi operationnel", owner: "Manager", amount: "0 EUR", status: "Actif" },
-  { reference: "ERP-003", name: "Rapport automatique", owner: "Assistant IA", amount: "0 EUR", status: "Valide" },
+  { reference: "CFG-001", name: "Configuration active", owner: "Administrateur", amount: "Systeme", status: "Actif" },
+  { reference: "VAL-002", name: "Validation ouverte", owner: "Manager", amount: "Workflow", status: "En attente" },
+  { reference: "RPT-003", name: "Rapport planifie", owner: "Assistant IA", amount: "Reporting", status: "Valide" },
 ];
 
 const analyticsBySector: Record<string, {
@@ -705,16 +705,17 @@ function AdminTemplate({ module }: { module: ModuleView }) {
         <DataGrid
           columns={[
             { key: "reference", label: "Reference" },
-            { key: "name", label: "Nom" },
+            { key: "name", label: "Configuration" },
             { key: "owner", label: "Responsable" },
+            { key: "amount", label: "Categorie" },
             { key: "status", label: "Statut", badge: true },
           ]}
           data={tableRows}
         />
       </section>
       <section className="mt-8 grid gap-5 xl:grid-cols-2">
-        <FormModal title={`Formulaire ${module.name}`} fields={[{ label: "Nom" }, { label: "Code" }, { label: "Statut" }]} />
-        <AttachmentManager attachments={[{ name: "Import exemple.xlsx", type: "Excel", size: "84 KB" }]} />
+        <FormModal title="Creer une configuration" fields={[{ label: "Titre" }, { label: "Categorie" }, { label: "Responsable" }]} />
+        <AttachmentManager attachments={[{ name: "Modele import.xlsx", type: "Excel", size: "84 KB" }]} />
       </section>
     </>
   );

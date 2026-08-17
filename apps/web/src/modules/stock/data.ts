@@ -6,7 +6,7 @@ export const stockKpis = [
 ];
 
 export const products = [
-  { name: "Ordinateur Pro", sku: "ERP-001", stock: 42, status: "Disponible", value: "38 400 EUR" },
+  { name: "Ordinateur Pro", sku: "SKU-734001", stock: 42, status: "Disponible", value: "38 400 EUR" },
   { name: "Scanner code-barres", sku: "ERP-002", stock: 8, status: "Stock faible", value: "4 800 EUR" },
   { name: "Terminal mobile", sku: "ERP-004", stock: 3, status: "Critique", value: "2 700 EUR" },
 ];
