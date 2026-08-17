@@ -18,6 +18,13 @@ type ServiceCheck = {
   detail: string;
 };
 
+type PlatformStatus = {
+  generatedAt?: string;
+  services?: Array<{ name: string; status: string; detail?: string }>;
+  incidents?: Array<{ title: string; status: string; date?: string }>;
+  maintenance?: Array<{ title: string; status: string; window?: string }>;
+};
+
 const initialChecks: ServiceCheck[] = [
   {
     id: "health",
@@ -32,6 +39,14 @@ const initialChecks: ServiceCheck[] = [
     name: "Base de donnees et dependances",
     description: "Controle de readiness incluant les dependances critiques.",
     path: "/health/ready",
+    state: "checking",
+    detail: "Verification en cours...",
+  },
+  {
+    id: "platform",
+    name: "Statut produit",
+    description: "Source de verite des statuts Disponible, Beta et Prevu.",
+    path: "/api/platform-status",
     state: "checking",
     detail: "Verification en cours...",
   },
@@ -58,6 +73,7 @@ export default function StatusPage() {
   const tx = (value: string) => translateContentText(value, locale);
   const [checks, setChecks] = useState<ServiceCheck[]>(initialChecks);
   const [lastUpdated, setLastUpdated] = useState<string>("");
+  const [platformStatus, setPlatformStatus] = useState<PlatformStatus | null>(null);
 
   async function runChecks() {
     const results = await Promise.all(
@@ -65,8 +81,12 @@ export default function StatusPage() {
         const startedAt = performance.now();
 
         try {
-          await axios.get(`${apiOriginUrl}${check.path}`, { timeout: 8000 });
+          const response = await axios.get(`${apiOriginUrl}${check.path}`, { timeout: 8000 });
           const latency = Math.round(performance.now() - startedAt);
+
+          if (check.id === "platform") {
+            setPlatformStatus(response.data);
+          }
 
           return {
             ...check,
@@ -148,6 +168,42 @@ export default function StatusPage() {
             </article>
           ))}
         </div>
+
+        <section className="mt-6 grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
+          <article className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
+            <h2 className="text-xl font-black">{tx("Services produit")}</h2>
+            <div className="mt-5 space-y-3">
+              {(platformStatus?.services ?? []).map((service) => (
+                <div key={service.name} className="flex items-center justify-between gap-4 rounded-2xl bg-slate-50 p-4">
+                  <div>
+                    <p className="font-black text-night">{service.name}</p>
+                    <p className="mt-1 text-sm text-slate-500">{tx(service.detail ?? "")}</p>
+                  </div>
+                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
+                    {tx(service.status)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article className="rounded-3xl bg-white p-6 shadow ring-1 ring-slate-200">
+            <h2 className="text-xl font-black">{tx("Incidents et maintenance")}</h2>
+            <div className="mt-5 space-y-3">
+              {(platformStatus?.incidents?.length ?? 0) === 0 && (
+                <div className="rounded-2xl bg-emerald-50 p-4 font-bold text-emerald-700">
+                  {tx("Aucun incident ouvert.")}
+                </div>
+              )}
+              {(platformStatus?.maintenance ?? []).map((item) => (
+                <div key={item.title} className="rounded-2xl bg-slate-50 p-4">
+                  <p className="font-black text-night">{tx(item.title)}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-500">{tx(item.window ?? "")}</p>
+                </div>
+              ))}
+            </div>
+          </article>
+        </section>
       </section>
     </main>
   );

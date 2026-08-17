@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import Link from "next/link";
+import { FormEvent, useMemo, useState } from "react";
 import { demoHighlights } from "@modules/cloud-market/data";
 import { apiClient } from "@shared/api/client";
 import LanguageSwitcher from "@shared/i18n/LanguageSwitcher";
@@ -23,11 +24,24 @@ const initialForm: DemoForm = {
   need: "",
 };
 
+const demoSectors = ["general", "retail", "restaurant", "construction", "healthcare"] as const;
+
 export default function DemoPage() {
   const { t } = useI18n();
   const [form, setForm] = useState<DemoForm>(initialForm);
+  const [sector, setSector] = useState<(typeof demoSectors)[number]>("general");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+
+  const walkthrough = useMemo(
+    () => [
+      { title: t("demo.step.dashboard"), text: t("demo.step.dashboardText"), metric: sector === "restaurant" ? "286 tickets" : "482 300 EUR" },
+      { title: t("demo.step.crm"), text: t("demo.step.crmText"), metric: "1 208" },
+      { title: t("demo.step.inventory"), text: t("demo.step.inventoryText"), metric: "17" },
+      { title: t("demo.step.billing"), text: t("demo.step.billingText"), metric: "48 200 EUR" },
+    ],
+    [sector, t]
+  );
 
   const updateField = (field: keyof DemoForm, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -39,7 +53,7 @@ export default function DemoPage() {
     setMessage("");
 
     try {
-      const response = await apiClient.post<DemoResponse>("/demo/requests", form);
+      const response = await apiClient.post<DemoResponse>("/demo/requests", { ...form, sector });
 
       if (!response.data.success) {
         setStatus("error");
@@ -50,10 +64,18 @@ export default function DemoPage() {
       setStatus("success");
       setMessage(response.data.message);
       setForm(initialForm);
+      setSector("general");
     } catch {
       setStatus("error");
-      setMessage("Impossible d'envoyer la demande. Verifiez que l'API Cloud est lancee sur NEXT_PUBLIC_API_URL.");
+      setMessage(t("demo.error"));
     }
+  };
+
+  const resetDemo = () => {
+    setForm(initialForm);
+    setSector("general");
+    setStatus("idle");
+    setMessage("");
   };
 
   return (
@@ -68,13 +90,48 @@ export default function DemoPage() {
           <p className="mt-4 text-lg leading-8 text-slate-600">
             {t("demo.text")}
           </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href={`/dashboard?sector=${sector}`} className="rounded-2xl bg-[#FF7A00] px-5 py-3 font-black text-white">
+              {t("demo.tryNow")}
+            </Link>
+            <button type="button" onClick={resetDemo} className="rounded-2xl border border-slate-300 bg-white px-5 py-3 font-black text-night">
+              {t("demo.reset")}
+            </button>
+          </div>
           <div className="mt-8 grid gap-3">
             {demoHighlights.map((item) => (
               <div key={item} className="rounded-lg bg-white p-5 font-bold shadow ring-1 ring-slate-200">
-                {item}
+                {t(`demo.highlight.${demoHighlights.indexOf(item)}`)}
               </div>
             ))}
           </div>
+
+          <section className="mt-8 rounded-2xl bg-[#1E2A38] p-6 text-white">
+            <label className="text-sm font-black uppercase tracking-[0.18em] text-[#8df8e8]" htmlFor="demo-sector">
+              {t("demo.sector")}
+            </label>
+            <select
+              id="demo-sector"
+              value={sector}
+              onChange={(event) => setSector(event.target.value as (typeof demoSectors)[number])}
+              className="mt-3 w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 font-black outline-none"
+            >
+              {demoSectors.map((item) => (
+                <option key={item} value={item} className="text-night">
+                  {t(`demo.sector.${item}`)}
+                </option>
+              ))}
+            </select>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {walkthrough.map((step) => (
+                <article key={step.title} className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#8df8e8]">{step.metric}</p>
+                  <h2 className="mt-2 font-black">{step.title}</h2>
+                  <p className="mt-2 text-sm leading-6 text-white/70">{step.text}</p>
+                </article>
+              ))}
+            </div>
+          </section>
         </div>
 
         <form onSubmit={submit} className="rounded-lg bg-white p-7 shadow ring-1 ring-slate-200">

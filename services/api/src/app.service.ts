@@ -45,12 +45,13 @@ export class AppService {
     return {
       product: "EnterpriseERP Cloud",
       modules: [
-        { key: "dashboard", name: "Dashboard CEO", status: "ready", value: "Pilotage, KPIs, risques et priorites IA" },
-        { key: "crm", name: "CRM", status: "ready", value: "Clients, prospects, statut et revenu" },
-        { key: "stock", name: "Stock", status: "ready", value: "Produits, SKU, quantites et alertes" },
-        { key: "facturation", name: "Facturation", status: "ready", value: "Factures, echeances et encaissements" },
+        { key: "dashboard", name: "Dashboard CEO", status: "available", value: "Pilotage, KPIs, risques et priorites IA" },
+        { key: "crm", name: "CRM", status: "available", value: "Clients, prospects, statut et revenu" },
+        { key: "stock", name: "Stock", status: "available", value: "Produits, SKU, quantites et alertes" },
+        { key: "facturation", name: "Facturation", status: "available", value: "Factures, echeances et encaissements" },
+        { key: "security", name: "RBAC et audit", status: "beta", value: "Roles, permissions, sessions et journal d'audit" },
         { key: "ai", name: "Assistant IA", status: "planned", value: "Syntheses, recommandations et automatisations" },
-        { key: "mobile", name: "Mobile", status: "planned", value: "Connexion EnterpriseERP.Mobile" },
+        { key: "mobile", name: "Mobile", status: "beta", value: "Connexion EnterpriseERP.Mobile progressive" },
       ],
     };
   }
@@ -71,7 +72,7 @@ export class AppService {
       },
       plans: [
         { name: "Starter", price: "Free trial", target: "Validation et demos" },
-        { name: "Business", price: "Quote", target: "PME en croissance" },
+        { name: "Business", price: "From 49 EUR/month", target: "PME en croissance" },
         { name: "Enterprise", price: "Custom", target: "Multi-sites, SLA, integrations" },
       ],
     };
@@ -89,10 +90,10 @@ export class AppService {
     return {
       trustCenter: "EnterpriseERP Cloud",
       controls: [
-        { key: "roles", status: "planned", description: "Role-based access control for admin, manager and employee scopes." },
-        { key: "readiness", status: "ready", description: "Health and readiness endpoints for cloud QA and deployment checks." },
-        { key: "secrets", status: "ready", description: "Environment-based configuration with secrets excluded from Git." },
-        { key: "audit", status: "planned", description: "Audit trail for sensitive actions and business changes." },
+        { key: "roles", status: "beta", description: "Role-based access control for admin, manager and employee scopes." },
+        { key: "readiness", status: "available", description: "Health and readiness endpoints for cloud QA and deployment checks." },
+        { key: "secrets", status: "available", description: "Environment-based configuration with secrets excluded from Git." },
+        { key: "audit", status: "beta", description: "Audit trail for sensitive actions and business changes." },
         { key: "retention", status: "planned", description: "Trial and subscription data retention policy." },
       ],
     };
@@ -186,12 +187,15 @@ export class AppService {
 
   getPlatformStatus() {
     return {
+      generatedAt: new Date().toISOString(),
       services: [
-        { name: "Web app", status: "operational" },
-        { name: "Cloud API", status: "operational" },
-        { name: "Prisma schema", status: "valid" },
-        { name: "Mobile sync", status: "planned" },
+        { name: "Web app", status: "available", detail: "Next.js frontend deployed" },
+        { name: "Cloud API", status: "available", detail: "NestJS API responding" },
+        { name: "Database", status: "available", detail: "Readiness query validated" },
+        { name: "Mobile sync", status: "beta", detail: "Progressive EnterpriseERP.Mobile connection" },
       ],
+      incidents: [],
+      maintenance: [{ title: "Integration monitoring upgrade", status: "planned", window: "Upcoming sprint" }],
     };
   }
 

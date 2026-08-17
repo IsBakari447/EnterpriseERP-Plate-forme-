@@ -991,6 +991,54 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
   },
 };
 
+Object.assign(contentTranslations.fr ??= {}, {
+  available: "Disponible",
+  beta: "Beta",
+  planned: "Prevu",
+  "Next.js frontend deployed": "Frontend Next.js deploye",
+  "NestJS API responding": "API NestJS joignable",
+  "Readiness query validated": "Controle readiness valide",
+  "Progressive EnterpriseERP.Mobile connection": "Connexion EnterpriseERP.Mobile progressive",
+  "Integration monitoring upgrade": "Amelioration du monitoring des integrations",
+  "Upcoming sprint": "Prochain sprint",
+});
+
+Object.assign(contentTranslations.en ??= {}, {
+  "Statut produit": "Product status",
+  "Source de verite des statuts Disponible, Beta et Prevu.":
+    "Source of truth for Available, Beta and Planned statuses.",
+  "Services produit": "Product services",
+  "Incidents et maintenance": "Incidents and maintenance",
+  "Aucun incident ouvert.": "No open incident.",
+  Disponible: "Available",
+  Beta: "Beta",
+  Prevu: "Planned",
+  available: "Available",
+  beta: "Beta",
+  planned: "Planned",
+});
+
+Object.assign(contentTranslations.sv ??= {}, {
+  "Statut produit": "Produktstatus",
+  "Source de verite des statuts Disponible, Beta et Prevu.":
+    "Kalla for statusarna Tillganglig, Beta och Planerad.",
+  "Services produit": "Produkttjanster",
+  "Incidents et maintenance": "Incidenter och underhall",
+  "Aucun incident ouvert.": "Ingen oppen incident.",
+  Disponible: "Tillganglig",
+  Beta: "Beta",
+  Prevu: "Planerad",
+  available: "Tillganglig",
+  beta: "Beta",
+  planned: "Planerad",
+  "Next.js frontend deployed": "Next.js-frontend distribuerad",
+  "NestJS API responding": "NestJS API svarar",
+  "Readiness query validated": "Readiness-kontroll validerad",
+  "Progressive EnterpriseERP.Mobile connection": "Progressiv EnterpriseERP.Mobile-anslutning",
+  "Integration monitoring upgrade": "Forbattring av integrationsmonitorering",
+  "Upcoming sprint": "Kommande sprint",
+});
+
 function translateLabelPart(value: string, locale: Locale) {
   if (locale === "fr") return value;
   return labelTranslations[locale]?.[value] ?? labelTranslations.en?.[value] ?? value;

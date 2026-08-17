@@ -6,16 +6,16 @@ import { useI18n } from "@shared/i18n/I18nProvider";
 import {
   competitorSignals,
   integrationItems,
+  integrationStatuses,
   onboardingSteps,
   pricingPlans,
   securityItems,
   solutionCards,
+  solutionStatuses,
 } from "./data";
 
 export function CloudMarketPage() {
   const { t } = useI18n();
-  const solutionStatuses = ["available", "available", "available", "available", "beta", "beta"];
-  const integrationStatuses = ["available", "available", "available", "available", "available", "beta", "planned", "planned", "planned"];
   const statusClass = (status: string) =>
     status === "available"
       ? "bg-emerald-50 text-emerald-700"
@@ -44,6 +44,9 @@ export function CloudMarketPage() {
               </a>
               <a href="/pricing" className="rounded-2xl border border-white/30 px-6 py-4 font-black text-white">
                 {t("market.offers")}
+              </a>
+              <a href="/demo" className="rounded-2xl bg-[#FF7A00] px-6 py-4 font-black text-white shadow-lg shadow-orange-500/20">
+                {t("demo.tryNow")}
               </a>
               <a href="/login" className="rounded-2xl border border-white/30 px-6 py-4 font-black text-white">
                 {t("auth.login")}
@@ -118,9 +121,9 @@ export function CloudMarketPage() {
 
       <section id="problemes" className="mx-auto grid max-w-7xl scroll-mt-28 gap-5 px-6 pb-16 lg:grid-cols-[.8fr_1.2fr] lg:px-16">
         <div className="rounded-3xl bg-[#1E2A38] p-7 text-white">
-          <h2 className="text-3xl font-black">{t("market.expectedSignals")}</h2>
+          <h2 className="text-3xl font-black">{t("market.businessBenefits")}</h2>
           <p className="mt-4 leading-8 text-white/75">
-            {t("market.expectedSignalsText")}
+            {t("market.businessBenefitsText")}
           </p>
         </div>
         <div className="grid gap-3 md:grid-cols-2">

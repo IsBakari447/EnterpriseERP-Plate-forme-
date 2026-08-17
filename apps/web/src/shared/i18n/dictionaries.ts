@@ -2500,4 +2500,168 @@ Object.assign(dictionaries.nl, {
   "profile.chooseFromDevice": "Foto van apparaat kiezen",
 });
 
+Object.assign(dictionaries.fr, {
+  "market.businessBenefits": "Ce que gagne votre entreprise",
+  "market.businessBenefitsText":
+    "EnterpriseERP aide les dirigeants a reduire les doubles saisies, suivre la tresorerie, prioriser les relances et garder une vue claire sur les operations.",
+  "market.solution.0.description":
+    "Centralisez clients, ventes, factures et stock pour gagner du temps et reduire les erreurs.",
+  "market.solution.0.point.0": "Operations centralisees",
+  "market.solution.0.point.1": "Moins de doubles saisies",
+  "market.solution.0.point.2": "Donnees exploitables",
+  "market.solution.1.description":
+    "Suivez tresorerie, priorites, risques et activite recente depuis un centre de decision.",
+  "market.solution.1.point.0": "A faire aujourd'hui",
+  "market.solution.1.point.1": "Risques et opportunites",
+  "market.solution.1.point.2": "Actions directes",
+  "market.solution.2.description":
+    "Transformez prospects, devis et relances en ventes suivies avec un pipeline clair.",
+  "market.solution.3.description":
+    "Anticipez les ruptures, suivez les seuils critiques et declenchez les reapprovisionnements.",
+  "market.solution.4.description":
+    "Connectez web, mobile et integrations autour d'une API Cloud verifiee par health checks.",
+  "market.solution.5.description":
+    "Automatisez progressivement recommandations, emails, suivi commercial et usages mobiles.",
+  "market.signal.0": "Moins de fichiers disperses entre ventes, stock et factures",
+  "market.signal.1": "Tresorerie plus lisible avec les encaissements prioritaires",
+  "market.signal.2": "Relances, validations et ruptures visibles chaque jour",
+  "market.signal.3": "API prete pour connecter mobile, BI et automatisations",
+  "market.signal.4": "Assistant IA integre aux actions commerciales et operations",
+  "market.signal.5": "Securite, roles et audit exposes avec des statuts clairs",
+  "market.plan.1.price": "A partir de 49 EUR/mois",
+  "market.plan.1.feature.0": "5 utilisateurs inclus",
+  "demo.tryNow": "Essayer la demo maintenant",
+  "demo.reset": "Reinitialiser la demo",
+  "demo.error": "Impossible d'envoyer la demande. Verifiez que l'API Cloud est lancee.",
+  "demo.sector": "Secteur de demonstration",
+  "demo.sector.general": "Entreprise generale",
+  "demo.sector.retail": "Retail",
+  "demo.sector.restaurant": "Restaurant",
+  "demo.sector.construction": "Construction",
+  "demo.sector.healthcare": "Sante",
+  "demo.highlight.0": "Choix du secteur et donnees fictives prechargees",
+  "demo.highlight.1": "Walkthrough dashboard, CRM, stock et facturation",
+  "demo.highlight.2": "Actions prioritaires: relancer, reapprovisionner, valider",
+  "demo.highlight.3": "Controle API readiness, latence et dependances",
+  "demo.highlight.4": "Reset automatique de la demo apres exploration",
+  "demo.step.dashboard": "Dashboard dirigeant",
+  "demo.step.dashboardText":
+    "Visualisez les KPI, alertes, actions prioritaires et recommandations IA.",
+  "demo.step.crm": "CRM et pipeline",
+  "demo.step.crmText": "Suivez clients, opportunites, relances et activite commerciale.",
+  "demo.step.inventory": "Stock critique",
+  "demo.step.inventoryText":
+    "Reperez les ruptures possibles et declenchez le reapprovisionnement.",
+  "demo.step.billing": "Facturation",
+  "demo.step.billingText": "Controlez les factures dues, paiements et encaissements prioritaires.",
+});
+
+Object.assign(dictionaries.en, {
+  "market.businessBenefits": "What your business gains",
+  "market.businessBenefitsText":
+    "EnterpriseERP helps leaders reduce duplicate work, track cash flow, prioritize follow-ups and keep a clear view of operations.",
+  "market.solution.0.description":
+    "Centralize customers, sales, invoices and inventory to save time and reduce errors.",
+  "market.solution.0.point.0": "Centralized operations",
+  "market.solution.0.point.1": "Less duplicate entry",
+  "market.solution.0.point.2": "Usable data",
+  "market.solution.1.description":
+    "Track cash flow, priorities, risks and recent activity from a decision center.",
+  "market.solution.1.point.0": "Today's work",
+  "market.solution.1.point.1": "Risks and opportunities",
+  "market.solution.1.point.2": "Direct actions",
+  "market.solution.2.description":
+    "Turn prospects, quotes and follow-ups into tracked sales with a clear pipeline.",
+  "market.solution.3.description":
+    "Anticipate stockouts, track critical thresholds and trigger replenishment.",
+  "market.solution.4.description":
+    "Connect web, mobile and integrations around a Cloud API verified by health checks.",
+  "market.solution.5.description":
+    "Progressively automate recommendations, emails, sales follow-up and mobile usage.",
+  "market.signal.0": "Fewer scattered files between sales, inventory and invoices",
+  "market.signal.1": "Clearer cash flow with priority collections",
+  "market.signal.2": "Follow-ups, approvals and stockouts visible every day",
+  "market.signal.3": "API ready to connect mobile, BI and automation",
+  "market.signal.4": "AI assistant embedded in sales and operational actions",
+  "market.signal.5": "Security, roles and audit shown with clear statuses",
+  "market.plan.1.price": "From 49 EUR/month",
+  "market.plan.1.feature.0": "5 users included",
+  "demo.tryNow": "Try the demo now",
+  "demo.reset": "Reset demo",
+  "demo.error": "Unable to send the request. Check that the Cloud API is running.",
+  "demo.sector": "Demo sector",
+  "demo.sector.general": "General business",
+  "demo.sector.retail": "Retail",
+  "demo.sector.restaurant": "Restaurant",
+  "demo.sector.construction": "Construction",
+  "demo.sector.healthcare": "Healthcare",
+  "demo.highlight.0": "Sector choice and preloaded sample data",
+  "demo.highlight.1": "Dashboard, CRM, inventory and billing walkthrough",
+  "demo.highlight.2": "Priority actions: follow up, replenish, approve",
+  "demo.highlight.3": "API readiness, latency and dependency checks",
+  "demo.highlight.4": "Automatic demo reset after exploration",
+  "demo.step.dashboard": "Executive dashboard",
+  "demo.step.dashboardText": "View KPIs, alerts, priority actions and AI recommendations.",
+  "demo.step.crm": "CRM and pipeline",
+  "demo.step.crmText": "Track customers, opportunities, follow-ups and sales activity.",
+  "demo.step.inventory": "Critical inventory",
+  "demo.step.inventoryText": "Spot possible stockouts and trigger replenishment.",
+  "demo.step.billing": "Billing",
+  "demo.step.billingText": "Control due invoices, payments and priority collections.",
+});
+
+Object.assign(dictionaries.sv, {
+  "market.businessBenefits": "Vad foretaget vinner",
+  "market.businessBenefitsText":
+    "EnterpriseERP hjalper ledare att minska dubbelarbete, folja kassaflode, prioritera uppfoljningar och behalla en tydlig operativ vy.",
+  "market.solution.0.description":
+    "Centralisera kunder, forsaljning, fakturor och lager for att spara tid och minska fel.",
+  "market.solution.0.point.0": "Centraliserade operationer",
+  "market.solution.0.point.1": "Mindre dubbelregistrering",
+  "market.solution.0.point.2": "Anvandbara data",
+  "market.solution.1.description":
+    "Folj kassaflode, prioriteringar, risker och senaste aktivitet fran ett beslutscenter.",
+  "market.solution.1.point.0": "Dagens arbete",
+  "market.solution.1.point.1": "Risker och mojligheter",
+  "market.solution.1.point.2": "Direkta atgarder",
+  "market.solution.2.description":
+    "Gor prospekt, offerter och uppfoljningar till sparad forsaljning med en tydlig pipeline.",
+  "market.solution.3.description":
+    "Forutse lagerbrister, folj kritiska gransvarden och starta pafyllning.",
+  "market.solution.4.description":
+    "Koppla webb, mobil och integrationer runt ett Cloud API verifierat med health checks.",
+  "market.solution.5.description":
+    "Automatisera stegvis rekommendationer, email, saljuppfoljning och mobil anvandning.",
+  "market.signal.0": "Farre utspridda filer mellan forsaljning, lager och fakturor",
+  "market.signal.1": "Tydligare kassaflode med prioriterade inbetalningar",
+  "market.signal.2": "Uppfoljningar, godkannanden och lagerbrister syns varje dag",
+  "market.signal.3": "API redo for mobil, BI och automatisering",
+  "market.signal.4": "AI-assistent integrerad i salj- och driftatgarder",
+  "market.signal.5": "Sakerhet, roller och audit visas med tydliga statusar",
+  "market.plan.1.price": "Fran 49 EUR/manad",
+  "market.plan.1.feature.0": "5 anvandare ingar",
+  "demo.tryNow": "Prova demon nu",
+  "demo.reset": "Aterstall demo",
+  "demo.error": "Det gar inte att skicka begaran. Kontrollera att Cloud API ar igang.",
+  "demo.sector": "Demosektor",
+  "demo.sector.general": "Allmant foretag",
+  "demo.sector.retail": "Handel",
+  "demo.sector.restaurant": "Restaurang",
+  "demo.sector.construction": "Bygg",
+  "demo.sector.healthcare": "Vard",
+  "demo.highlight.0": "Sektorval och forinlast exempeldata",
+  "demo.highlight.1": "Genomgang av dashboard, CRM, lager och fakturering",
+  "demo.highlight.2": "Prioriterade atgarder: folj upp, fyll pa, godkann",
+  "demo.highlight.3": "Kontroll av API-readiness, latens och beroenden",
+  "demo.highlight.4": "Automatisk aterstallning efter demo",
+  "demo.step.dashboard": "Ledningsdashboard",
+  "demo.step.dashboardText": "Visa KPI:er, varningar, prioriterade atgarder och AI-rekommendationer.",
+  "demo.step.crm": "CRM och pipeline",
+  "demo.step.crmText": "Folj kunder, mojligheter, uppfoljningar och saljaktivitet.",
+  "demo.step.inventory": "Kritiskt lager",
+  "demo.step.inventoryText": "Upptack mojliga lagerbrister och starta pafyllning.",
+  "demo.step.billing": "Fakturering",
+  "demo.step.billingText": "Kontrollera forfallna fakturor, betalningar och prioriterade inbetalningar.",
+});
+
 
