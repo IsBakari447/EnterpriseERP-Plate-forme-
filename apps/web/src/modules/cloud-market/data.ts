@@ -152,20 +152,20 @@ export const roiCards = [
 
 export const faqs = [
   {
-    question: "EnterpriseERP Cloud est-il different de EnterpriseERP classique EUR",
-    answer: "Oui. EnterpriseERP Cloud est la version SaaS API-first, pensee pour web, mobile, integrations, multi-entreprise et deploiement cloud.",
+    question: "EnterpriseERP Cloud est-il different de EnterpriseERP classique ?",
+    answer: "Oui. EnterpriseERP Cloud est la version SaaS concue pour travailler depuis le web, connecter le mobile, isoler les donnees par entreprise et integrer vos outils.",
   },
   {
-    question: "L'essai gratuit demande-t-il une carte bancaire EUR",
-    answer: "La proposition produit recommande un essai de 14 jours sans friction, avec limites claires et lecture seule en fin d'essai.",
+    question: "L'essai gratuit demande-t-il une carte bancaire ?",
+    answer: "Non. Vous beneficiez de 14 jours d'essai sans carte bancaire pour tester les modules essentiels avec des limites clairement affichees.",
   },
   {
-    question: "Peut-on connecter l'application mobile EUR",
-    answer: "Oui, l'architecture Cloud expose une API REST. L'experience mobile avancee sera livree progressivement autour de cette API.",
+    question: "Peut-on connecter l'application mobile ?",
+    answer: "Oui. Le socle API Cloud est disponible et la synchronisation mobile avancee est livree progressivement en beta.",
   },
   {
-    question: "Le produit est-il pret pour les integrations EUR",
-    answer: "La base API-first existe deja. Les connecteurs externes sont presentes avec un statut clair: disponible, beta ou prevu.",
+    question: "Quelles integrations sont disponibles ?",
+    answer: "Les endpoints API REST sont disponibles, les webhooks sont en beta et les connecteurs paiements, email/calendrier et comptables sont classes comme prevus.",
   },
 ];
 

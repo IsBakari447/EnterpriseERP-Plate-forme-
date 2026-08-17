@@ -2664,4 +2664,76 @@ Object.assign(dictionaries.sv, {
   "demo.step.billingText": "Kontrollera forfallna fakturor, betalningar och prioriterade inbetalningar.",
 });
 
+Object.assign(dictionaries.fr, {
+  "auth.loginHero": "Un espace securise pour piloter votre entreprise, vos equipes et vos operations.",
+  "auth.registerHero": "Creez votre espace de travail, choisissez votre secteur et invitez votre equipe.",
+  "auth.valueDataIsolation": "Donnees isolees",
+  "auth.valueDataIsolationText": "Chaque entreprise garde ses donnees separees et controlees.",
+  "auth.valueRoleAccess": "Acces par role",
+  "auth.valueRoleAccessText": "Chaque utilisateur voit uniquement ce qui correspond a son role.",
+  "auth.valueSecureSessions": "Sessions securisees",
+  "auth.valueSecureSessionsText": "Connexion controlee avec appareils et sessions revocables.",
+  "auth.valueSectorWorkspace": "Espace sectoriel",
+  "faq.0.question": "EnterpriseERP Cloud est-il different de EnterpriseERP classique ?",
+  "faq.0.answer":
+    "Oui. EnterpriseERP Cloud est la version SaaS concue pour travailler depuis le web, connecter le mobile, isoler les donnees par entreprise et integrer vos outils.",
+  "faq.1.question": "L'essai gratuit demande-t-il une carte bancaire ?",
+  "faq.1.answer":
+    "Non. Vous beneficiez de 14 jours d'essai sans carte bancaire pour tester les modules essentiels avec des limites clairement affichees.",
+  "faq.2.question": "Peut-on connecter l'application mobile ?",
+  "faq.2.answer":
+    "Oui. Le socle API Cloud est disponible et la synchronisation mobile avancee est livree progressivement en beta.",
+  "faq.3.question": "Quelles integrations sont disponibles ?",
+  "faq.3.answer":
+    "Les endpoints API REST sont disponibles, les webhooks sont en beta et les connecteurs paiements, email/calendrier et comptables sont classes comme prevus.",
+});
+
+Object.assign(dictionaries.en, {
+  "auth.loginHero": "A secure workspace to run your business, teams and operations.",
+  "auth.registerHero": "Create your workspace, choose your industry and invite your team.",
+  "auth.valueDataIsolation": "Isolated data",
+  "auth.valueDataIsolationText": "Each company keeps its data separated and controlled.",
+  "auth.valueRoleAccess": "Role-based access",
+  "auth.valueRoleAccessText": "Each user only sees what matches their role.",
+  "auth.valueSecureSessions": "Secure sessions",
+  "auth.valueSecureSessionsText": "Controlled sign-in with revocable devices and sessions.",
+  "auth.valueSectorWorkspace": "Industry workspace",
+  "faq.0.question": "Is EnterpriseERP Cloud different from classic EnterpriseERP?",
+  "faq.0.answer":
+    "Yes. EnterpriseERP Cloud is the SaaS version built for web work, mobile connection, company-isolated data and integrations.",
+  "faq.1.question": "Does the free trial require a credit card?",
+  "faq.1.answer":
+    "No. You get a 14-day trial without a credit card to test the essential modules with clearly displayed limits.",
+  "faq.2.question": "Can the mobile app be connected?",
+  "faq.2.answer":
+    "Yes. The Cloud API foundation is available and advanced mobile sync is being delivered progressively in beta.",
+  "faq.3.question": "Which integrations are available?",
+  "faq.3.answer":
+    "REST API endpoints are available, webhooks are in beta, and payment, email/calendar and accounting connectors are marked as planned.",
+});
+
+Object.assign(dictionaries.sv, {
+  "auth.loginHero": "En saker arbetsyta for att styra foretag, team och operationer.",
+  "auth.registerHero": "Skapa din arbetsyta, valj bransch och bjud in ditt team.",
+  "auth.valueDataIsolation": "Isolerade data",
+  "auth.valueDataIsolationText": "Varje foretag behaller sina data separerade och kontrollerade.",
+  "auth.valueRoleAccess": "Rollbaserad atkomst",
+  "auth.valueRoleAccessText": "Varje anvandare ser bara det som matchar rollen.",
+  "auth.valueSecureSessions": "Sakra sessioner",
+  "auth.valueSecureSessionsText": "Kontrollerad inloggning med enheter och sessioner som kan aterkallas.",
+  "auth.valueSectorWorkspace": "Branscharbetsyta",
+  "faq.0.question": "Ar EnterpriseERP Cloud annorlunda an klassiska EnterpriseERP?",
+  "faq.0.answer":
+    "Ja. EnterpriseERP Cloud ar SaaS-versionen for webbarbete, mobil anslutning, foretagsisolerade data och integrationer.",
+  "faq.1.question": "Kravs bankkort for gratis provperiod?",
+  "faq.1.answer":
+    "Nej. Du far 14 dagars provperiod utan bankkort for att testa de viktigaste modulerna med tydliga granser.",
+  "faq.2.question": "Kan mobilappen anslutas?",
+  "faq.2.answer":
+    "Ja. Cloud API-grunden ar tillganglig och avancerad mobilsynk levereras stegvis i beta.",
+  "faq.3.question": "Vilka integrationer finns?",
+  "faq.3.answer":
+    "REST API-endpoints ar tillgangliga, webhooks ar i beta och betalnings-, email/kalender- och bokforingskopplingar ar markerade som planerade.",
+});
+
 

@@ -50,9 +50,9 @@ export default function AuthShell({
 
               <div className="mt-10 grid gap-3 sm:grid-cols-3">
                 {[
-                  ["JWT", t("auth.featureJwt")],
-                  ["RBAC", t("auth.featureRbac")],
-                  [t("auth.featureAiLabel"), t("auth.featureAi")],
+                  [t("auth.valueDataIsolation"), t("auth.valueDataIsolationText")],
+                  [t("auth.valueRoleAccess"), t("auth.valueRoleAccessText")],
+                  [t("auth.valueSecureSessions"), t("auth.valueSecureSessionsText")],
                 ].map(([label, detail]) => (
                   <div key={label} className="rounded-2xl border border-white/10 bg-white/10 p-4">
                     <div className="text-lg font-black">{label}</div>

@@ -146,9 +146,9 @@ export default function RegisterPage() {
         </button>
 
         <div className="grid gap-3 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-600 sm:grid-cols-3">
-          <span>{t("auth.multiTenant")}</span>
-          <span>{t("auth.rbac")}</span>
-          <span>{t("auth.sectorEngine")}</span>
+          <span>{t("auth.valueDataIsolation")}</span>
+          <span>{t("auth.valueRoleAccess")}</span>
+          <span>{t("auth.valueSectorWorkspace")}</span>
         </div>
       </form>
     </AuthShell>
