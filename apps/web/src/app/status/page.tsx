@@ -2,7 +2,6 @@
 
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
-import { apiOriginUrl } from "@shared/api/client";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { translateContentText } from "@shared/i18n/content-labels";
 
@@ -12,7 +11,7 @@ type ServiceCheck = {
   id: string;
   name: string;
   description: string;
-  path: string;
+  url: string;
   state: CheckState;
   latency?: number;
   detail: string;
@@ -25,53 +24,113 @@ type PlatformStatus = {
   maintenance?: Array<{ title: string; status: string; window?: string }>;
 };
 
+function getDefaultApiBaseUrl() {
+  if (typeof window !== "undefined" && window.location.hostname.includes("enterpriseerp-web.onrender.com")) {
+    return "https://enterpriseerp-api.onrender.com/api";
+  }
+
+  return "http://localhost:4000/api";
+}
+
+function getStatusUrls() {
+  const configuredApiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? getDefaultApiBaseUrl()).replace(/\/$/, "");
+  const apiBaseUrl = configuredApiBaseUrl.endsWith("/api") ? configuredApiBaseUrl : `${configuredApiBaseUrl}/api`;
+  const apiOriginUrl = apiBaseUrl.replace(/\/api\/?$/, "");
+
+  return {
+    apiBaseUrl,
+    apiOriginUrl,
+    healthUrl: `${apiOriginUrl}/health`,
+    readinessUrl: `${apiOriginUrl}/health/ready`,
+    platformStatusUrl: `${apiBaseUrl}/platform-status`,
+  };
+}
+
+const baselineProductServices: NonNullable<PlatformStatus["services"]> = [
+  { name: "Application Web", status: "available", detail: "Next.js frontend loaded" },
+  { name: "API", status: "available", detail: "Health endpoint monitored" },
+  { name: "PostgreSQL", status: "available", detail: "Readiness endpoint monitored" },
+  { name: "Authentication", status: "beta", detail: "Dedicated auth status check required" },
+  { name: "File Storage", status: "planned", detail: "Object storage integration planned" },
+  { name: "AI Services", status: "beta", detail: "AI agents delivered progressively" },
+];
+
 const fallbackPlatformStatus: PlatformStatus = {
-  services: [
-    { name: "Web Application", status: "available", detail: "Next.js frontend loaded" },
-    { name: "API", status: "available", detail: "Health endpoint monitored" },
-    { name: "PostgreSQL", status: "available", detail: "Readiness endpoint monitored" },
-    { name: "Authentication", status: "available", detail: "Login and sessions monitored" },
-    { name: "File Storage", status: "planned", detail: "Object storage integration planned" },
-    { name: "AI Services", status: "beta", detail: "AI agents delivered progressively" },
-  ],
+  services: baselineProductServices,
   incidents: [],
   maintenance: [],
 };
 
-const initialChecks: ServiceCheck[] = [
-  {
-    id: "web",
-    name: "Application web",
-    description: "Disponibilite du frontend EnterpriseERP.",
-    path: "/status",
-    state: "checking",
-    detail: "Verification en cours...",
-  },
-  {
-    id: "health",
-    name: "API principale",
-    description: "Disponibilite du service backend EnterpriseERP.",
-    path: "/health",
-    state: "checking",
-    detail: "Verification en cours...",
-  },
-  {
-    id: "ready",
-    name: "Base de donnees et dependances",
-    description: "Controle de readiness incluant les dependances critiques.",
-    path: "/health/ready",
-    state: "checking",
-    detail: "Verification en cours...",
-  },
-  {
-    id: "platform",
-    name: "Statut produit",
-    description: "Source de verite des statuts Disponible, Beta et Prevu.",
-    path: "/api/platform-status",
-    state: "checking",
-    detail: "Verification en cours...",
-  },
-];
+function getInitialChecks(): ServiceCheck[] {
+  const { healthUrl, readinessUrl, platformStatusUrl } = getStatusUrls();
+
+  return [
+    {
+      id: "web",
+      name: "Application web",
+      description: "Disponibilite du frontend EnterpriseERP.",
+      url: "/status",
+      state: "checking",
+      detail: "Verification en cours...",
+    },
+    {
+      id: "health",
+      name: "API principale",
+      description: "Disponibilite du service backend EnterpriseERP.",
+      url: healthUrl,
+      state: "checking",
+      detail: "Verification en cours...",
+    },
+    {
+      id: "ready",
+      name: "Base de donnees et dependances",
+      description: "Controle de readiness incluant les dependances critiques.",
+      url: readinessUrl,
+      state: "checking",
+      detail: "Verification en cours...",
+    },
+    {
+      id: "platform",
+      name: "Statut produit",
+      description: "Source de verite des statuts Disponible, Beta et Prevu.",
+      url: platformStatusUrl,
+      state: "checking",
+      detail: "Verification en cours...",
+    },
+  ];
+}
+
+function statusFromCheck(check: ServiceCheck | undefined): string {
+  if (!check) return "beta";
+  if (check.state === "online") return "available";
+  if (check.state === "checking" || check.state === "degraded") return "beta";
+  return "planned";
+}
+
+function buildProductServices(checks: ServiceCheck[]): NonNullable<PlatformStatus["services"]> {
+  const web = checks.find((check) => check.id === "web");
+  const health = checks.find((check) => check.id === "health");
+  const ready = checks.find((check) => check.id === "ready");
+
+  return [
+    { ...baselineProductServices[0], status: statusFromCheck(web) },
+    { ...baselineProductServices[1], status: statusFromCheck(health) },
+    { ...baselineProductServices[2], status: statusFromCheck(ready) },
+    baselineProductServices[3],
+    baselineProductServices[4],
+    baselineProductServices[5],
+  ];
+}
+
+function normalizePlatformStatus(status: PlatformStatus | null | undefined, checks: ServiceCheck[]): PlatformStatus {
+  return {
+    ...fallbackPlatformStatus,
+    ...(status ?? {}),
+    services: buildProductServices(checks),
+    incidents: status?.incidents ?? [],
+    maintenance: status?.maintenance ?? [],
+  };
+}
 
 function badgeClass(state: CheckState) {
   if (state === "online") return "bg-emerald-50 text-emerald-700";
@@ -92,13 +151,15 @@ function stateLabel(state: CheckState) {
 export default function StatusPage() {
   const { locale } = useI18n();
   const tx = (value: string) => translateContentText(value, locale);
-  const [checks, setChecks] = useState<ServiceCheck[]>(initialChecks);
+  const [checks, setChecks] = useState<ServiceCheck[]>(() => getInitialChecks());
   const [lastUpdated, setLastUpdated] = useState<string>("");
-  const [platformStatus, setPlatformStatus] = useState<PlatformStatus | null>(null);
+  const [platformStatus, setPlatformStatus] = useState<PlatformStatus>(fallbackPlatformStatus);
 
   async function runChecks() {
+    const checksToRun = getInitialChecks();
+    const { platformStatusUrl } = getStatusUrls();
     const results = await Promise.all(
-      initialChecks.map(async (check) => {
+      checksToRun.map(async (check) => {
         const startedAt = performance.now();
 
         if (check.id === "web") {
@@ -111,12 +172,8 @@ export default function StatusPage() {
         }
 
         try {
-          const response = await axios.get(`${apiOriginUrl}${check.path}`, { timeout: 8000 });
+          const response = await axios.get(check.url, { timeout: 8000 });
           const latency = Math.round(performance.now() - startedAt);
-
-          if (check.id === "platform") {
-            setPlatformStatus(response.data);
-          }
 
           return {
             ...check,
@@ -125,10 +182,6 @@ export default function StatusPage() {
             detail: latency > 1500 ? "Service joignable, latence a surveiller." : "Service joignable.",
           } satisfies ServiceCheck;
         } catch {
-          if (check.id === "platform") {
-            setPlatformStatus(fallbackPlatformStatus);
-          }
-
           return {
             ...check,
             state: "offline",
@@ -139,6 +192,19 @@ export default function StatusPage() {
     );
 
     setChecks(results);
+    const platformCheck = results.find((check) => check.id === "platform");
+    let platformPayload: PlatformStatus | null = null;
+
+    if (platformCheck?.state !== "offline") {
+      try {
+        const response = await axios.get(platformStatusUrl, { timeout: 8000 });
+        platformPayload = response.data;
+      } catch {
+        platformPayload = fallbackPlatformStatus;
+      }
+    }
+
+    setPlatformStatus(normalizePlatformStatus(platformPayload, results));
     setLastUpdated(new Date().toLocaleString());
   }
 
@@ -198,7 +264,7 @@ export default function StatusPage() {
               </div>
               <div className="mt-5 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-700">
                 <p>{tx(item.detail)}</p>
-                <p className="mt-2">Endpoint: {item.path}</p>
+                <p className="mt-2">Endpoint: {item.url}</p>
                 <p className="mt-2">{tx("Latence")}: {item.latency ? `${item.latency} ms` : tx("non disponible")}</p>
               </div>
             </article>
