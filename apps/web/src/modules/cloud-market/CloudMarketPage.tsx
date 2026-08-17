@@ -3,6 +3,7 @@
 import MarketingHeader from "@shared/components/marketing/MarketingHeader";
 import MarketingFooter from "@shared/components/marketing/MarketingFooter";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import type { Locale } from "@shared/i18n/dictionaries";
 import {
   competitorSignals,
   integrationItems,
@@ -14,8 +15,20 @@ import {
   solutionStatuses,
 } from "./data";
 
+const promoVideoCaptions: Record<Locale, { src: string; label: string; srcLang: string }> = {
+  fr: { src: "/videos/enterpriseerp-promo-fr.vtt", label: "Francais", srcLang: "fr" },
+  en: { src: "/videos/enterpriseerp-promo-en.vtt", label: "English", srcLang: "en" },
+  sv: { src: "/videos/enterpriseerp-promo-sv.vtt", label: "Svenska", srcLang: "sv" },
+  de: { src: "/videos/enterpriseerp-promo-de.vtt", label: "Deutsch", srcLang: "de" },
+  es: { src: "/videos/enterpriseerp-promo-es.vtt", label: "Espanol", srcLang: "es" },
+  pt: { src: "/videos/enterpriseerp-promo-pt.vtt", label: "Portugues", srcLang: "pt" },
+  it: { src: "/videos/enterpriseerp-promo-it.vtt", label: "Italiano", srcLang: "it" },
+  nl: { src: "/videos/enterpriseerp-promo-nl.vtt", label: "Nederlands", srcLang: "nl" },
+};
+
 export function CloudMarketPage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
+  const captions = promoVideoCaptions[locale] ?? promoVideoCaptions.fr;
   const statusClass = (status: string) =>
     status === "available"
       ? "bg-emerald-50 text-emerald-700"
@@ -88,13 +101,26 @@ export function CloudMarketPage() {
 
           <div className="overflow-hidden rounded-3xl bg-[#101A26] p-3 shadow-2xl ring-1 ring-slate-200">
             <video
+              key={locale}
               className="aspect-video w-full rounded-2xl bg-black object-cover"
               controls
               preload="metadata"
               playsInline
+              aria-label={t("market.videoTitle")}
             >
               <source src="/videos/enterpriseerp-promo.mp4" type="video/mp4" />
+              <track
+                key={captions.src}
+                default
+                kind="captions"
+                src={captions.src}
+                srcLang={captions.srcLang}
+                label={captions.label}
+              />
             </video>
+            <p className="mt-3 px-1 text-sm font-semibold text-white/70">
+              {t("market.videoLanguageNote")}
+            </p>
           </div>
         </div>
       </section>

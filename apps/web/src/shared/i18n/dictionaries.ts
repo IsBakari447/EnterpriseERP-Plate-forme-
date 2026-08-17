@@ -2736,4 +2736,36 @@ Object.assign(dictionaries.sv, {
     "REST API-endpoints ar tillgangliga, webhooks ar i beta och betalnings-, email/kalender- och bokforingskopplingar ar markerade som planerade.",
 });
 
+Object.assign(dictionaries.fr, {
+  "market.videoLanguageNote": "La presentation suit la langue selectionnee grace aux sous-titres.",
+});
+
+Object.assign(dictionaries.en, {
+  "market.videoLanguageNote": "The presentation follows the selected language through captions.",
+});
+
+Object.assign(dictionaries.sv, {
+  "market.videoLanguageNote": "Presentationen foljer valt sprak via undertexter.",
+});
+
+Object.assign(dictionaries.de, {
+  "market.videoLanguageNote": "Die Prasentation folgt der ausgewahlten Sprache uber Untertitel.",
+});
+
+Object.assign(dictionaries.es, {
+  "market.videoLanguageNote": "La presentacion sigue el idioma seleccionado mediante subtitulos.",
+});
+
+Object.assign(dictionaries.pt, {
+  "market.videoLanguageNote": "A apresentacao segue o idioma selecionado atraves de legendas.",
+});
+
+Object.assign(dictionaries.it, {
+  "market.videoLanguageNote": "La presentazione segue la lingua selezionata tramite sottotitoli.",
+});
+
+Object.assign(dictionaries.nl, {
+  "market.videoLanguageNote": "De presentatie volgt de geselecteerde taal via ondertitels.",
+});
+
 
