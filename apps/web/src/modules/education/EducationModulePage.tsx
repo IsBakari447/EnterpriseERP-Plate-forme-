@@ -768,8 +768,8 @@ export default function EducationModulePage({ module }: { module: ModuleView }) 
       const records = await educationService.list<EducationApiRecord>(resource);
       setApiRows(records.map((record) => apiRecordToGridRow(resource, record)));
       setLoadError("");
-    } catch {
-      setLoadError("Unable to load data from the API.");
+    } catch (error) {
+      setLoadError(error instanceof Error ? error.message : "Unable to load data from the API.");
     }
   }
 

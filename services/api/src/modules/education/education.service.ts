@@ -1,4 +1,5 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
 import { PrismaService } from "../../prisma.service";
 
@@ -17,7 +18,9 @@ type ResourceConfig = {
   dateFields: string[];
   numberFields: string[];
   arrayFields: string[];
+  requiredFields: string[];
   defaults: Record<string, unknown>;
+  duplicateMessage: string;
 };
 
 const resources: Record<EducationResource, ResourceConfig> = {
@@ -26,56 +29,72 @@ const resources: Record<EducationResource, ResourceConfig> = {
     dateFields: ["birthDate", "enrollmentDate"],
     numberFields: ["balance"],
     arrayFields: [],
+    requiredFields: ["matricule", "firstName", "lastName"],
     defaults: { status: "Actif", balance: 0 },
+    duplicateMessage: "Student ID already exists.",
   },
   teachers: {
     delegate: "educationTeacher",
     dateFields: ["hireDate"],
     numberFields: ["salary"],
     arrayFields: ["subjects", "classes"],
+    requiredFields: ["teacherCode", "firstName", "lastName"],
     defaults: { status: "Actif" },
+    duplicateMessage: "Teacher ID already exists.",
   },
   classes: {
     delegate: "educationClass",
     dateFields: [],
     numberFields: ["capacity"],
     arrayFields: [],
+    requiredFields: ["name"],
     defaults: { status: "Actif", capacity: 0 },
+    duplicateMessage: "Class already exists.",
   },
   courses: {
     delegate: "educationCourse",
     dateFields: [],
     numberFields: ["weeklyHours"],
     arrayFields: [],
+    requiredFields: ["code", "name"],
     defaults: { status: "Actif" },
+    duplicateMessage: "Course code already exists.",
   },
   schedule: {
     delegate: "educationScheduleEntry",
     dateFields: ["date"],
     numberFields: [],
     arrayFields: [],
+    requiredFields: ["courseName", "className", "date"],
     defaults: { status: "Planifie" },
+    duplicateMessage: "Schedule entry already exists.",
   },
   exams: {
     delegate: "educationExam",
     dateFields: ["date"],
     numberFields: ["participants", "average"],
     arrayFields: [],
+    requiredFields: ["title", "subject", "className", "date"],
     defaults: { status: "Programme", participants: 0 },
+    duplicateMessage: "Exam already exists.",
   },
   attendance: {
     delegate: "educationAttendance",
     dateFields: ["date"],
     numberFields: [],
     arrayFields: [],
+    requiredFields: ["studentName", "className", "date", "status"],
     defaults: {},
+    duplicateMessage: "Attendance record already exists.",
   },
   fees: {
     delegate: "educationSchoolFee",
     dateFields: ["dueDate"],
     numberFields: ["amount", "paid"],
     arrayFields: [],
+    requiredFields: ["studentName", "feeName"],
     defaults: { status: "A relancer", amount: 0, paid: 0 },
+    duplicateMessage: "School fee already exists.",
   },
 };
 
@@ -109,6 +128,31 @@ export class EducationService {
       update(args: unknown): Promise<unknown>;
       delete(args: unknown): Promise<unknown>;
     };
+  }
+
+  private validateRequiredFields(config: ResourceConfig, data: Record<string, unknown>) {
+    const missingFields = config.requiredFields.filter((field) => {
+      const value = data[field];
+      return value === undefined || value === null || String(value).trim() === "";
+    });
+
+    if (missingFields.length > 0) {
+      throw new BadRequestException("Missing required fields.");
+    }
+  }
+
+  private handlePrismaError(resource: EducationResource, error: unknown): never {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        throw new ConflictException(this.config(resource).duplicateMessage);
+      }
+
+      if (error.code === "P2025") {
+        throw new NotFoundException("Education record not found.");
+      }
+    }
+
+    throw error;
   }
 
   private normalize(resource: EducationResource, body: Record<string, unknown>) {
@@ -174,24 +218,34 @@ export class EducationService {
 
   async create(user: AuthenticatedUser, resource: EducationResource, body: Record<string, unknown>) {
     const companyId = requireTenant(user);
+    const config = this.config(resource);
     const data = this.normalize(resource, body);
+    this.validateRequiredFields(config, data);
 
-    return this.delegate(resource).create({
-      data: {
-        ...data,
-        companyId,
-      },
-    });
+    try {
+      return await this.delegate(resource).create({
+        data: {
+          ...data,
+          companyId,
+        },
+      });
+    } catch (error) {
+      this.handlePrismaError(resource, error);
+    }
   }
 
   async update(user: AuthenticatedUser, resource: EducationResource, id: string, body: Record<string, unknown>) {
     await this.findOne(user, resource, id);
     const data = this.normalize(resource, body);
 
-    return this.delegate(resource).update({
-      where: { id },
-      data,
-    });
+    try {
+      return await this.delegate(resource).update({
+        where: { id },
+        data,
+      });
+    } catch (error) {
+      this.handlePrismaError(resource, error);
+    }
   }
 
   async remove(user: AuthenticatedUser, resource: EducationResource, id: string) {

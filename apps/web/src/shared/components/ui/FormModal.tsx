@@ -30,11 +30,12 @@ export default function FormModal({
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     setError("");
     setSaved(false);
     setSubmitting(true);
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(form);
     const values = Object.fromEntries(
       fields.map((field) => [field.label, String(formData.get(field.label) ?? "").trim()])
     );
@@ -42,9 +43,10 @@ export default function FormModal({
     try {
       await onSubmit?.(values);
       setSaved(true);
-      event.currentTarget.reset();
-    } catch {
-      setError("Unable to save. Check the information.");
+      form.reset();
+    } catch (submitError) {
+      setSaved(false);
+      setError(submitError instanceof Error ? submitError.message : "Unable to save. Check the information.");
     } finally {
       setSubmitting(false);
     }
@@ -76,7 +78,7 @@ export default function FormModal({
           <button type="submit" className="rounded-xl bg-[#FF7A00] px-6 py-3 font-black text-white shadow">
             {submitting ? tFixed("Saving...") : tFixed(submitLabel)}
           </button>
-          {saved && <span className="ml-3 text-sm font-black text-[#00A693]">{tFixed("Enregistre.")}</span>}
+          {saved && !error && <span className="ml-3 text-sm font-black text-[#00A693]">{tFixed("Enregistre.")}</span>}
           {error && <span className="ml-3 text-sm font-black text-red-600">{tFixed(error)}</span>}
         </div>
       </form>
