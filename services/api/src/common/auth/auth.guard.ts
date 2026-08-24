@@ -30,7 +30,7 @@ export class AuthGuard implements CanActivate {
     const header = Array.isArray(authorization) ? authorization[0] : authorization;
 
     if (!header?.startsWith("Bearer ")) {
-      throw new UnauthorizedException("Authentification requise");
+      throw new UnauthorizedException("Authentication required");
     }
 
     const token = header.slice("Bearer ".length).trim();

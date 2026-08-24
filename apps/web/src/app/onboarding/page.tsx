@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { sectorDefinitions, sectorOptions } from "@config/sectors";
 import { authService } from "@modules/auth/services/auth.service";
 import { onboardingService } from "@modules/onboarding/services/onboarding.service";
-import { getApiErrorMessage } from "@shared/api/errors";
+import { getApiErrorMessage, isUnauthorizedError } from "@shared/api/errors";
 import { tokenStorage } from "@shared/auth/token-storage";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import type { ModuleKey, SectorKey } from "@shared/sector/types";
@@ -97,7 +97,9 @@ export default function OnboardingPage() {
       } catch (error) {
         if (!active) return;
         setStatus("error");
-        setErrorMessage(getApiErrorMessage(error, t("onboarding.loadError")));
+        setErrorMessage(
+          isUnauthorizedError(error) ? t("auth.required") : getApiErrorMessage(error, t("onboarding.loadError"))
+        );
       }
     }
 
@@ -198,7 +200,9 @@ export default function OnboardingPage() {
       router.push("/dashboard");
     } catch (error) {
       setStatus("error");
-      setErrorMessage(getApiErrorMessage(error, t("onboarding.saveError")));
+      setErrorMessage(
+        isUnauthorizedError(error) ? t("auth.required") : getApiErrorMessage(error, t("onboarding.saveError"))
+      );
     }
   }
 

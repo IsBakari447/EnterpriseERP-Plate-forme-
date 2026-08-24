@@ -35,7 +35,7 @@ export class PermissionsGuard implements CanActivate {
     const user = request.user;
 
     if (!user?.role || !user.sub) {
-      throw new UnauthorizedException("Authentification requise");
+      throw new UnauthorizedException("Authentication required");
     }
 
     const explicitPermissions = user.permissions ?? [];
@@ -50,7 +50,7 @@ export class PermissionsGuard implements CanActivate {
     const allowed = requiredPermissions.every((permission) => effectivePermissions.has(permission));
 
     if (!allowed) {
-      throw new ForbiddenException("Permission insuffisante");
+      throw new ForbiddenException("Insufficient permission");
     }
 
     return true;

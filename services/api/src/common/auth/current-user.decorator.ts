@@ -19,7 +19,7 @@ export const CurrentUser = createParamDecorator(
     const request = context.switchToHttp().getRequest<RequestWithUser>();
 
     if (!request.user) {
-      throw new UnauthorizedException("Authentification requise");
+      throw new UnauthorizedException("Authentication required");
     }
 
     return request.user;
@@ -28,7 +28,7 @@ export const CurrentUser = createParamDecorator(
 
 export function requireTenant(user: AuthenticatedUser) {
   if (!user.companyId) {
-    throw new UnauthorizedException("Entreprise requise pour cette operation");
+    throw new UnauthorizedException("Company context required for this operation");
   }
 
   return user.companyId;

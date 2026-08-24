@@ -1962,7 +1962,7 @@ dictionaries.sv = {
   "onboarding.badge": "SaaS-onboarding",
   "onboarding.title": "Konfigurera din EnterpriseERP-arbetsyta.",
   "onboarding.subtitle": "En snabb assistent gor registreringen till en arbetsyta redo for arbete: sektor, moduler, team, import och oversikt.",
-  "onboarding.progress": "Progress",
+  "onboarding.progress": "Framsteg",
   "onboarding.step": "Steg",
   "onboarding.skip": "Ga till oversikten",
   "onboarding.company.title": "Foretag",
@@ -3006,6 +3006,7 @@ Object.assign(dictionaries.nl, {
 Object.assign(dictionaries.fr, {
   "sector.companyLoadError": "Impossible de charger les informations de l'entreprise.",
   "sector.companyUpdateError": "Impossible de modifier le secteur de l'entreprise.",
+  "auth.required": "Connexion requise. Connectez-vous pour continuer.",
   "country.SE": "Suede",
   "country.FR": "France",
   "country.CD": "RDC",
@@ -3026,6 +3027,7 @@ Object.assign(dictionaries.fr, {
 Object.assign(dictionaries.en, {
   "sector.companyLoadError": "Unable to load company information.",
   "sector.companyUpdateError": "Unable to update the company sector.",
+  "auth.required": "Sign-in required. Sign in to continue.",
   "country.SE": "Sweden",
   "country.FR": "France",
   "country.CD": "DR Congo",
@@ -3046,6 +3048,7 @@ Object.assign(dictionaries.en, {
 Object.assign(dictionaries.sv, {
   "sector.companyLoadError": "Det gick inte att ladda foretagsinformationen.",
   "sector.companyUpdateError": "Det gick inte att uppdatera foretagets sektor.",
+  "auth.required": "Inloggning kravs. Logga in for att fortsatta.",
   "country.SE": "Sverige",
   "country.FR": "Frankrike",
   "country.CD": "DR Kongo",
@@ -3066,6 +3069,7 @@ Object.assign(dictionaries.sv, {
 Object.assign(dictionaries.de, {
   "sector.companyLoadError": "Unternehmensinformationen konnten nicht geladen werden.",
   "sector.companyUpdateError": "Der Unternehmenssektor konnte nicht aktualisiert werden.",
+  "auth.required": "Anmeldung erforderlich. Melden Sie sich an, um fortzufahren.",
   "country.SE": "Schweden",
   "country.FR": "Frankreich",
   "country.CD": "DR Kongo",
@@ -3086,6 +3090,7 @@ Object.assign(dictionaries.de, {
 Object.assign(dictionaries.es, {
   "sector.companyLoadError": "No se pudo cargar la informacion de la empresa.",
   "sector.companyUpdateError": "No se pudo actualizar el sector de la empresa.",
+  "auth.required": "Inicio de sesion requerido. Inicie sesion para continuar.",
   "country.SE": "Suecia",
   "country.FR": "Francia",
   "country.CD": "RD Congo",
@@ -3106,6 +3111,7 @@ Object.assign(dictionaries.es, {
 Object.assign(dictionaries.pt, {
   "sector.companyLoadError": "Nao foi possivel carregar as informacoes da empresa.",
   "sector.companyUpdateError": "Nao foi possivel atualizar o setor da empresa.",
+  "auth.required": "Inicio de sessao necessario. Inicie sessao para continuar.",
   "country.SE": "Suecia",
   "country.FR": "Franca",
   "country.CD": "RD Congo",
@@ -3126,6 +3132,7 @@ Object.assign(dictionaries.pt, {
 Object.assign(dictionaries.it, {
   "sector.companyLoadError": "Impossibile caricare le informazioni dell'azienda.",
   "sector.companyUpdateError": "Impossibile aggiornare il settore dell'azienda.",
+  "auth.required": "Accesso richiesto. Accedi per continuare.",
   "country.SE": "Svezia",
   "country.FR": "Francia",
   "country.CD": "RD Congo",
@@ -3146,6 +3153,7 @@ Object.assign(dictionaries.it, {
 Object.assign(dictionaries.nl, {
   "sector.companyLoadError": "Bedrijfsinformatie kon niet worden geladen.",
   "sector.companyUpdateError": "De bedrijfssector kon niet worden bijgewerkt.",
+  "auth.required": "Aanmelden vereist. Meld u aan om door te gaan.",
   "country.SE": "Zweden",
   "country.FR": "Frankrijk",
   "country.CD": "DR Congo",

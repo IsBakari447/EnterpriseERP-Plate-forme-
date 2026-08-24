@@ -24,6 +24,10 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
     return fallback;
   }
 
+  if (error.response.status === 401) {
+    return fallback;
+  }
+
   const payload = error.response?.data;
   const message =
     firstMessage(payload?.message) ??
@@ -31,6 +35,10 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
     error.message;
 
   return message || fallback;
+}
+
+export function isUnauthorizedError(error: unknown) {
+  return isAxiosError(error) && error.response?.status === 401;
 }
 
 export function isExistingAccountError(message: string) {
