@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SectorProvider } from "@shared/sector/SectorProvider";
 import { I18nProvider } from "@shared/i18n/I18nProvider";
+import { JsonLd, buildGlobalJsonLd } from "@shared/seo/structured-data";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -91,16 +92,16 @@ export const metadata: Metadata = {
 
     images: [
       {
-        url: "/enterpriseerp-icon.png",
-        width: 512,
-        height: 512,
-        alt: "EnterpriseERP Cloud",
+        url: "/enterpriseerp-og.png",
+        width: 1200,
+        height: 630,
+        alt: "EnterpriseERP Cloud ERP SaaS",
       },
     ],
   },
 
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
 
     title:
       "EnterpriseERP Cloud | ERP Cloud, Mobile et IA",
@@ -109,7 +110,7 @@ export const metadata: Metadata = {
       "ERP Cloud moderne pour CRM, ventes, facturation, stock, finance, RH, mobile et IA.",
 
     images: [
-      "/enterpriseerp-icon.png",
+      "/enterpriseerp-og.png",
     ],
   },
 };
@@ -122,6 +123,7 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body>
+        <JsonLd data={buildGlobalJsonLd()} />
         <I18nProvider>
           <SectorProvider>{children}</SectorProvider>
         </I18nProvider>

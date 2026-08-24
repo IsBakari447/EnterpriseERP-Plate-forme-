@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import MarketingHeader from "@shared/components/marketing/MarketingHeader";
 import MarketingFooter from "@shared/components/marketing/MarketingFooter";
 import { useI18n } from "@shared/i18n/I18nProvider";
@@ -121,6 +122,78 @@ export function CloudMarketPage() {
             <p className="mt-3 px-1 text-sm font-semibold text-white/70">
               {t("market.videoLanguageNote")}
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white px-6 py-14 lg:px-16">
+        <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[1.05fr_.95fr]">
+          <div>
+            <span className="inline-flex rounded-full bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
+              {t("market.productProofBadge")}
+            </span>
+            <h2 className="mt-5 text-3xl font-black leading-tight text-night lg:text-4xl">
+              {t("market.productProofTitle")}
+            </h2>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
+              {t("market.productProofText")}
+            </p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              {[0, 1, 2].map((index) => (
+                <article key={index} className="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-200">
+                  <h3 className="font-black text-night">{t(`market.productProof.${index}.title`)}</h3>
+                  <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
+                    {t(`market.productProof.${index}.text`)}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div className="overflow-hidden rounded-3xl bg-[#101A26] p-3 shadow-2xl ring-1 ring-slate-200">
+            <Image
+              src="/enterpriseerp-og.png"
+              width={1200}
+              height={630}
+              alt={t("market.productProofTitle")}
+              className="aspect-[1200/630] w-full rounded-2xl object-cover"
+              priority
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-16">
+        <div className="rounded-3xl bg-white p-8 shadow ring-1 ring-slate-200">
+          <span className="inline-flex rounded-full bg-[#FF7A00]/10 px-4 py-2 text-sm font-black text-[#C75A00]">
+            {t("market.trustBadge")}
+          </span>
+          <div className="mt-5 grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-start">
+            <div>
+              <h2 className="text-3xl font-black leading-tight text-night lg:text-4xl">
+                {t("market.trustTitle")}
+              </h2>
+              <p className="mt-4 leading-7 text-slate-600">{t("market.trustText")}</p>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              {[0, 1, 2].map((index) => (
+                <article key={index} className="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-200">
+                  <p className="text-3xl font-black text-[#00A693]">{t(`market.trustMetric.${index}.value`)}</p>
+                  <p className="mt-2 text-sm font-bold leading-6 text-slate-600">
+                    {t(`market.trustMetric.${index}.label`)}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {[0, 1, 2].map((index) => (
+              <article key={index} className="rounded-2xl border border-slate-200 p-5">
+                <p className="text-sm font-bold leading-6 text-slate-600">
+                  {t(`market.trustUseCase.${index}.text`)}
+                </p>
+                <p className="mt-4 font-black text-night">{t(`market.trustUseCase.${index}.label`)}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
