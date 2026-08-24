@@ -7,11 +7,13 @@ export default function ERPLayout({
   title,
   subtitle,
   action,
+  onAction,
   children,
 }: {
   title: string;
   subtitle: string;
   action?: string;
+  onAction?: () => void;
   children: React.ReactNode;
 }) {
   return (
@@ -19,7 +21,13 @@ export default function ERPLayout({
       <Sidebar />
 
       <section className="p-5 lg:ml-64 lg:p-8 xl:p-10">
-        <PageHeader title={title} subtitle={subtitle} action={action} />
+        <PageHeader
+          title={title}
+          subtitle={subtitle}
+          action={action}
+          onAction={onAction}
+        />
+
         {children}
       </section>
     </main>

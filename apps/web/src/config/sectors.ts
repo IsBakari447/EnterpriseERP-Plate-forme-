@@ -162,6 +162,7 @@ export const sectorDefinitions: Record<SectorKey, SectorDefinition> = {
       "emploi-du-temps",
       "examens",
       "cours",
+      "presences",
       "frais-scolaires",
       "facturation",
       "rh",

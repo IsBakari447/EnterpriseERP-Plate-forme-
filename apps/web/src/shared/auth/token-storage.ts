@@ -19,8 +19,12 @@ export type AuthUser = {
     id: string;
     name: string;
     sector: string;
+    enabledModules?: string[];
+    country?: string | null;
     language: string;
     currency: string;
+    onboardingCompleted?: boolean;
+    onboardingCompletedAt?: string | null;
   } | null;
 };
 
@@ -29,6 +33,11 @@ export type AuthSession = {
   refreshToken: string;
   tokenType: string;
   expiresIn: string;
+  companyId?: string | null;
+  sector?: string | null;
+  onboardingCompleted?: boolean;
+  role?: string;
+  permissions?: string[];
   user: AuthUser;
 };
 

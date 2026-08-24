@@ -7,7 +7,15 @@ import AuthShell from "@modules/auth/components/AuthShell";
 import { authService } from "@modules/auth/services/auth.service";
 import { getApiErrorMessage, isExistingAccountError } from "@shared/api/errors";
 import { useI18n } from "@shared/i18n/I18nProvider";
-import { sectorOptions } from "@config/sectors";
+import { sectorDefinitions, sectorOptions } from "@config/sectors";
+import type { SectorKey } from "@shared/sector/types";
+
+function getInitialSector(): SectorKey {
+  if (typeof window === "undefined") return "general";
+
+  const value = new URLSearchParams(window.location.search).get("sector");
+  return value && value in sectorDefinitions ? (value as SectorKey) : "general";
+}
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -16,7 +24,7 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [sector, setSector] = useState("general");
+  const [sector, setSector] = useState<SectorKey>(getInitialSector);
   const [status, setStatus] = useState<"idle" | "loading" | "error" | "account-exists">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -126,7 +134,7 @@ export default function RegisterPage() {
           <span className="text-sm font-black text-slate-700">{t("auth.sector")}</span>
           <select
             value={sector}
-            onChange={(event) => setSector(event.target.value)}
+            onChange={(event) => setSector(event.target.value as SectorKey)}
             className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-bold outline-none transition focus:border-[#00C2A9] focus:bg-white focus:ring-4 focus:ring-[#00C2A9]/15"
           >
             {sectorOptions.map((option) => (

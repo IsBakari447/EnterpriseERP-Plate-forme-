@@ -37,7 +37,14 @@ export const authService = {
     const session = tokenStorage.get();
 
     if (session) {
-      tokenStorage.set({ ...session, user: data });
+      tokenStorage.set({
+        ...session,
+        companyId: data.companyId,
+        sector: data.company?.sector ?? session.sector,
+        onboardingCompleted: data.company?.onboardingCompleted ?? session.onboardingCompleted,
+        role: data.role,
+        user: data,
+      });
     }
 
     return data;

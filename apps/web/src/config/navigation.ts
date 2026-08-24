@@ -58,6 +58,7 @@ export const navigationItems: NavigationItem[] = [
   { key: "emploi-du-temps", name: "Emploi du temps", href: moduleHref("emploi-du-temps"), icon: "PL" },
   { key: "examens", name: "Examens", href: moduleHref("examens"), icon: "EX" },
   { key: "cours", name: "Cours", href: moduleHref("cours"), icon: "CR" },
+  { key: "presences", name: "Presences", href: moduleHref("presences"), icon: "AT" },
   { key: "frais-scolaires", name: "Frais scolaires", href: moduleHref("frais-scolaires"), icon: "FS" },
   { key: "flotte", name: "Flotte", href: moduleHref("flotte"), icon: "FL" },
   { key: "conducteurs", name: "Conducteurs", href: moduleHref("conducteurs"), icon: "CD" },

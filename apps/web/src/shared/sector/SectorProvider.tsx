@@ -10,7 +10,11 @@ import {
 } from "react";
 
 import { sectorDefinitions } from "@/config/sectors";
-import { companyService } from "@modules/company/services/company.service";
+import {
+  companyService,
+  type CompanyDto,
+} from "@modules/company/services/company.service";
+
 import type {
   SectorDefinition,
   SectorKey,
@@ -19,87 +23,216 @@ import type {
 type SectorContextValue = {
   sectorKey: SectorKey;
   sector: SectorDefinition;
+
+  company: CompanyDto | null;
+  companyName: string;
+  country: string | null;
+  currency: string;
+  enabledModules: string[];
+
   loading: boolean;
   error: string;
-  setSector: (sector: SectorKey) => Promise<void>;
+
+  setSector: (
+    sector: SectorKey
+  ) => Promise<void>;
+
+  refreshCompany: () => Promise<void>;
 };
 
-const SectorContext = createContext<SectorContextValue | null>(null);
-const STORAGE_KEY = "enterpriseerp-sector";
+const SectorContext =
+  createContext<SectorContextValue | null>(
+    null
+  );
 
-function isSectorKey(value: string | null | undefined): value is SectorKey {
-  return Boolean(value && value in sectorDefinitions);
+const STORAGE_KEY =
+  "enterpriseerp-sector";
+
+const COMPANY_LOAD_ERROR_KEY =
+  "sector.companyLoadError";
+
+const COMPANY_UPDATE_ERROR_KEY =
+  "sector.companyUpdateError";
+
+function isSectorKey(
+  value: string | null | undefined
+): value is SectorKey {
+  return Boolean(
+    value &&
+      value in sectorDefinitions
+  );
 }
 
 function readSavedSector(): SectorKey {
-  if (typeof window === "undefined") return "general";
+  if (typeof window === "undefined") {
+    return "general";
+  }
 
-  const savedSector = window.localStorage.getItem(STORAGE_KEY);
-  return isSectorKey(savedSector) ? savedSector : "general";
+  const savedSector =
+    window.localStorage.getItem(
+      STORAGE_KEY
+    );
+
+  return isSectorKey(savedSector)
+    ? savedSector
+    : "general";
 }
 
-export function SectorProvider({ children }: { children: ReactNode }) {
-  const [sectorKey, setSectorKey] = useState<SectorKey>("general");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+export function SectorProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const [sectorKey, setSectorKey] =
+    useState<SectorKey>("general");
 
-  useEffect(() => {
-    async function loadCompanySector() {
-      setSectorKey(readSavedSector());
-      setLoading(false);
-      setError("");
+  const [company, setCompany] =
+    useState<CompanyDto | null>(null);
 
-      try {
-        const company = await companyService.getCurrent();
+  const [
+    enabledModules,
+    setEnabledModules,
+  ] = useState<string[]>([]);
 
-        if (isSectorKey(company.sector)) {
-          setSectorKey(company.sector);
-          window.localStorage.setItem(STORAGE_KEY, company.sector);
-          return;
-        }
-      } catch {
-        // The web app must remain usable when the API is offline in development.
-      }
-    }
+  const [loading, setLoading] =
+    useState(false);
 
-    loadCompanySector();
-  }, []);
+  const [error, setError] =
+    useState("");
 
-  async function setSector(nextSector: SectorKey) {
+  function applyCompany(
+    nextCompany: CompanyDto
+  ) {
+    setCompany(nextCompany);
+
+    setEnabledModules(
+      nextCompany.enabledModules ?? []
+    );
+
+    const nextSector =
+      isSectorKey(nextCompany.sector)
+        ? nextCompany.sector
+        : "general";
+
     setSectorKey(nextSector);
-    window.localStorage.setItem(STORAGE_KEY, nextSector);
+
+    if (
+      typeof window !== "undefined"
+    ) {
+      window.localStorage.setItem(
+        STORAGE_KEY,
+        nextSector
+      );
+    }
+  }
+
+  async function refreshCompany() {
+    setLoading(true);
     setError("");
 
     try {
-      await companyService.update({ sector: nextSector });
+      const nextCompany =
+        await companyService.getCurrent();
+
+      applyCompany(nextCompany);
     } catch {
-      // Keep the selected sector locally when the API/database is unavailable.
+      /*
+       * Offline/development fallback only.
+       * The API Company remains the source
+       * of truth in normal operation.
+       */
+      setSectorKey(
+        readSavedSector()
+      );
+
+      setError(
+        COMPANY_LOAD_ERROR_KEY
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void refreshCompany();
+  }, []);
+
+  async function setSector(
+    nextSector: SectorKey
+  ) {
+    setError("");
+
+    try {
+      const updatedCompany =
+        await companyService.update({
+          sector: nextSector,
+        });
+
+      applyCompany(updatedCompany);
+    } catch {
+      setError(
+        COMPANY_UPDATE_ERROR_KEY
+      );
+
+      throw new Error(
+        COMPANY_UPDATE_ERROR_KEY
+      );
     }
   }
 
   const value = useMemo(
     () => ({
       sectorKey,
-      sector: sectorDefinitions[sectorKey],
+
+      sector:
+        sectorDefinitions[sectorKey],
+
+      company,
+
+      companyName:
+        company?.name ??
+        "EnterpriseERP",
+
+      country:
+        company?.country ?? null,
+
+      currency:
+        company?.currency ??
+        "EUR",
+
+      enabledModules,
+
       loading,
       error,
       setSector,
+      refreshCompany,
     }),
-    [sectorKey, loading, error]
+    [
+      sectorKey,
+      company,
+      enabledModules,
+      loading,
+      error,
+    ]
   );
 
   return (
-    <SectorContext.Provider value={value}>
+    <SectorContext.Provider
+      value={value}
+    >
       {children}
     </SectorContext.Provider>
   );
 }
 
 export function useSector() {
-  const context = useContext(SectorContext);
+  const context =
+    useContext(SectorContext);
 
   if (!context) {
-    throw new Error("useSector must be used inside SectorProvider.");
+    throw new Error(
+      "useSector must be used inside SectorProvider."
+    );
   }
 
   return context;

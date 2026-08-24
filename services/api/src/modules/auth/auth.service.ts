@@ -93,12 +93,19 @@ export class AuthService {
       },
     });
 
+    const currentUser = await this.me(user.id);
+
     return {
       accessToken,
       refreshToken,
       tokenType: "Bearer",
       expiresIn: process.env.JWT_ACCESS_EXPIRES_IN ?? "15m",
-      user: await this.me(user.id),
+      companyId: currentUser.companyId,
+      sector: currentUser.company?.sector ?? null,
+      onboardingCompleted: currentUser.company?.onboardingCompleted ?? false,
+      role: currentUser.role,
+      permissions: rolePermissions[currentUser.role] ?? [],
+      user: currentUser,
     };
   }
 
@@ -256,12 +263,19 @@ export class AuthService {
       },
     });
 
+    const currentUser = await this.me(session.user.id);
+
     return {
       accessToken,
       refreshToken: nextRefreshToken,
       tokenType: "Bearer",
       expiresIn: process.env.JWT_ACCESS_EXPIRES_IN ?? "15m",
-      user: await this.me(session.user.id),
+      companyId: currentUser.companyId,
+      sector: currentUser.company?.sector ?? null,
+      onboardingCompleted: currentUser.company?.onboardingCompleted ?? false,
+      role: currentUser.role,
+      permissions: rolePermissions[currentUser.role] ?? [],
+      user: currentUser,
     };
   }
 
@@ -310,6 +324,9 @@ export class AuthService {
             enabledModules: true,
             language: true,
             currency: true,
+            country: true,
+            onboardingCompleted: true,
+            onboardingCompletedAt: true,
           },
         },
         memberships: {

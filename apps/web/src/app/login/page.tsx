@@ -23,8 +23,12 @@ export default function LoginPage() {
     setErrorMessage("");
 
     try {
-      await authService.login({ email, password, rememberMe });
-      router.push("/dashboard");
+      const session = await authService.login({ email, password, rememberMe });
+      const onboardingCompleted =
+        session.onboardingCompleted ?? session.user.company?.onboardingCompleted ?? false;
+      const sector = session.sector ?? session.user.company?.sector ?? "general";
+
+      router.push(onboardingCompleted ? "/dashboard" : `/onboarding?sector=${sector}`);
     } catch (error) {
       setStatus("error");
       setErrorMessage(getApiErrorMessage(error, t("auth.loginError")));

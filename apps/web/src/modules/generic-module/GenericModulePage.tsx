@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import AIRecommendation from "@shared/components/ui/AIRecommendation";
 import ActivityTimeline from "@shared/components/ui/ActivityTimeline";
@@ -47,6 +48,7 @@ const operationsModules: ModuleKey[] = [
   "emploi-du-temps",
   "examens",
   "cours",
+  "presences",
   "chambres",
   "housekeeping",
   "restaurant-hotel",
@@ -994,28 +996,113 @@ function ProjectTemplate({ module }: { module: ModuleView }) {
   );
 }
 
-function OperationsTemplate({ module }: { module: ModuleView }) {
+function OperationsTemplate({ module, sectorKey }: { module: ModuleView; sectorKey: SectorKey }) {
   const { locale } = useI18n();
   const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
-  const isRestaurantFlow = ["commandes", "reservations", "cuisine", "restaurant-hotel"].includes(module.key);
-  const isTransportFlow = ["expeditions", "itineraires", "flotte", "conducteurs"].includes(module.key);
   const isHrFlow = module.key === "rh";
+  const isRestaurantFlow = sectorKey === "restaurant" && ["commandes", "reservations", "cuisine"].includes(module.key);
+  const isHotelRestaurantFlow = sectorKey === "hotel" && module.key === "restaurant-hotel";
+  const isHotelFlow = sectorKey === "hotel" && ["reservations", "chambres", "housekeeping"].includes(module.key);
+  const isCommerceOrderFlow = sectorKey === "commerce" && module.key === "commandes";
+  const isEducationFlow = sectorKey === "education" && ["etudiants", "enseignants", "classes", "emploi-du-temps", "examens", "cours", "presences"].includes(module.key);
+  const isHealthFlow = sectorKey === "sante" && ["patients", "medecins", "rendez-vous", "consultations"].includes(module.key);
+  const isTransportFlow = sectorKey === "transport" && ["expeditions", "itineraires", "flotte", "conducteurs", "maintenance"].includes(module.key);
+  const showPos = isRestaurantFlow || isHotelRestaurantFlow;
+  const primaryLabel = isHrFlow
+    ? "Employes"
+    : showPos || isCommerceOrderFlow
+      ? "Commandes"
+      : isHotelFlow
+        ? "Reservations"
+        : isEducationFlow
+          ? "Etudiants"
+          : isHealthFlow
+            ? "Patients"
+            : isTransportFlow
+              ? "Expeditions"
+              : "Operations";
+  const realtimeLabel = showPos
+    ? "Temps attente"
+    : isHrFlow || isEducationFlow
+      ? "Planning"
+      : isHealthFlow
+        ? "Rendez-vous"
+        : "Temps reel";
+  const planningTitle = showPos
+    ? "Tables, cuisine et service"
+    : isHrFlow
+      ? "Planning du personnel"
+      : isHotelFlow
+        ? "Reservations, chambres et service"
+        : isEducationFlow
+          ? "Emploi du temps et classes"
+          : isHealthFlow
+            ? "Rendez-vous et consultations"
+            : "Calendrier operationnel";
+  const workflowTitle = isHrFlow
+    ? "Gestion RH"
+    : isHotelFlow
+      ? "Operations hotelieres"
+      : isCommerceOrderFlow
+        ? "Suivi des commandes"
+        : isEducationFlow
+          ? "Suivi academique"
+          : isHealthFlow
+            ? "Parcours patient"
+            : "Workflow temps reel";
+  const workflowItems = isHrFlow
+    ? ["Presences", "Conges", "Contrats", "Fiches de paie", "Documents RH"]
+    : isHotelFlow
+      ? ["Reservation", "Check-in", "Housekeeping", "Service client", "Facturation"]
+      : isCommerceOrderFlow
+        ? ["Commande recue", "Preparation", "Expedition", "Paiement", "Facturation"]
+        : isEducationFlow
+    ? ["Cours", "Examens", "Presences", "Frais scolaires", "Documents"]
+    : isHealthFlow
+      ? ["Admission", "Consultation", "Prescription", "Facturation", "Dossier medical"]
+      : ["Affectation", "En cours", "Validation", "Signature", "Facturation"];
+  const cardSubtitle = showPos
+    ? "Ticket service"
+    : isHrFlow
+      ? "Dossier employe"
+      : isHotelFlow
+        ? "Sejour client"
+        : isCommerceOrderFlow
+          ? "Commande client"
+          : isEducationFlow
+            ? "Dossier scolaire"
+            : isHealthFlow
+              ? "Dossier patient"
+              : "Operation terrain";
+  const cardAmount = showPos
+    ? "Addition"
+    : isHrFlow
+      ? "Contrat"
+      : isHotelFlow
+        ? "Chambre"
+        : isCommerceOrderFlow
+          ? "Panier"
+          : isEducationFlow
+            ? "Classe"
+            : isHealthFlow
+              ? "Consultation"
+              : "SLA";
 
   return (
     <>
       <MetricGrid
         items={[
-          { label: isRestaurantFlow ? "Commandes" : "Operations", value: isRestaurantFlow ? "286" : "438", change: "+12%" },
-          { label: isRestaurantFlow ? "Temps attente" : "Temps reel", value: isRestaurantFlow ? "14 min" : "Actif", change: "Live" },
+          { label: primaryLabel, value: showPos || isCommerceOrderFlow ? "286" : isEducationFlow ? "1 280" : isHealthFlow ? "642" : isHrFlow ? "48" : "438", change: "+12%" },
+          { label: realtimeLabel, value: showPos ? "14 min" : isEducationFlow ? "38" : isHealthFlow ? "186" : isHrFlow ? "42" : "Actif", change: "Live" },
           { label: isHrFlow ? "Presences" : "A traiter", value: isHrFlow ? "42/48" : "7", change: "Priorite" },
           { label: "Statistiques", value: "98%", change: "Suivi" },
         ]}
       />
       <section className="mt-8 grid gap-5 xl:grid-cols-[1fr_.9fr]">
-        {isTransportFlow ? <MapWidget /> : <PlanningWidget title={isRestaurantFlow ? "Tables, cuisine et service" : "Calendrier operationnel"} />}
-        {isRestaurantFlow ? <PosWidget /> : <Widget title="Workflow temps reel" eyebrow="Operations">
+        {isTransportFlow ? <MapWidget /> : <PlanningWidget title={planningTitle} />}
+        {showPos ? <PosWidget /> : <Widget title={workflowTitle} eyebrow="Operations">
           <div className="space-y-3">
-            {["Affectation", "En cours", "Validation", "Signature", "Facturation"].map((item) => (
+            {workflowItems.map((item) => (
               <div key={item} className="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-700">{tx(item)}</div>
             ))}
           </div>
@@ -1025,7 +1112,7 @@ function OperationsTemplate({ module }: { module: ModuleView }) {
         <Kanban
           columns={["Nouveau", "Affecte", "En cours", "Controle", "Termine"].map((step, index) => ({
             title: step,
-            cards: index < 4 ? [{ title: `${module.name} ${index + 1}`, subtitle: isRestaurantFlow ? "Ticket service" : "Operation terrain", amount: isRestaurantFlow ? "Addition" : "SLA", meta: "Live" }] : [],
+            cards: index < 4 ? [{ title: `${module.name} ${index + 1}`, subtitle: cardSubtitle, amount: cardAmount, meta: "Live" }] : [],
           }))}
         />
       </section>
@@ -1039,10 +1126,15 @@ function OperationsTemplate({ module }: { module: ModuleView }) {
 }
 
 export default function GenericModulePage({ module }: { module: ModuleView }) {
+  const [createOpen, setCreateOpen] = useState(false);
+  const router = useRouter();
+
   const { locale, t } = useI18n();
-  const { sector, sectorKey } = useSector();
+  const { sector, sectorKey, loading, company, error } = useSector();
   const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
   const template = getTemplate(module.key);
+  const sectorReady = !loading && Boolean(company || error);
+  const moduleAllowed = !sectorReady || sector.modules.includes(module.key);
   const localizedModule = {
     ...module,
     name: sector.labels?.[module.key] ? tx(sector.labels[module.key]!) : t(`nav.${module.key}`),
@@ -1058,11 +1150,48 @@ export default function GenericModulePage({ module }: { module: ModuleView }) {
     security: "Securite & permissions",
   }[template];
 
+  useEffect(() => {
+    if (!moduleAllowed) {
+      router.replace("/dashboard");
+    }
+  }, [moduleAllowed, router]);
+
+  if (!sectorReady) {
+    return (
+      <ERPLayout
+        title={t("common.loading")}
+        subtitle={tx("Verification du secteur et des modules disponibles.")}
+      >
+        <section className="rounded-3xl bg-white p-8 shadow ring-1 ring-slate-200">
+          <p className="text-lg font-bold text-slate-600">
+            {tx("Preparation de l'interface adaptee au secteur.")}
+          </p>
+        </section>
+      </ERPLayout>
+    );
+  }
+
+  if (!moduleAllowed) {
+    return (
+      <ERPLayout
+        title={tx("Module indisponible")}
+        subtitle={tx("Ce module n'appartient pas au secteur selectionne. Redirection vers le tableau de bord.")}
+      >
+        <section className="rounded-3xl bg-white p-8 shadow ring-1 ring-slate-200">
+          <p className="text-lg font-bold text-slate-600">
+            {tx("Le module demande n'est pas disponible pour ce secteur.")}
+          </p>
+        </section>
+      </ERPLayout>
+    );
+  }
+
   return (
     <ERPLayout
       title={`${module.icon} ${localizedModule.name}`}
       subtitle={`${tx(templateLabel)}: ${tx("une interface adaptee au metier, assemblee avec des widgets reutilisables.")}`}
       action={tx("Creer")}
+      onAction={() => setCreateOpen(true)}
     >
       {template === "admin" && <AdminTemplate module={localizedModule} />}
       {template === "analytics" && <AnalyticsTemplate sectorKey={sectorKey} />}
@@ -1070,8 +1199,92 @@ export default function GenericModulePage({ module }: { module: ModuleView }) {
       {template === "commerce" && <CommerceTemplate module={localizedModule} />}
       {template === "finance" && <FinanceTemplate module={localizedModule} />}
       {template === "project" && <ProjectTemplate module={localizedModule} />}
-      {template === "operations" && <OperationsTemplate module={localizedModule} />}
+      {template === "operations" && <OperationsTemplate module={localizedModule} sectorKey={sectorKey} />}
       {template === "security" && <SecurityTemplate />}
+
+      {createOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm"
+          onClick={() => setCreateOpen(false)}
+        >
+          <div
+            className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#00A693]">
+                  EnterpriseERP Platform
+                </p>
+
+                <h2 className="mt-1 text-2xl font-black text-night">
+                  {`${tx("Creer")} ${localizedModule.name}`}
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setCreateOpen(false)
+                }
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 font-black text-slate-500 hover:bg-slate-200"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-6 space-y-4">
+              <div>
+                <label className="text-sm font-bold text-slate-600">
+                  {tx("Nom")}
+                </label>
+
+                <input
+                  type="text"
+                  className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-[#00C2A9]"
+                  placeholder={localizedModule.name}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-bold text-slate-600">
+                  {tx("Description")}
+                </label>
+
+                <textarea
+                  rows={4}
+                  className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-[#00C2A9]"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCreateOpen(false)
+                  }
+                  className="rounded-xl border border-slate-200 px-4 py-2 font-bold text-slate-600 hover:bg-slate-50"
+                >
+                  {tx("Annuler")}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCreateOpen(false)
+                  }
+                  className="rounded-xl bg-[#1E2A38] px-5 py-2 font-bold text-white hover:opacity-90"
+                >
+                  {tx("Creer")}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </ERPLayout>
   );
 }

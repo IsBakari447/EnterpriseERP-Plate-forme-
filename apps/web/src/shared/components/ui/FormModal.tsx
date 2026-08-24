@@ -15,18 +15,39 @@ export default function FormModal({
   title,
   fields,
   submitLabel = "Enregistrer",
+  onSubmit,
 }: {
   title: string;
   fields: FormField[];
   submitLabel?: string;
+  onSubmit?: (values: Record<string, string>) => Promise<void> | void;
 }) {
   const { locale } = useI18n();
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const tFixed = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSaved(true);
+    setError("");
+    setSaved(false);
+    setSubmitting(true);
+
+    const formData = new FormData(event.currentTarget);
+    const values = Object.fromEntries(
+      fields.map((field) => [field.label, String(formData.get(field.label) ?? "").trim()])
+    );
+
+    try {
+      await onSubmit?.(values);
+      setSaved(true);
+      event.currentTarget.reset();
+    } catch {
+      setError("Unable to save. Check the information.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -43,6 +64,7 @@ export default function FormModal({
           <label key={field.label} className="block">
             <span className="text-sm font-black text-slate-700">{tFixed(field.label)}</span>
             <input
+              name={field.label}
               type={field.type ?? "text"}
               placeholder={field.placeholder ? tFixed(field.placeholder) : undefined}
               className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold outline-none focus:border-[#00C2A9] focus:ring-4 focus:ring-[#00C2A9]/15"
@@ -52,9 +74,10 @@ export default function FormModal({
 
         <div className="md:col-span-2">
           <button type="submit" className="rounded-xl bg-[#FF7A00] px-6 py-3 font-black text-white shadow">
-            {tFixed(submitLabel)}
+            {submitting ? tFixed("Saving...") : tFixed(submitLabel)}
           </button>
           {saved && <span className="ml-3 text-sm font-black text-[#00A693]">{tFixed("Enregistre.")}</span>}
+          {error && <span className="ml-3 text-sm font-black text-red-600">{tFixed(error)}</span>}
         </div>
       </form>
     </section>

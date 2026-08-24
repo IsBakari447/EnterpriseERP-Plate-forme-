@@ -12,6 +12,7 @@ import { ProfileModule } from "./modules/profile/profile.module";
 import { AuditModule } from "./modules/audit/audit.module";
 import { CoreModule } from "./common/core/core.module";
 import { OperationsModule } from "./modules/operations/operations.module";
+import { EducationModule } from "./modules/education/education.module";
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { OperationsModule } from "./modules/operations/operations.module";
     ProfileModule,
     AuditModule,
     OperationsModule,
+    EducationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

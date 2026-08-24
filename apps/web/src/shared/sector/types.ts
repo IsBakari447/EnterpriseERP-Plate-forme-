@@ -58,6 +58,7 @@ export type ModuleKey =
   | "emploi-du-temps"
   | "examens"
   | "cours"
+  | "presences"
   | "frais-scolaires"
   | "flotte"
   | "conducteurs"

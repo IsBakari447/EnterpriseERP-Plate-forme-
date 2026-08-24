@@ -1,5 +1,5 @@
 import { navigationByKey } from "@config/navigation";
-import GenericModulePage from "@modules/generic-module/GenericModulePage";
+import ModulePageResolver from "@modules/module-registry/ModulePageResolver";
 import type { ModuleKey } from "@shared/sector/types";
 
 function isModuleKey(value: string): value is ModuleKey {
@@ -16,7 +16,7 @@ export default async function ModulePage({
   const item = navigationByKey[moduleKey];
 
   return (
-    <GenericModulePage
+    <ModulePageResolver
       module={{
         key: moduleKey,
         name: item.name,

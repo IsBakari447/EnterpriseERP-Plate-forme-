@@ -31,7 +31,7 @@ export default function SectorSelector() {
         ))}
       </select>
 
-      {error && <p className="mt-2 text-xs leading-5 text-orange-300">{error}</p>}
+      {error && <p className="mt-2 text-xs leading-5 text-orange-300">{t(error)}</p>}
     </div>
   );
 }

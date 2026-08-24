@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
+import { sectorDefinitions, sectorOptions } from "@config/sectors";
 import { demoHighlights } from "@modules/cloud-market/data";
 import { apiClient } from "@shared/api/client";
 import LanguageSwitcher from "@shared/i18n/LanguageSwitcher";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import type { SectorKey } from "@shared/sector/types";
 
 type DemoForm = {
   name: string;
@@ -24,12 +26,17 @@ const initialForm: DemoForm = {
   need: "",
 };
 
-const demoSectors = ["general", "retail", "restaurant", "construction", "healthcare"] as const;
+function getInitialSector(): SectorKey {
+  if (typeof window === "undefined") return "general";
+
+  const value = new URLSearchParams(window.location.search).get("sector");
+  return value && value in sectorDefinitions ? (value as SectorKey) : "general";
+}
 
 export default function DemoPage() {
   const { t } = useI18n();
   const [form, setForm] = useState<DemoForm>(initialForm);
-  const [sector, setSector] = useState<(typeof demoSectors)[number]>("general");
+  const [sector, setSector] = useState<SectorKey>(getInitialSector);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
@@ -64,7 +71,7 @@ export default function DemoPage() {
       setStatus("success");
       setMessage(response.data.message);
       setForm(initialForm);
-      setSector("general");
+      setSector(getInitialSector());
     } catch {
       setStatus("error");
       setMessage(t("demo.error"));
@@ -73,7 +80,7 @@ export default function DemoPage() {
 
   const resetDemo = () => {
     setForm(initialForm);
-    setSector("general");
+    setSector(getInitialSector());
     setStatus("idle");
     setMessage("");
   };
@@ -113,12 +120,12 @@ export default function DemoPage() {
             <select
               id="demo-sector"
               value={sector}
-              onChange={(event) => setSector(event.target.value as (typeof demoSectors)[number])}
+              onChange={(event) => setSector(event.target.value as SectorKey)}
               className="mt-3 w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 font-black outline-none"
             >
-              {demoSectors.map((item) => (
-                <option key={item} value={item} className="text-night">
-                  {t(`demo.sector.${item}`)}
+              {sectorOptions.map((item) => (
+                <option key={item.key} value={item.key} className="text-night">
+                  {t(`sector.${item.key}`)}
                 </option>
               ))}
             </select>

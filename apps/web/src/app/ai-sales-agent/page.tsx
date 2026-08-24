@@ -5,6 +5,7 @@ import { useState } from "react";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import KPICard from "@shared/components/ui/KPICard";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { useSector } from "@shared/sector/SectorProvider";
 import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 
@@ -26,8 +27,8 @@ const scripts = [
 
 export default function AiSalesAgentPage() {
   const { locale, t } = useI18n();
+  const { sectorKey } = useSector();
   const tx = (value: string) => translateContentText(translateFixedLabel(value, locale), locale);
-  const [sector, setSector] = useState("Commerce");
   const [channel, setChannel] = useState("Email");
   const [context, setContext] = useState("");
   const [output, setOutput] = useState(
@@ -36,8 +37,10 @@ export default function AiSalesAgentPage() {
   const [copied, setCopied] = useState(false);
 
   function generate() {
+    const sectorLabel = t(`sector.${sectorKey}`);
+
     setOutput(
-      `${tx("Canal")} ${tx(channel)} - ${tx("secteur")} ${tx(sector)}: ${tx("EnterpriseERP aide votre organisation a centraliser CRM, ventes, facturation et priorites IA.")} ${context || tx("Je vous propose une courte demonstration adaptee a votre activite cette semaine.")}`
+      `${tx("Canal")} ${tx(channel)} - ${tx("secteur")} ${sectorLabel}: ${tx("EnterpriseERP aide votre organisation a centraliser CRM, ventes, facturation et priorites IA.")} ${context || tx("Je vous propose une courte demonstration adaptee a votre activite cette semaine.")}`
     );
   }
 
@@ -68,11 +71,9 @@ export default function AiSalesAgentPage() {
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             <label>
               <span className="text-sm font-black text-slate-700">{t("salesAgent.sector")}</span>
-              <select value={sector} onChange={(event) => setSector(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-bold outline-none focus:border-[#00C2A9]">
-                {["Commerce", "Restauration", "Services", "Construction", "Sante", "Education"].map((option) => (
-                  <option key={option} value={option}>{tx(option)}</option>
-                ))}
-              </select>
+              <div className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-bold text-slate-700">
+                {t(`sector.${sectorKey}`)}
+              </div>
             </label>
             <label>
               <span className="text-sm font-black text-slate-700">{t("salesAgent.channel")}</span>

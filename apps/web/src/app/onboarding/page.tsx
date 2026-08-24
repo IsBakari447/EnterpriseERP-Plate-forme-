@@ -1,8 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { sectorDefinitions, sectorOptions } from "@config/sectors";
+import { authService } from "@modules/auth/services/auth.service";
+import { onboardingService } from "@modules/onboarding/services/onboarding.service";
+import { getApiErrorMessage } from "@shared/api/errors";
+import { tokenStorage } from "@shared/auth/token-storage";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import type { ModuleKey, SectorKey } from "@shared/sector/types";
 
@@ -19,6 +23,20 @@ const steps: OnboardingStep[] = [
   { key: "import" },
 ];
 
+const countryOptions = ["SE", "FR", "CD", "BE", "CA"] as const;
+
+function normalizeCountry(value?: string | null) {
+  const normalized = (value ?? "").trim().toLowerCase();
+
+  if (["suede", "sweden", "sverige", "se"].includes(normalized)) return "SE";
+  if (["france", "fr"].includes(normalized)) return "FR";
+  if (["rdc", "congo", "cd"].includes(normalized)) return "CD";
+  if (["belgique", "belgium", "belgien", "be"].includes(normalized)) return "BE";
+  if (["canada", "ca"].includes(normalized)) return "CA";
+
+  return "SE";
+}
+
 function getInitialSector(): SectorKey {
   if (typeof window === "undefined") return "general";
   const params = new URLSearchParams(window.location.search);
@@ -27,14 +45,17 @@ function getInitialSector(): SectorKey {
 }
 
 export default function OnboardingPage() {
-  const { t } = useI18n();
+  const router = useRouter();
+  const { locale, t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
   const [sector, setSector] = useState<SectorKey>(getInitialSector);
   const [company, setCompany] = useState("EnterpriseERP");
-  const [country, setCountry] = useState("Suede");
+  const [country, setCountry] = useState("SE");
   const [currency, setCurrency] = useState("EUR");
   const [invites, setInvites] = useState("manager@entreprise.com");
   const [importStatus, setImportStatus] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "saving" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
   const [selectedModules, setSelectedModules] = useState<ModuleKey[]>(() =>
     sectorDefinitions[getInitialSector()].modules.slice(0, 8)
   );
@@ -47,6 +68,46 @@ export default function OnboardingPage() {
     [sectorConfig.modules]
   );
 
+  useEffect(() => {
+    let active = true;
+
+    async function loadOnboarding() {
+      setStatus("loading");
+
+      try {
+        const current = await onboardingService.getOnboardingState();
+
+        if (!active) return;
+
+        setCompany(current.name || "EnterpriseERP");
+        setSector(current.sector);
+        setCountry(normalizeCountry(current.country));
+        setCurrency(current.currency || "EUR");
+
+        if (current.enabledModules?.length) {
+          setSelectedModules(current.enabledModules as ModuleKey[]);
+        }
+
+        if (current.onboardingCompleted) {
+          router.replace("/dashboard");
+          return;
+        }
+
+        setStatus("idle");
+      } catch (error) {
+        if (!active) return;
+        setStatus("error");
+        setErrorMessage(getApiErrorMessage(error, t("onboarding.loadError")));
+      }
+    }
+
+    loadOnboarding();
+
+    return () => {
+      active = false;
+    };
+  }, [router, t]);
+
   function toggleModule(module: ModuleKey) {
     setSelectedModules((current) =>
       current.includes(module) ? current.filter((item) => item !== module) : [...current, module]
@@ -56,6 +117,89 @@ export default function OnboardingPage() {
   function changeSector(nextSector: SectorKey) {
     setSector(nextSector);
     setSelectedModules(sectorDefinitions[nextSector].modules.slice(0, 8));
+  }
+
+  function parseInviteEmails() {
+    return invites
+      .split(/[\n,;]+/)
+      .map((email) => email.trim())
+      .filter(Boolean);
+  }
+
+  function validateCurrentStep() {
+    if (currentStep === 0 && !company.trim()) {
+      setErrorMessage(t("onboarding.requiredCompany"));
+      return false;
+    }
+
+    if (currentStep === 2 && !country.trim()) {
+      setErrorMessage(t("onboarding.requiredCountry"));
+      return false;
+    }
+
+    if (currentStep === 3 && selectedModules.length === 0) {
+      setErrorMessage(t("onboarding.requiredModule"));
+      return false;
+    }
+
+    if (currentStep === 4) {
+      const invalidEmail = parseInviteEmails().find((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+
+      if (invalidEmail) {
+        setErrorMessage(t("onboarding.invalidInvite"));
+        return false;
+      }
+    }
+
+    setErrorMessage("");
+    return true;
+  }
+
+  function goNext() {
+    if (!validateCurrentStep()) return;
+    setCurrentStep((step) => Math.min(steps.length - 1, step + 1));
+  }
+
+  async function completeOnboarding() {
+    if (!validateCurrentStep()) return;
+
+    setStatus("saving");
+    setErrorMessage("");
+
+    try {
+      await onboardingService.updateCompany({ name: company.trim() });
+      await onboardingService.updateSector(sector);
+      await onboardingService.updateSettings({
+        country: country.trim(),
+        currency,
+        language: locale,
+      });
+      await onboardingService.updateModules(selectedModules);
+      await onboardingService.inviteUsers({ emails: parseInviteEmails() });
+      const updatedCompany = await onboardingService.completeOnboarding();
+      const user = await authService.me();
+      const session = tokenStorage.get();
+
+      if (session) {
+        tokenStorage.set({
+          ...session,
+          companyId: updatedCompany.id,
+          sector: updatedCompany.sector,
+          onboardingCompleted: true,
+          user: {
+            ...session.user,
+            ...user,
+            company: updatedCompany,
+          },
+        });
+      }
+
+      window.localStorage.setItem("enterpriseerp-sector", sector);
+      router.push("/dashboard");
+    } catch (error) {
+      setStatus("error");
+      setErrorMessage(getApiErrorMessage(error, t("onboarding.saveError")));
+    }
   }
 
   return (
@@ -108,10 +252,16 @@ export default function OnboardingPage() {
                 <h2 className="mt-2 text-3xl font-black">{t(`onboarding.${steps[currentStep].key}.title`)}</h2>
                 <p className="mt-2 text-slate-500">{t(`onboarding.${steps[currentStep].key}.description`)}</p>
               </div>
-              <Link href="/dashboard" className="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-black text-slate-700 hover:border-[#00C2A9]">
-                {t("onboarding.skip")}
-              </Link>
+              <span className="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-black text-slate-500">
+                {status === "loading" ? t("onboarding.loading") : t("onboarding.requiredBeforeDashboard")}
+              </span>
             </div>
+
+            {errorMessage && (
+              <div className="mt-6 rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-bold text-red-800">
+                {errorMessage}
+              </div>
+            )}
 
             <div className="mt-8">
               {currentStep === 0 && (
@@ -151,7 +301,11 @@ export default function OnboardingPage() {
                   <label className="block">
                     <span className="text-sm font-black text-slate-700">{t("onboarding.country")}</span>
                     <select value={country} onChange={(event) => setCountry(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none focus:border-[#00C2A9]">
-                      {["Suede", "France", "RDC", "Belgique", "Canada"].map((item) => <option key={item}>{item}</option>)}
+                      {countryOptions.map((item) => (
+                        <option key={item} value={item}>
+                          {t(`country.${item}`)}
+                        </option>
+                      ))}
                     </select>
                   </label>
                   <label className="block">
@@ -211,7 +365,7 @@ export default function OnboardingPage() {
                     <div key={title} className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-6">
                       <h3 className="text-xl font-black">{title}</h3>
                       <p className="mt-2 text-sm font-semibold text-slate-500">{text}</p>
-                      <button type="button" onClick={() => setImportStatus(`${title}: fichier pret a importer.`)} className="mt-5 rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-700 shadow ring-1 ring-slate-200">
+                      <button type="button" onClick={() => setImportStatus(`${title}: ${t("onboarding.fileReady")}`)} className="mt-5 rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-700 shadow ring-1 ring-slate-200">
                         {t("onboarding.chooseFile")}
                       </button>
                     </div>
@@ -233,15 +387,20 @@ export default function OnboardingPage() {
               {currentStep < steps.length - 1 ? (
                 <button
                   type="button"
-                  onClick={() => setCurrentStep((step) => Math.min(steps.length - 1, step + 1))}
+                  onClick={goNext}
                   className="rounded-2xl bg-[#FF7A00] px-6 py-3 font-black text-white shadow-lg shadow-orange-500/20"
                 >
                   {t("onboarding.continue")}
                 </button>
               ) : (
-                <Link href="/dashboard" className="rounded-2xl bg-[#00A693] px-6 py-3 text-center font-black text-white shadow-lg shadow-emerald-500/20">
-                  {t("onboarding.openDashboard")}
-                </Link>
+                <button
+                  type="button"
+                  onClick={completeOnboarding}
+                  disabled={status === "saving"}
+                  className="rounded-2xl bg-[#00A693] px-6 py-3 text-center font-black text-white shadow-lg shadow-emerald-500/20 disabled:opacity-60"
+                >
+                  {status === "saving" ? t("onboarding.saving") : t("onboarding.openDashboard")}
+                </button>
               )}
             </div>
           </section>

@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import KPICard from "@shared/components/ui/KPICard";
 import DataGrid from "@shared/components/ui/DataGrid";
 import { ModuleBarChart, RevenueChart } from "@shared/components/charts/RevenueChart";
+import { authService } from "@modules/auth/services/auth.service";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { useSector } from "@shared/sector/SectorProvider";
 import {
@@ -20,11 +22,11 @@ import {
 } from "../data";
 import { translateDashboardText } from "../translations";
 
-function formatKpi(kpi: DecisionKpi, factor: number) {
+function formatKpi(kpi: DecisionKpi, factor: number, currency: string) {
   const value = kpi.format === "percent" ? kpi.baseValue : kpi.baseValue * factor;
 
   if (kpi.format === "currency") {
-    return `${Math.round(value).toLocaleString("fr-FR")} EUR`;
+    return `${Math.round(value).toLocaleString("fr-FR")} ${currency}`;
   }
 
   if (kpi.format === "percent") {
@@ -67,10 +69,45 @@ function priorityHref(action: PriorityAction) {
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { locale, t } = useI18n();
-  const { sectorKey } = useSector();
+  const { sectorKey, currency } = useSector();
   const [period, setPeriod] = useState<PeriodKey>("30d");
   const [customizing, setCustomizing] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    async function verifyOnboarding() {
+      const session = authService.getSession();
+      const cachedCompleted =
+        session?.onboardingCompleted ?? session?.user.company?.onboardingCompleted;
+      const cachedSector = session?.sector ?? session?.user.company?.sector ?? sectorKey;
+
+      if (cachedCompleted === false) {
+        router.replace(`/onboarding?sector=${cachedSector}`);
+        return;
+      }
+
+      try {
+        const user = await authService.me();
+
+        if (active && user.company && !user.company.onboardingCompleted) {
+          router.replace(`/onboarding?sector=${user.company.sector ?? "general"}`);
+        }
+      } catch {
+        if (active && !session) {
+          router.replace("/login");
+        }
+      }
+    }
+
+    verifyOnboarding();
+
+    return () => {
+      active = false;
+    };
+  }, [router, sectorKey]);
 
   const selectedPeriod = periodOptions.find((option) => option.key === period) ?? periodOptions[2];
   const dashboard = sectorDashboards[sectorKey] ?? sectorDashboards.general;
@@ -81,10 +118,10 @@ export default function DashboardPage() {
     () =>
       dashboard.kpis.map((kpi) => ({
         label: dt(kpi.label),
-        value: formatKpi(kpi, selectedPeriod.factor),
+        value: formatKpi(kpi, selectedPeriod.factor, currency),
         change: `${kpi.change} - ${selectedPeriodLabel}`,
       })),
-    [dashboard.kpis, selectedPeriod.factor, selectedPeriodLabel, locale]
+    [dashboard.kpis, selectedPeriod.factor, selectedPeriodLabel, locale, currency]
   );
 
   return (

@@ -64,6 +64,8 @@ model Company {
   currency       String        @default("EUR")
   language       String        @default("fr")
   timezone       String        @default("Europe/Stockholm")
+  onboardingCompleted   Boolean   @default(false)
+  onboardingCompletedAt DateTime?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   users          User[]
@@ -74,7 +76,178 @@ model Company {
   clients        Client[]
   products       Product[]
   invoices       Invoice[]
+  educationStudents EducationStudent[]
+  educationTeachers EducationTeacher[]
+  educationClasses  EducationClass[]
+  educationCourses  EducationCourse[]
+  educationScheduleEntries EducationScheduleEntry[]
+  educationExams EducationExam[]
+  educationAttendances EducationAttendance[]
+  educationSchoolFees EducationSchoolFee[]
   auditLogs      AuditLog[]
+}
+
+model EducationStudent {
+  id        String   @id @default(cuid())
+  companyId String
+  matricule String
+  firstName String
+  lastName  String
+  birthDate DateTime?
+  gender    String?
+  className String?
+  level     String?
+  address   String?
+  guardianName String?
+  phone     String?
+  email     String?
+  enrollmentDate DateTime?
+  status    String   @default("Actif")
+  photoUrl  String?
+  balance   Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, matricule])
+  @@index([companyId])
+}
+
+model EducationTeacher {
+  id        String   @id @default(cuid())
+  companyId String
+  teacherCode String
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  specialty String?
+  subjects  String[] @default([])
+  contractType String?
+  hireDate DateTime?
+  salary   Float?
+  classes  String[] @default([])
+  availability Json?
+  status   String   @default("Actif")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, teacherCode])
+  @@index([companyId])
+}
+
+model EducationClass {
+  id        String   @id @default(cuid())
+  companyId String
+  name      String
+  level     String?
+  capacity  Int      @default(0)
+  teacherName String?
+  room      String?
+  status    String   @default("Actif")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, name])
+  @@index([companyId])
+}
+
+model EducationCourse {
+  id        String   @id @default(cuid())
+  companyId String
+  code      String
+  name      String
+  description String?
+  level     String?
+  subject   String?
+  teacherName String?
+  weeklyHours Int?
+  program   String?
+  status    String   @default("Actif")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, code])
+  @@index([companyId])
+}
+
+model EducationScheduleEntry {
+  id        String   @id @default(cuid())
+  companyId String
+  courseName String
+  className  String
+  teacherName String
+  room      String?
+  date      DateTime
+  startTime String
+  endTime   String
+  recurrence String?
+  status    String   @default("Planifie")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([date])
+}
+
+model EducationExam {
+  id        String   @id @default(cuid())
+  companyId String
+  title     String
+  subject   String
+  className String
+  date      DateTime
+  teacherName String?
+  participants Int @default(0)
+  average   Float?
+  status    String   @default("Programme")
+  results   Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([date])
+}
+
+model EducationAttendance {
+  id        String   @id @default(cuid())
+  companyId String
+  studentName String
+  className   String
+  date        DateTime
+  status      String
+  justification String?
+  teacherName String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([date])
+}
+
+model EducationSchoolFee {
+  id        String   @id @default(cuid())
+  companyId String
+  studentName String
+  className String?
+  feeName   String
+  amount    Float    @default(0)
+  paid      Float    @default(0)
+  dueDate   DateTime?
+  status    String   @default("A relancer")
+  paymentMethod String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([dueDate])
 }
 
 model User {

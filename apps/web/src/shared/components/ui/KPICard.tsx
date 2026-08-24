@@ -15,13 +15,14 @@ export default function KPICard({
 }) {
   const { locale } = useI18n();
   const displayLabel = translateContentText(translateFixedLabel(label, locale), locale);
+  const displayChange = change ? translateContentText(translateFixedLabel(change, locale), locale) : undefined;
 
   return (
     <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
       <p className="text-sm text-slate-500">{displayLabel}</p>
       <p className="mt-3 text-3xl font-bold text-night">{value}</p>
-      {change && (
-        <p className="mt-2 text-sm font-semibold text-turquoise">{change}</p>
+      {displayChange && (
+        <p className="mt-2 text-sm font-semibold text-turquoise">{displayChange}</p>
       )}
     </div>
   );

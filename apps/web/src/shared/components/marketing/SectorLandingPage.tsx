@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import FeatureCard from "./FeatureCard";
 import MarketingFooter from "./MarketingFooter";
 import MarketingHeader from "./MarketingHeader";
@@ -36,13 +37,13 @@ export default function SectorLandingPage({
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a href="#contact" className="rounded-xl bg-[#FF7A00] px-6 py-3.5 text-center font-semibold text-white shadow-lg transition hover:bg-[#e66e00]">
-                {t("marketing.requestFullDemo")}
-              </a>
+              <Link href={`/register?sector=${sector.slug}`} className="rounded-xl bg-[#FF7A00] px-6 py-3.5 text-center font-semibold text-white shadow-lg transition hover:bg-[#e66e00]">
+                {t("auth.createAccount")}
+              </Link>
 
-              <a href="https://enterpriseerp-2.onrender.com/" target="_blank" rel="noreferrer" className="rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center font-semibold text-[#1E2A38] transition hover:bg-slate-50">
-                {t("marketing.viewErp")}
-              </a>
+              <Link href={`/demo?sector=${sector.slug}`} className="rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center font-semibold text-[#1E2A38] transition hover:bg-slate-50">
+                {t("marketing.openDemo")}
+              </Link>
             </div>
 
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-slate-600">
@@ -153,9 +154,9 @@ export default function SectorLandingPage({
             <h2 className="mt-4 text-3xl font-bold text-[#1E2A38] sm:text-4xl">{tc(sector.dashboardTitle)}</h2>
             <p className="mt-6 text-lg leading-8 text-slate-600">{tc(sector.dashboardDescription)}</p>
 
-            <a href="https://enterpriseerp-2.onrender.com/" target="_blank" rel="noreferrer" className="mt-8 inline-flex rounded-xl bg-[#FF7A00] px-6 py-3.5 font-semibold text-white transition hover:bg-[#e66e00]">
+            <Link href={`/demo?sector=${sector.slug}`} className="mt-8 inline-flex rounded-xl bg-[#FF7A00] px-6 py-3.5 font-semibold text-white transition hover:bg-[#e66e00]">
               {t("marketing.openDemo")}
-            </a>
+            </Link>
           </div>
 
           <div className="rounded-[28px] bg-[#F7F9FC] p-6 shadow-xl">
@@ -205,9 +206,9 @@ export default function SectorLandingPage({
                   ))}
                 </ul>
 
-                <a href="#contact" className={`mt-9 block rounded-xl px-5 py-3 text-center font-semibold transition ${plan.featured ? "bg-[#FF7A00] text-white hover:bg-[#e66e00]" : "bg-[#1E2A38] text-white hover:bg-[#29394B]"}`}>
+                <Link href={`/register?sector=${sector.slug}`} className={`mt-9 block rounded-xl px-5 py-3 text-center font-semibold transition ${plan.featured ? "bg-[#FF7A00] text-white hover:bg-[#e66e00]" : "bg-[#1E2A38] text-white hover:bg-[#29394B]"}`}>
                   {t("marketing.requestFullDemo")}
-                </a>
+                </Link>
               </article>
             ))}
           </div>
@@ -221,13 +222,13 @@ export default function SectorLandingPage({
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/80">{tc(sector.ctaDescription)}</p>
 
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <a href={`mailto:contact@enterpriseerp.com?subject=EnterpriseERP demo request ${sector.slug}`} className="rounded-xl bg-[#FF7A00] px-6 py-3.5 font-semibold text-white transition hover:bg-[#e66e00]">
-                {t("marketing.requestFullDemo")}
-              </a>
+              <Link href={`/register?sector=${sector.slug}`} className="rounded-xl bg-[#FF7A00] px-6 py-3.5 font-semibold text-white transition hover:bg-[#e66e00]">
+                {t("auth.createAccount")}
+              </Link>
 
-              <a href="https://enterpriseerp-2.onrender.com/" target="_blank" rel="noreferrer" className="rounded-xl border border-white/30 px-6 py-3.5 font-semibold text-white transition hover:bg-white/10">
-                {t("marketing.viewErp")}
-              </a>
+              <Link href={`/demo?sector=${sector.slug}`} className="rounded-xl border border-white/30 px-6 py-3.5 font-semibold text-white transition hover:bg-white/10">
+                {t("marketing.openDemo")}
+              </Link>
             </div>
           </div>
         </div>

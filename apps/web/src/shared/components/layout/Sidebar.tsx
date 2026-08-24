@@ -8,19 +8,25 @@ import LanguageSwitcher from "@shared/i18n/LanguageSwitcher";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
-import SectorSelector from "@shared/sector/SectorSelector";
 import { useSector } from "@shared/sector/SectorProvider";
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { sector } = useSector();
+  const { enabledModules, sector, sectorKey } = useSector();
   const { locale, t } = useI18n();
   const translateSectorLabel = (value: string) =>
     translateContentText(translateFixedLabel(value, locale), locale);
 
-  const visibleItems = navigationItems.filter((item) =>
-    sector.modules.includes(item.key)
-  );
+  const alwaysVisibleKeys = new Set(["dashboard", "parametres"]);
+  const visibleItems = navigationItems.filter((item) => {
+    const sectorAllowsModule = sector.modules.includes(item.key);
+    const companyAllowsModule =
+      enabledModules.length === 0 ||
+      enabledModules.includes(item.key) ||
+      alwaysVisibleKeys.has(item.key);
+
+    return sectorAllowsModule && companyAllowsModule;
+  });
   const administrationKeys = new Set(["utilisateurs", "roles-permissions"]);
   const businessItems = visibleItems.filter((item) => !administrationKeys.has(item.key));
   const administrationItems = visibleItems.filter((item) => administrationKeys.has(item.key));
@@ -75,7 +81,27 @@ export default function Sidebar() {
 
       <div className="space-y-3">
         <LanguageSwitcher compact />
-        <SectorSelector />
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/45">
+            {t("dashboard.filter.sector")}
+          </p>
+
+          <div className="mt-3 flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#00C2A9]/15 text-lg">
+              {sector.icon || "🏢"}
+            </div>
+
+            <div className="min-w-0">
+              <p className="truncate text-sm font-black text-white">
+                {t(`sector.${sectorKey}`)}
+              </p>
+
+              <p className="mt-0.5 text-[11px] font-semibold text-white/45">
+                EnterpriseERP Platform
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <nav className="mt-5 flex-1 space-y-5 overflow-y-auto pr-1 enterprise-scroll">
