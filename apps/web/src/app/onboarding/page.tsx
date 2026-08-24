@@ -44,6 +44,10 @@ function getInitialSector(): SectorKey {
   return value && value in sectorDefinitions ? (value as SectorKey) : "general";
 }
 
+function getLoginRedirectPath(sector: SectorKey) {
+  return `/login?redirect=${encodeURIComponent(`/onboarding?sector=${sector}`)}`;
+}
+
 export default function OnboardingPage() {
   const router = useRouter();
   const { locale, t } = useI18n();
@@ -72,6 +76,11 @@ export default function OnboardingPage() {
     let active = true;
 
     async function loadOnboarding() {
+      if (!tokenStorage.getAccessToken()) {
+        router.replace(getLoginRedirectPath(sector));
+        return;
+      }
+
       setStatus("loading");
 
       try {
@@ -96,10 +105,15 @@ export default function OnboardingPage() {
         setStatus("idle");
       } catch (error) {
         if (!active) return;
+
+        if (isUnauthorizedError(error)) {
+          tokenStorage.clear();
+          router.replace(getLoginRedirectPath(sector));
+          return;
+        }
+
         setStatus("error");
-        setErrorMessage(
-          isUnauthorizedError(error) ? t("auth.required") : getApiErrorMessage(error, t("onboarding.loadError"))
-        );
+        setErrorMessage(getApiErrorMessage(error, t("onboarding.loadError")));
       }
     }
 
@@ -169,6 +183,11 @@ export default function OnboardingPage() {
     setErrorMessage("");
 
     try {
+      if (!tokenStorage.getAccessToken()) {
+        router.replace(getLoginRedirectPath(sector));
+        return;
+      }
+
       await onboardingService.updateCompany({ name: company.trim() });
       await onboardingService.updateSector(sector);
       await onboardingService.updateSettings({
@@ -199,10 +218,14 @@ export default function OnboardingPage() {
       window.localStorage.setItem("enterpriseerp-sector", sector);
       router.push("/dashboard");
     } catch (error) {
+      if (isUnauthorizedError(error)) {
+        tokenStorage.clear();
+        router.replace(getLoginRedirectPath(sector));
+        return;
+      }
+
       setStatus("error");
-      setErrorMessage(
-        isUnauthorizedError(error) ? t("auth.required") : getApiErrorMessage(error, t("onboarding.saveError"))
-      );
+      setErrorMessage(getApiErrorMessage(error, t("onboarding.saveError")));
     }
   }
 

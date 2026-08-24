@@ -27,8 +27,11 @@ export default function LoginPage() {
       const onboardingCompleted =
         session.onboardingCompleted ?? session.user.company?.onboardingCompleted ?? false;
       const sector = session.sector ?? session.user.company?.sector ?? "general";
+      const redirect =
+        typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("redirect");
+      const safeRedirect = redirect?.startsWith("/") && !redirect.startsWith("//") ? redirect : null;
 
-      router.push(onboardingCompleted ? "/dashboard" : `/onboarding?sector=${sector}`);
+      router.push(safeRedirect ?? (onboardingCompleted ? "/dashboard" : `/onboarding?sector=${sector}`));
     } catch (error) {
       setStatus("error");
       setErrorMessage(getApiErrorMessage(error, t("auth.loginError")));
