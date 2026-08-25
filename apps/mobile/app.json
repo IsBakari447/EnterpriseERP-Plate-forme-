@@ -6,6 +6,12 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "icon": "./assets/enterpriseerp-icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F4F7FB"
+    },
     "plugins": [
       "expo-router",
       "expo-secure-store",
@@ -15,7 +21,11 @@
       "typedRoutes": true
     },
     "android": {
-      "package": "com.enterpriseerp.mobile"
+      "package": "com.enterpriseerp.mobile",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F4F7FB"
+      }
     },
     "ios": {
       "bundleIdentifier": "com.enterpriseerp.mobile"

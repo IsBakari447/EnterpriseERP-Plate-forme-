@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -57,7 +58,11 @@ export default function LoginScreen() {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <View style={styles.logo}>
-          <Ionicons name="cloud-outline" size={38} color="white" />
+          <Image
+            source={require("../assets/enterpriseerp-icon.png")}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </View>
 
         <Text style={styles.brand}>EnterpriseERP Cloud</Text>
@@ -147,8 +152,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    backgroundColor: colors.primary,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: "hidden",
   },
+  logoImage: { width: 60, height: 60 },
   brand: {
     marginTop: 18,
     textAlign: "center",

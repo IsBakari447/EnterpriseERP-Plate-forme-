@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -100,7 +101,11 @@ export default function Dashboard() {
         <View style={styles.header}>
           <View style={styles.brandBlock}>
             <View style={styles.logo}>
-              <Text style={styles.logoText}>E</Text>
+              <Image
+                source={require("../assets/enterpriseerp-icon.png")}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
             </View>
 
             <View>
@@ -275,9 +280,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.primaryDark,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: "hidden",
   },
-  logoText: { color: "white", fontWeight: "900", fontSize: 18 },
+  logoImage: { width: 38, height: 38 },
   brand: { color: colors.text, fontWeight: "900", fontSize: 20 },
   tagline: { color: colors.primary, fontWeight: "800", fontSize: 12, marginTop: 2 },
   avatar: {

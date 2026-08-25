@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -70,8 +71,15 @@ export default function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-full w-64 flex-col border-r border-white/10 bg-night px-4 py-5 text-white">
       <Link href="/" className="mb-5 flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-base font-black text-night">
-          E
+        <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white p-1.5 shadow-sm">
+          <Image
+            src="/enterpriseerp-icon.png"
+            alt="EnterpriseERP Cloud"
+            width={40}
+            height={40}
+            className="h-full w-full object-contain"
+            priority
+          />
         </div>
         <div className="min-w-0">
           <div className="truncate text-xl font-black">EnterpriseERP</div>
