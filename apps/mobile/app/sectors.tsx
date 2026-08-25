@@ -36,6 +36,7 @@ export default function SectorPicker() {
 
           <View style={styles.copy}>
             <Text style={styles.label}>{t(item.labelKey)}</Text>
+            <Text style={styles.description}>{t(item.descriptionKey)}</Text>
             <Text style={styles.meta}>
               {item.modules.length} {t("sectors.modulesConfigured")}
             </Text>
@@ -73,5 +74,6 @@ const styles = StyleSheet.create({
   },
   copy: { flex: 1, marginLeft: 14 },
   label: { fontSize: 16, fontWeight: "800", color: colors.text },
+  description: { color: colors.muted, marginTop: 4, fontSize: 12, lineHeight: 17 },
   meta: { color: colors.muted, marginTop: 4, fontSize: 12 },
 });

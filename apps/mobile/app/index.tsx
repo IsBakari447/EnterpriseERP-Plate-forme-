@@ -27,21 +27,19 @@ function normalizeSector(value?: string | null): SectorKey | null {
 
   const key = value.toLowerCase();
 
-  if (key === "commerce") return "retail";
-  if (key === "sante") return "health";
-  if (key === "industrie") return "industry";
+  if (key === "retail") return "commerce";
+  if (key === "health") return "sante";
+  if (key === "industry") return "industrie";
 
   if (
     key === "general" ||
-    key === "retail" ||
     key === "restaurant" ||
-    key === "health" ||
+    key === "commerce" ||
     key === "education" ||
+    key === "sante" ||
     key === "transport" ||
-    key === "industry" ||
+    key === "industrie" ||
     key === "hotel" ||
-    key === "agriculture" ||
-    key === "services" ||
     key === "construction"
   ) {
     return key;
@@ -96,9 +94,6 @@ export default function Dashboard() {
     );
   }
 
-  const displayName =
-    user?.firstName ?? user?.name?.split(" ")[0] ?? user?.email ?? "EnterpriseERP";
-
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.page}>
@@ -147,12 +142,22 @@ export default function Dashboard() {
 
         <View style={styles.welcomeCard}>
           <Text style={styles.eyebrow}>ENTERPRISEERP CLOUD</Text>
-          <Text style={styles.title}>
-            {t("dashboard.hello")}, {displayName}
+          <Text style={styles.title}>{t("app.heroTitle")}</Text>
+          <Text style={styles.subtitle}>{t("app.heroText")}</Text>
+          <Text style={styles.companyLine}>
+            {t("dashboard.hello")}, {user?.firstName ?? user?.name?.split(" ")[0] ?? user?.email ?? "EnterpriseERP"} -{" "}
+            {user?.company?.name ?? "EnterpriseERP"}
           </Text>
-          <Text style={styles.subtitle}>
-            {user?.company?.name ?? "EnterpriseERP"} - {t("dashboard.overview")}
-          </Text>
+
+          <View style={styles.valueRow}>
+            {["app.value.time", "app.value.errors", "app.value.cash", "app.value.automation"].map(
+              (key) => (
+                <View key={key} style={styles.valuePill}>
+                  <Text style={styles.valueText}>{t(key)}</Text>
+                </View>
+              ),
+            )}
+          </View>
         </View>
 
         <Pressable
@@ -171,20 +176,34 @@ export default function Dashboard() {
           {sector.kpis.map((kpi) => (
             <KpiCard
               key={kpi.key}
-              label={kpi.label}
+              label={t(kpi.labelKey)}
               value={kpi.value}
-              trend={kpi.trend}
+              trend={t(kpi.trendKey)}
               accent={sector.accent}
             />
           ))}
         </View>
 
+        <View style={styles.commandCenter}>
+          <Text style={styles.commandTitle}>{t("dashboard.commandCenter")}</Text>
+          <Text style={styles.commandText}>{t("dashboard.commandCenterText")}</Text>
+          <View style={styles.commandModules}>
+            {["nav.clients", "nav.stock", "nav.facturation", "nav.assistant", "app.tagline"].map(
+              (key) => (
+                <Text key={key} style={styles.commandChip}>
+                  {t(key)}
+                </Text>
+              ),
+            )}
+          </View>
+        </View>
+
         <View style={styles.panel}>
           <Text style={styles.panelTitle}>{t("dashboard.priorityActions")}</Text>
-          {sector.priorityActions.map((action) => (
-            <View key={action} style={styles.actionRow}>
+          {sector.priorityActionKeys.map((actionKey) => (
+            <View key={actionKey} style={styles.actionRow}>
               <Ionicons name="alert-circle-outline" size={18} color={sector.accent} />
-              <Text style={styles.actionText}>{action}</Text>
+              <Text style={styles.actionText}>{t(actionKey)}</Text>
             </View>
           ))}
         </View>
@@ -210,9 +229,9 @@ export default function Dashboard() {
         <View style={styles.split}>
           <View style={styles.panelHalf}>
             <Text style={styles.panelTitle}>{t("dashboard.recentActivity")}</Text>
-            {sector.recentActivity.map((event) => (
-              <Text key={event} style={styles.timelineItem}>
-                {event}
+            {sector.recentActivityKeys.map((eventKey) => (
+              <Text key={eventKey} style={styles.timelineItem}>
+                {t(eventKey)}
               </Text>
             ))}
           </View>
@@ -229,8 +248,8 @@ export default function Dashboard() {
               {apiOnline === null
                 ? t("common.loading")
                 : apiOnline
-                  ? "Operational"
-                  : "Offline"}
+                  ? t("common.operational")
+                  : t("common.offline")}
             </Text>
           </View>
         </View>
@@ -284,14 +303,25 @@ const styles = StyleSheet.create({
   welcomeCard: {
     padding: 18,
     borderRadius: 24,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.primaryDark,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "#31445C",
     marginBottom: 14,
   },
   eyebrow: { fontSize: 11, letterSpacing: 1.5, fontWeight: "900", color: colors.primary },
-  title: { fontSize: 27, fontWeight: "900", color: colors.text, marginTop: 6 },
-  subtitle: { color: colors.muted, marginTop: 5 },
+  title: { fontSize: 28, fontWeight: "900", color: "white", marginTop: 8, lineHeight: 35 },
+  subtitle: { color: "#DDE7F4", marginTop: 8, lineHeight: 22 },
+  companyLine: { color: "#AFC0D5", marginTop: 14, fontWeight: "800" },
+  valueRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 16 },
+  valuePill: {
+    paddingHorizontal: 11,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: "#24364B",
+    borderWidth: 1,
+    borderColor: "#38506B",
+  },
+  valueText: { color: "white", fontWeight: "800", fontSize: 11 },
   sector: {
     padding: 20,
     borderRadius: 22,
@@ -313,6 +343,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     marginTop: 12,
+  },
+  commandCenter: {
+    padding: 18,
+    borderRadius: 22,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginTop: 14,
+  },
+  commandTitle: { color: colors.text, fontWeight: "900", fontSize: 18 },
+  commandText: { color: colors.muted, lineHeight: 21, marginTop: 6 },
+  commandModules: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 14 },
+  commandChip: {
+    backgroundColor: "#ECFDF5",
+    color: colors.primaryDark,
+    overflow: "hidden",
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    fontWeight: "900",
+    fontSize: 11,
   },
   panelTitle: { color: colors.text, fontWeight: "900", fontSize: 16, marginBottom: 12 },
   actionRow: { flexDirection: "row", alignItems: "center", gap: 9, paddingVertical: 9 },

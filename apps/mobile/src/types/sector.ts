@@ -1,38 +1,95 @@
 export type SectorKey =
   | "general"
-  | "retail"
   | "restaurant"
-  | "health"
+  | "commerce"
+  | "construction"
+  | "sante"
   | "education"
   | "transport"
-  | "industry"
-  | "hotel"
-  | "agriculture"
-  | "services"
-  | "construction";
+  | "industrie"
+  | "hotel";
 
 export type ModuleKey =
+  | "dashboard"
+  | "clients"
   | "crm"
-  | "sales"
+  | "ventes"
+  | "produits"
   | "stock"
-  | "invoicing"
-  | "accounting"
-  | "hr"
-  | "appointments"
+  | "devis"
+  | "facturation"
+  | "paiements"
+  | "fournisseurs"
+  | "finances"
+  | "comptabilite"
+  | "rh"
+  | "rapports"
+  | "assistant"
+  | "ai-sales-agent"
+  | "ai-studio"
+  | "support"
+  | "gouvernance"
+  | "utilisateurs"
+  | "roles-permissions"
+  | "notifications"
+  | "documents"
+  | "statistiques"
+  | "commandes"
+  | "reservations"
+  | "menus"
+  | "cuisine"
+  | "recettes"
+  | "achats"
+  | "chantiers"
+  | "contrats"
+  | "materiels"
+  | "materiaux"
+  | "budgets"
+  | "patients"
+  | "medecins"
+  | "rendez-vous"
+  | "consultations"
+  | "pharmacie"
+  | "laboratoire"
+  | "dossiers-medicaux"
+  | "etudiants"
+  | "enseignants"
+  | "classes"
+  | "emploi-du-temps"
+  | "examens"
+  | "cours"
+  | "presences"
+  | "frais-scolaires"
+  | "flotte"
+  | "conducteurs"
+  | "expeditions"
+  | "itineraires"
+  | "carburant"
+  | "maintenance"
   | "production"
-  | "projects"
-  | "ai"
-  | "users"
-  | "reports"
-  | "settings";
+  | "matieres-premieres"
+  | "machines"
+  | "ordres-fabrication"
+  | "chambres"
+  | "housekeeping"
+  | "restaurant-hotel"
+  | "parametres";
+
+export type SectorKpi = {
+  key: string;
+  labelKey: string;
+  value: string;
+  trendKey: string;
+};
 
 export type SectorDefinition = {
   key: SectorKey;
-  labelKey: `sector.${SectorKey}`;
+  labelKey: string;
+  descriptionKey: string;
   icon: string;
   accent: string;
   modules: ModuleKey[];
-  kpis: { key: string; label: string; value: string; trend: string }[];
-  priorityActions: string[];
-  recentActivity: string[];
+  kpis: SectorKpi[];
+  priorityActionKeys: string[];
+  recentActivityKeys: string[];
 };

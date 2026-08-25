@@ -22,8 +22,8 @@ export type ModuleStatusMap = Partial<
 const apiToMobileModule: Record<string, ModuleKey | undefined> = {
   crm: "crm",
   stock: "stock",
-  facturation: "invoicing",
-  ai: "ai",
+  facturation: "facturation",
+  ai: "assistant",
 };
 
 export async function getModuleStatuses(): Promise<ModuleStatusMap> {

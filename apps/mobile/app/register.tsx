@@ -23,16 +23,14 @@ import type { SectorKey } from "@/types/sector";
 
 const apiSectorMap: Record<SectorKey, RegisterPayload["sector"]> = {
   general: "general",
-  retail: "commerce",
+  commerce: "commerce",
   restaurant: "restaurant",
   construction: "construction",
-  health: "sante",
+  sante: "sante",
   education: "education",
   transport: "transport",
-  industry: "industrie",
+  industrie: "industrie",
   hotel: "hotel",
-  agriculture: "agriculture",
-  services: "services",
 };
 
 export default function RegisterScreen() {

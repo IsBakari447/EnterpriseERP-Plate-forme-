@@ -9,29 +9,20 @@ import { useSector } from "@/context/SectorContext";
 import { colors } from "@/theme";
 import type { ModuleKey } from "@/types/sector";
 
-const moduleActions: Record<ModuleKey, string[]> = {
-  crm: ["Open customer 360", "Prepare follow-up", "Add note"],
-  sales: ["Create order", "Validate stock", "Prepare invoice"],
-  stock: ["Scan QR", "Adjust quantity", "Start inventory"],
-  invoicing: ["Create invoice", "Share PDF", "Record payment"],
-  accounting: ["Cash forecast", "Export entries", "Review VAT"],
-  hr: ["Check attendance", "Approve leave", "Open payroll"],
-  appointments: ["Confirm schedule", "Notify customer", "Assign owner"],
-  production: ["Start batch", "Check raw material", "Close order"],
-  projects: ["Open Kanban", "Review deadline", "Assign task"],
-  ai: ["Summarize report", "Draft email", "Prioritize actions"],
-  users: ["Invite user", "Review role", "Open sessions"],
-  reports: ["Open dashboard", "Export PDF", "Schedule report"],
-  settings: ["Company settings", "Language", "Security"],
-};
+const moduleActions: string[] = [
+  "module.openApi",
+  "module.dataSync",
+  "module.aiAssist",
+  "module.mobileFirst",
+];
 
 export default function ModuleScreen() {
   const { id } = useLocalSearchParams<{ id: ModuleKey }>();
   const { sector } = useSector();
   const { t } = useLanguage();
-  const module = moduleMeta[id] ?? moduleMeta.crm;
+  const moduleId = id && id in moduleMeta ? id : "dashboard";
+  const module = moduleMeta[moduleId];
   const title = t(module.labelKey);
-  const actions = moduleActions[id] ?? moduleActions.crm;
 
   return (
     <SafeAreaView style={styles.safe} edges={["bottom"]}>
@@ -50,10 +41,10 @@ export default function ModuleScreen() {
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>{t("module.actions")}</Text>
-          {actions.map((action) => (
-            <View key={action} style={styles.action}>
+          {moduleActions.map((actionKey) => (
+            <View key={actionKey} style={styles.action}>
               <Ionicons name="flash-outline" size={18} color={sector.accent} />
-              <Text style={styles.actionText}>{action}</Text>
+              <Text style={styles.actionText}>{t(actionKey)}</Text>
             </View>
           ))}
         </View>

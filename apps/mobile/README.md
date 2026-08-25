@@ -35,7 +35,7 @@ N'utilisez pas `localhost` depuis un telephone physique : cela pointerait vers l
 - Chargement de l'utilisateur via `/api/auth/me`.
 - Choix et persistance du secteur actif.
 - Support multilingue mobile FR / EN / SV.
-- Secteurs principaux : entreprise generale, commerce, restauration, construction, sante, education, transport, industrie, hotellerie, agriculture et services.
+- Secteurs alignes avec EnterpriseERP Cloud : entreprise generale, restauration, commerce, construction, sante, education, transport, industrie et hotellerie.
 - Dashboard mobile avec KPI, actions prioritaires, modules, activite recente et etat API.
 - CRM mobile connecte a `/api/clients`.
 - Ecrans modules generiques prets pour les flux terrain.
