@@ -26,6 +26,344 @@ type ModuleView = {
 
 type BusinessTemplate = "admin" | "analytics" | "crm" | "commerce" | "finance" | "project" | "operations" | "security";
 
+type CreateField = {
+  key: string;
+  label: string;
+  type?: "text" | "email" | "tel" | "number" | "date" | "time" | "textarea" | "select";
+  placeholder?: string;
+  options?: string[];
+  required?: boolean;
+};
+
+type CreateFormDefinition = {
+  title: string;
+  fields: CreateField[];
+};
+
+const createForms: Partial<Record<ModuleKey, CreateFormDefinition>> = {
+  etudiants: {
+    title: "Ajouter un etudiant",
+    fields: [
+      { key: "firstName", label: "Prenom", required: true },
+      { key: "lastName", label: "Nom", required: true },
+      { key: "studentNumber", label: "Matricule" },
+      { key: "birthDate", label: "Date de naissance", type: "date" },
+      { key: "class", label: "Classe" },
+      { key: "guardian", label: "Parent / tuteur" },
+      { key: "phone", label: "Telephone", type: "tel" },
+      { key: "email", label: "Email", type: "email" },
+    ],
+  },
+  enseignants: {
+    title: "Ajouter un enseignant",
+    fields: [
+      { key: "firstName", label: "Prenom", required: true },
+      { key: "lastName", label: "Nom", required: true },
+      { key: "speciality", label: "Specialite" },
+      { key: "subjects", label: "Matieres" },
+      { key: "phone", label: "Telephone", type: "tel" },
+      { key: "email", label: "Email", type: "email" },
+      { key: "contractType", label: "Type de contrat", type: "select", options: ["Temps plein", "Temps partiel", "Vacataire"] },
+    ],
+  },
+  classes: {
+    title: "Creer une classe",
+    fields: [
+      { key: "name", label: "Nom de la classe", required: true },
+      { key: "level", label: "Niveau" },
+      { key: "room", label: "Salle" },
+      { key: "capacity", label: "Capacite", type: "number" },
+      { key: "mainTeacher", label: "Enseignant principal" },
+    ],
+  },
+  "emploi-du-temps": {
+    title: "Ajouter un cours au planning",
+    fields: [
+      { key: "course", label: "Cours", required: true },
+      { key: "class", label: "Classe", required: true },
+      { key: "teacher", label: "Enseignant" },
+      { key: "room", label: "Salle" },
+      { key: "date", label: "Date", type: "date" },
+      { key: "startTime", label: "Heure debut", type: "time" },
+      { key: "endTime", label: "Heure fin", type: "time" },
+    ],
+  },
+  examens: {
+    title: "Creer un examen",
+    fields: [
+      { key: "name", label: "Nom de l'examen", required: true },
+      { key: "subject", label: "Matiere", required: true },
+      { key: "class", label: "Classe", required: true },
+      { key: "date", label: "Date", type: "date" },
+      { key: "teacher", label: "Enseignant" },
+      { key: "maximumScore", label: "Note maximale", type: "number" },
+    ],
+  },
+  cours: {
+    title: "Creer un cours",
+    fields: [
+      { key: "name", label: "Nom du cours", required: true },
+      { key: "code", label: "Code" },
+      { key: "subject", label: "Matiere" },
+      { key: "level", label: "Niveau" },
+      { key: "teacher", label: "Enseignant" },
+      { key: "hours", label: "Heures / semaine", type: "number" },
+      { key: "description", label: "Programme", type: "textarea" },
+    ],
+  },
+  reservations: {
+    title: "Creer une reservation",
+    fields: [
+      { key: "customer", label: "Client", required: true },
+      { key: "arrival", label: "Arrivee", type: "date", required: true },
+      { key: "departure", label: "Depart", type: "date", required: true },
+      { key: "room", label: "Chambre" },
+      { key: "adults", label: "Adultes", type: "number" },
+      { key: "children", label: "Enfants", type: "number" },
+      { key: "price", label: "Tarif", type: "number" },
+    ],
+  },
+  chambres: {
+    title: "Ajouter une chambre",
+    fields: [
+      { key: "number", label: "Numero", required: true },
+      { key: "type", label: "Type", type: "select", options: ["Simple", "Double", "Suite", "Familiale"] },
+      { key: "capacity", label: "Capacite", type: "number" },
+      { key: "price", label: "Prix / nuit", type: "number" },
+      { key: "status", label: "Statut", type: "select", options: ["Disponible", "Maintenance", "Hors service"] },
+    ],
+  },
+  housekeeping: {
+    title: "Creer une tache housekeeping",
+    fields: [
+      { key: "room", label: "Chambre", required: true },
+      { key: "employee", label: "Employe" },
+      { key: "task", label: "Tache", type: "select", options: ["Nettoyage", "Inspection", "Linge", "Mini-bar"] },
+      { key: "date", label: "Date", type: "date" },
+      { key: "notes", label: "Notes", type: "textarea" },
+    ],
+  },
+  commandes: {
+    title: "Creer une commande",
+    fields: [
+      { key: "table", label: "Table" },
+      { key: "customer", label: "Client" },
+      { key: "type", label: "Type", type: "select", options: ["Sur place", "A emporter", "Livraison"] },
+      { key: "items", label: "Articles / plats", type: "textarea", required: true },
+      { key: "notes", label: "Instructions cuisine", type: "textarea" },
+    ],
+  },
+  cuisine: {
+    title: "Creer une tache cuisine",
+    fields: [
+      { key: "order", label: "Commande", required: true },
+      { key: "station", label: "Poste cuisine" },
+      { key: "responsible", label: "Responsable" },
+      { key: "notes", label: "Instructions", type: "textarea" },
+    ],
+  },
+  menus: {
+    title: "Ajouter un article au menu",
+    fields: [
+      { key: "name", label: "Nom", required: true },
+      { key: "category", label: "Categorie" },
+      { key: "price", label: "Prix", type: "number", required: true },
+      { key: "description", label: "Description", type: "textarea" },
+    ],
+  },
+  patients: {
+    title: "Ajouter un patient",
+    fields: [
+      { key: "firstName", label: "Prenom", required: true },
+      { key: "lastName", label: "Nom", required: true },
+      { key: "birthDate", label: "Date de naissance", type: "date" },
+      { key: "phone", label: "Telephone", type: "tel" },
+      { key: "email", label: "Email", type: "email" },
+      { key: "address", label: "Adresse" },
+      { key: "emergencyContact", label: "Contact d'urgence" },
+    ],
+  },
+  medecins: {
+    title: "Ajouter un professionnel",
+    fields: [
+      { key: "firstName", label: "Prenom", required: true },
+      { key: "lastName", label: "Nom", required: true },
+      { key: "speciality", label: "Specialite" },
+      { key: "phone", label: "Telephone", type: "tel" },
+      { key: "email", label: "Email", type: "email" },
+    ],
+  },
+  "rendez-vous": {
+    title: "Creer un rendez-vous",
+    fields: [
+      { key: "patient", label: "Patient", required: true },
+      { key: "doctor", label: "Professionnel", required: true },
+      { key: "date", label: "Date", type: "date" },
+      { key: "time", label: "Heure", type: "time" },
+      { key: "reason", label: "Motif", type: "textarea" },
+    ],
+  },
+  consultations: {
+    title: "Creer une consultation",
+    fields: [
+      { key: "patient", label: "Patient", required: true },
+      { key: "doctor", label: "Professionnel", required: true },
+      { key: "reason", label: "Motif", type: "textarea" },
+      { key: "notes", label: "Observations", type: "textarea" },
+    ],
+  },
+  chantiers: {
+    title: "Creer un chantier",
+    fields: [
+      { key: "name", label: "Nom du chantier", required: true },
+      { key: "customer", label: "Client", required: true },
+      { key: "address", label: "Adresse" },
+      { key: "manager", label: "Chef de projet" },
+      { key: "startDate", label: "Date debut", type: "date" },
+      { key: "endDate", label: "Date prevue fin", type: "date" },
+      { key: "budget", label: "Budget", type: "number" },
+    ],
+  },
+  contrats: {
+    title: "Creer un contrat",
+    fields: [
+      { key: "reference", label: "Reference", required: true },
+      { key: "customer", label: "Client" },
+      { key: "project", label: "Projet / chantier" },
+      { key: "amount", label: "Montant", type: "number" },
+      { key: "startDate", label: "Debut", type: "date" },
+      { key: "endDate", label: "Fin", type: "date" },
+    ],
+  },
+  materiaux: {
+    title: "Ajouter un materiau",
+    fields: [
+      { key: "name", label: "Materiau", required: true },
+      { key: "quantity", label: "Quantite", type: "number" },
+      { key: "unit", label: "Unite" },
+      { key: "supplier", label: "Fournisseur" },
+      { key: "project", label: "Chantier" },
+      { key: "cost", label: "Cout", type: "number" },
+    ],
+  },
+  production: {
+    title: "Creer un ordre de production",
+    fields: [
+      { key: "product", label: "Produit", required: true },
+      { key: "quantity", label: "Quantite", type: "number", required: true },
+      { key: "line", label: "Ligne de production" },
+      { key: "plannedDate", label: "Date prevue", type: "date" },
+      { key: "responsible", label: "Responsable" },
+    ],
+  },
+  machines: {
+    title: "Ajouter une machine",
+    fields: [
+      { key: "name", label: "Machine", required: true },
+      { key: "reference", label: "Reference" },
+      { key: "location", label: "Emplacement" },
+      { key: "commissionDate", label: "Mise en service", type: "date" },
+      { key: "maintenanceDate", label: "Prochaine maintenance", type: "date" },
+    ],
+  },
+  "ordres-fabrication": {
+    title: "Creer un ordre de fabrication",
+    fields: [
+      { key: "reference", label: "Reference OF", required: true },
+      { key: "product", label: "Produit", required: true },
+      { key: "quantity", label: "Quantite", type: "number" },
+      { key: "startDate", label: "Date debut", type: "date" },
+      { key: "endDate", label: "Date prevue fin", type: "date" },
+    ],
+  },
+  expeditions: {
+    title: "Creer une expedition",
+    fields: [
+      { key: "customer", label: "Client", required: true },
+      { key: "origin", label: "Origine", required: true },
+      { key: "destination", label: "Destination", required: true },
+      { key: "goods", label: "Marchandise" },
+      { key: "weight", label: "Poids", type: "number" },
+      { key: "vehicle", label: "Vehicule" },
+      { key: "driver", label: "Conducteur" },
+      { key: "departure", label: "Depart", type: "date" },
+    ],
+  },
+  flotte: {
+    title: "Ajouter un vehicule",
+    fields: [
+      { key: "registration", label: "Immatriculation", required: true },
+      { key: "brand", label: "Marque" },
+      { key: "model", label: "Modele" },
+      { key: "mileage", label: "Kilometrage", type: "number" },
+      { key: "driver", label: "Conducteur" },
+      { key: "maintenance", label: "Prochaine maintenance", type: "date" },
+    ],
+  },
+  conducteurs: {
+    title: "Ajouter un conducteur",
+    fields: [
+      { key: "firstName", label: "Prenom", required: true },
+      { key: "lastName", label: "Nom", required: true },
+      { key: "phone", label: "Telephone", type: "tel" },
+      { key: "license", label: "Permis" },
+      { key: "licenseExpiry", label: "Expiration permis", type: "date" },
+    ],
+  },
+  clients: {
+    title: "Ajouter un client",
+    fields: [
+      { key: "name", label: "Nom", required: true },
+      { key: "email", label: "Email", type: "email" },
+      { key: "phone", label: "Telephone", type: "tel" },
+      { key: "address", label: "Adresse" },
+      { key: "country", label: "Pays" },
+    ],
+  },
+  fournisseurs: {
+    title: "Ajouter un fournisseur",
+    fields: [
+      { key: "name", label: "Entreprise", required: true },
+      { key: "contact", label: "Contact" },
+      { key: "email", label: "Email", type: "email" },
+      { key: "phone", label: "Telephone", type: "tel" },
+      { key: "address", label: "Adresse" },
+    ],
+  },
+  produits: {
+    title: "Ajouter un produit",
+    fields: [
+      { key: "sku", label: "SKU", required: true },
+      { key: "name", label: "Produit", required: true },
+      { key: "category", label: "Categorie" },
+      { key: "purchasePrice", label: "Prix achat", type: "number" },
+      { key: "salePrice", label: "Prix vente", type: "number" },
+      { key: "stock", label: "Stock initial", type: "number" },
+      { key: "barcode", label: "Code-barres" },
+    ],
+  },
+  facturation: {
+    title: "Creer une facture",
+    fields: [
+      { key: "customer", label: "Client", required: true },
+      { key: "reference", label: "Reference facture" },
+      { key: "date", label: "Date", type: "date" },
+      { key: "dueDate", label: "Echeance", type: "date" },
+      { key: "amount", label: "Montant", type: "number" },
+    ],
+  },
+  paiements: {
+    title: "Enregistrer un paiement",
+    fields: [
+      { key: "customer", label: "Client" },
+      { key: "invoice", label: "Facture" },
+      { key: "amount", label: "Montant", type: "number", required: true },
+      { key: "method", label: "Mode de paiement", type: "select", options: ["Carte", "Especes", "Virement", "Mobile"] },
+      { key: "date", label: "Date", type: "date" },
+    ],
+  },
+};
+
 const crmModules: ModuleKey[] = ["clients", "crm", "fournisseurs"];
 const commerceModules: ModuleKey[] = ["produits", "stock", "achats", "menus", "recettes", "pharmacie", "matieres-premieres"];
 const financeModules: ModuleKey[] = ["devis", "facturation", "paiements", "finances", "comptabilite", "budgets", "frais-scolaires"];
@@ -1139,6 +1477,14 @@ export default function GenericModulePage({ module }: { module: ModuleView }) {
     ...module,
     name: sector.labels?.[module.key] ? tx(sector.labels[module.key]!) : t(`nav.${module.key}`),
   };
+  const createDefinition =
+    createForms[module.key] ?? {
+      title: `${tx("Creer")} ${localizedModule.name}`,
+      fields: [
+        { key: "name", label: "Nom", required: true },
+        { key: "description", label: "Description", type: "textarea" as const },
+      ],
+    };
   const templateLabel = {
     admin: "Administration",
     analytics: "Analytics / BI",
@@ -1220,7 +1566,7 @@ export default function GenericModulePage({ module }: { module: ModuleView }) {
                 </p>
 
                 <h2 className="mt-1 text-2xl font-black text-night">
-                  {`${tx("Creer")} ${localizedModule.name}`}
+                  {tx(createDefinition.title)}
                 </h2>
               </div>
 
@@ -1237,27 +1583,43 @@ export default function GenericModulePage({ module }: { module: ModuleView }) {
             </div>
 
             <div className="mt-6 space-y-4">
-              <div>
-                <label className="text-sm font-bold text-slate-600">
-                  {tx("Nom")}
-                </label>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {createDefinition.fields.map((field) => (
+                  <div key={field.key} className={field.type === "textarea" ? "sm:col-span-2" : ""}>
+                    <label className="text-sm font-bold text-slate-600">
+                      {tx(field.label)}
+                      {field.required && <span className="ml-1 text-red-500">*</span>}
+                    </label>
 
-                <input
-                  type="text"
-                  className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-[#00C2A9]"
-                  placeholder={localizedModule.name}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-bold text-slate-600">
-                  {tx("Description")}
-                </label>
-
-                <textarea
-                  rows={4}
-                  className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-[#00C2A9]"
-                />
+                    {field.type === "textarea" ? (
+                      <textarea
+                        rows={4}
+                        required={field.required}
+                        placeholder={field.placeholder ? tx(field.placeholder) : undefined}
+                        className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-[#00C2A9]"
+                      />
+                    ) : field.type === "select" ? (
+                      <select
+                        required={field.required}
+                        className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-[#00C2A9]"
+                      >
+                        <option value="">{tx("Selectionner")}</option>
+                        {field.options?.map((option) => (
+                          <option key={option} value={option}>
+                            {tx(option)}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type={field.type ?? "text"}
+                        required={field.required}
+                        placeholder={field.placeholder ? tx(field.placeholder) : undefined}
+                        className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-[#00C2A9]"
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
