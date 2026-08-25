@@ -16,6 +16,7 @@ export default function SalesScreen() {
         { titleKey: "screen.sales.actionsTitle", items: ["screen.sales.actions.1", "screen.sales.actions.2", "screen.sales.actions.3"] },
       ]}
       aiKey="screen.sales.ai"
+      apiModule="sales"
     />
   );
 }

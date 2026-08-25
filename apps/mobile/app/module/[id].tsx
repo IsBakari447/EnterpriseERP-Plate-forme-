@@ -28,7 +28,7 @@ export default function GenericModuleScreen() {
       <View style={styles.header}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Retour"
+          accessibilityLabel={t("common.back")}
           onPress={() => router.back()}
           style={({ pressed }) => [
             styles.backButton,

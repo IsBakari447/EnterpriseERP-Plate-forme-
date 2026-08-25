@@ -16,6 +16,7 @@ export default function ReportsScreen() {
         { titleKey: "screen.reports.exportsTitle", items: ["screen.reports.exports.1", "screen.reports.exports.2", "screen.reports.exports.3"] },
       ]}
       aiKey="screen.reports.ai"
+      apiModule="reports"
     />
   );
 }

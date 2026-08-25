@@ -16,6 +16,7 @@ export default function ProductionScreen() {
         { titleKey: "screen.production.qualityTitle", items: ["screen.production.quality.1", "screen.production.quality.2", "screen.production.quality.3"] },
       ]}
       aiKey="screen.production.ai"
+      apiModule="production"
     />
   );
 }

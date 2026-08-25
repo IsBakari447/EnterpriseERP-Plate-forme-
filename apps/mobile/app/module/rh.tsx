@@ -16,6 +16,7 @@ export default function HumanResourcesScreen() {
         { titleKey: "screen.hr.docsTitle", items: ["screen.hr.docs.1", "screen.hr.docs.2", "screen.hr.docs.3"] },
       ]}
       aiKey="screen.hr.ai"
+      apiModule="hr"
     />
   );
 }

@@ -1,16 +1,26 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useLanguage } from "@/context/LanguageContext";
 import { useSector } from "@/context/SectorContext";
+import {
+  getModuleItems,
+  getModuleKpis,
+  type ApiListItem,
+  type ApiMetric,
+  type ModuleApiKey,
+} from "@/services/operations";
 import { colors } from "@/theme";
 
 type Metric = {
-  labelKey: string;
+  labelKey?: string;
+  label?: string;
   value: string;
-  hintKey: string;
+  hintKey?: string;
+  hint?: string;
 };
 
 type ModuleSection = {
@@ -25,6 +35,7 @@ type MobileModuleWorkspaceProps = {
   metrics: Metric[];
   sections: ModuleSection[];
   aiKey: string;
+  apiModule?: ModuleApiKey;
 };
 
 export function MobileModuleWorkspace({
@@ -34,11 +45,87 @@ export function MobileModuleWorkspace({
   metrics,
   sections,
   aiKey,
+  apiModule,
 }: MobileModuleWorkspaceProps) {
   const router = useRouter();
   const { t } = useLanguage();
   const { sector } = useSector();
   const title = t(titleKey);
+  const [apiMetrics, setApiMetrics] = useState<ApiMetric[]>([]);
+  const [apiItems, setApiItems] = useState<ApiListItem[]>([]);
+  const [isLoadingApi, setIsLoadingApi] = useState(false);
+  const [hasApiError, setHasApiError] = useState(false);
+
+  useEffect(() => {
+    if (!apiModule) {
+      return;
+    }
+
+    let isActive = true;
+    setIsLoadingApi(true);
+    setHasApiError(false);
+
+    Promise.all([getModuleKpis(apiModule), getModuleItems(apiModule)])
+      .then(([nextMetrics, nextItems]) => {
+        if (!isActive) {
+          return;
+        }
+
+        setApiMetrics(nextMetrics);
+        setApiItems(nextItems);
+      })
+      .catch(() => {
+        if (isActive) {
+          setHasApiError(true);
+        }
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsLoadingApi(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [apiModule]);
+
+  const displayedMetrics = useMemo<Metric[]>(() => {
+    if (apiMetrics.length === 0) {
+      return metrics;
+    }
+
+    return apiMetrics.map((metric) => ({
+      labelKey: metric.labelKey,
+      label: metric.label,
+      value: metric.value,
+      hintKey: metric.changeKey,
+      hint: metric.change,
+    }));
+  }, [apiMetrics, metrics]);
+
+  const getMetricLabel = (metric: Metric) =>
+    metric.labelKey ? t(metric.labelKey) : metric.label ?? "";
+
+  const getMetricHint = (metric: Metric) => {
+    if (metric.hintKey) {
+      return t(metric.hintKey);
+    }
+
+    return metric.hint ?? "";
+  };
+
+  const getItemTitle = (item: ApiListItem) =>
+    item.titleKey ? t(item.titleKey) : item.title ?? item.name ?? item.number ?? item.id ?? "-";
+
+  const getItemSubtitle = (item: ApiListItem) =>
+    item.subtitleKey ? t(item.subtitleKey) : item.subtitle ?? item.customer ?? item.role ?? "";
+
+  const getItemMeta = (item: ApiListItem) =>
+    item.metaKey ? t(item.metaKey) : item.meta ?? item.date ?? item.contract ?? "";
+
+  const getItemStatus = (item: ApiListItem) =>
+    item.statusKey ? t(item.statusKey) : item.status ?? "";
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -63,12 +150,30 @@ export function MobileModuleWorkspace({
           </View>
         </View>
 
+        {apiModule ? (
+          <View style={styles.apiState}>
+            <View
+              style={[
+                styles.apiDot,
+                { backgroundColor: hasApiError ? "#DC2626" : sector.accent },
+              ]}
+            />
+            <Text style={styles.apiStateText}>
+              {isLoadingApi
+                ? t("module.apiLoading")
+                : hasApiError
+                  ? t("module.apiErrorTitle")
+                  : t("module.apiConnected")}
+            </Text>
+          </View>
+        ) : null}
+
         <View style={styles.metrics}>
-          {metrics.map((metric) => (
-            <View key={metric.labelKey} style={styles.metricCard}>
-              <Text style={styles.metricLabel}>{t(metric.labelKey)}</Text>
+          {displayedMetrics.map((metric, index) => (
+            <View key={`${metric.labelKey ?? metric.label ?? "metric"}-${index}`} style={styles.metricCard}>
+              <Text style={styles.metricLabel}>{getMetricLabel(metric)}</Text>
               <Text style={styles.metricValue}>{metric.value}</Text>
-              <Text style={[styles.metricHint, { color: sector.accent }]}>{t(metric.hintKey)}</Text>
+              <Text style={[styles.metricHint, { color: sector.accent }]}>{getMetricHint(metric)}</Text>
             </View>
           ))}
         </View>
@@ -84,6 +189,33 @@ export function MobileModuleWorkspace({
             ))}
           </View>
         ))}
+
+        {apiModule ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>{t("module.apiData")}</Text>
+
+            {hasApiError ? (
+              <Text style={styles.mutedText}>{t("module.apiError")}</Text>
+            ) : apiItems.length === 0 ? (
+              <Text style={styles.mutedText}>{isLoadingApi ? t("common.loading") : t("module.apiEmpty")}</Text>
+            ) : (
+              apiItems.map((item, index) => (
+                <View key={item.id ?? `${apiModule}-${index}`} style={styles.apiItem}>
+                  <View style={styles.apiItemMain}>
+                    <Text style={styles.apiItemTitle}>{getItemTitle(item)}</Text>
+                    <Text style={styles.apiItemSubtitle}>{getItemSubtitle(item)}</Text>
+                  </View>
+                  <View style={styles.apiItemSide}>
+                    <Text style={styles.apiItemValue}>{item.value ?? item.amount ?? ""}</Text>
+                    <Text style={[styles.apiItemStatus, { color: sector.accent }]}>
+                      {getItemStatus(item) || getItemMeta(item)}
+                    </Text>
+                  </View>
+                </View>
+              ))
+            )}
+          </View>
+        ) : null}
 
         <View style={styles.aiCard}>
           <View style={styles.aiBadge}>
@@ -131,6 +263,20 @@ const styles = StyleSheet.create({
   title: { color: "white", fontSize: 30, lineHeight: 37, fontWeight: "900" },
   subtitle: { color: "#D6E4F3", fontSize: 15, lineHeight: 22 },
   metrics: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 16 },
+  apiState: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    marginTop: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  apiDot: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },
+  apiStateText: { color: colors.text, fontSize: 12, fontWeight: "900" },
   metricCard: {
     width: "31%",
     minHeight: 112,
@@ -161,6 +307,21 @@ const styles = StyleSheet.create({
   },
   itemDot: { width: 9, height: 9, borderRadius: 5, marginRight: 12 },
   itemText: { flex: 1, color: colors.text, fontSize: 15, lineHeight: 21, fontWeight: "800" },
+  mutedText: { color: colors.muted, fontSize: 15, lineHeight: 22, fontWeight: "700" },
+  apiItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 13,
+    borderTopWidth: 1,
+    borderTopColor: "#EEF3F8",
+  },
+  apiItemMain: { flex: 1, paddingRight: 12 },
+  apiItemTitle: { color: colors.text, fontSize: 15, fontWeight: "900" },
+  apiItemSubtitle: { color: colors.muted, fontSize: 13, lineHeight: 19, marginTop: 4, fontWeight: "700" },
+  apiItemSide: { alignItems: "flex-end", maxWidth: 120 },
+  apiItemValue: { color: colors.text, fontSize: 13, fontWeight: "900" },
+  apiItemStatus: { fontSize: 12, fontWeight: "900", marginTop: 4 },
   aiCard: {
     marginTop: 16,
     padding: 19,

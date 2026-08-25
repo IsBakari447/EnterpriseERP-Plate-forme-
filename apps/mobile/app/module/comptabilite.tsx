@@ -16,6 +16,7 @@ export default function AccountingScreen() {
         { titleKey: "screen.accounting.complianceTitle", items: ["screen.accounting.compliance.1", "screen.accounting.compliance.2", "screen.accounting.compliance.3"] },
       ]}
       aiKey="screen.accounting.ai"
+      apiModule="accounting"
     />
   );
 }

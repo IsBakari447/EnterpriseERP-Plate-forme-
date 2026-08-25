@@ -15,6 +15,26 @@ export class OperationsController {
     return this.operationsService.getOrders();
   }
 
+  @Get("reports/kpis")
+  reportsKpis() {
+    return this.operationsService.getReportsKpis();
+  }
+
+  @Get("reports/items")
+  reportsItems() {
+    return this.operationsService.getReportsItems();
+  }
+
+  @Get("accounting/kpis")
+  accountingKpis() {
+    return this.operationsService.getAccountingKpis();
+  }
+
+  @Get("accounting/items")
+  accountingItems() {
+    return this.operationsService.getAccountingItems();
+  }
+
   @Get("hr/kpis")
   hrKpis() {
     return this.operationsService.getHrKpis();
@@ -23,6 +43,26 @@ export class OperationsController {
   @Get("hr/employees")
   employees() {
     return this.operationsService.getEmployees();
+  }
+
+  @Get("appointments/kpis")
+  appointmentsKpis() {
+    return this.operationsService.getAppointmentsKpis();
+  }
+
+  @Get("appointments/items")
+  appointmentsItems() {
+    return this.operationsService.getAppointmentsItems();
+  }
+
+  @Get("production/kpis")
+  productionKpis() {
+    return this.operationsService.getProductionKpis();
+  }
+
+  @Get("production/items")
+  productionItems() {
+    return this.operationsService.getProductionItems();
   }
 
   @Get("assistant/kpis")

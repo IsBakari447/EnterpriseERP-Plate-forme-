@@ -16,6 +16,7 @@ export default function AppointmentsScreen() {
         { titleKey: "screen.appointments.followTitle", items: ["screen.appointments.follow.1", "screen.appointments.follow.2", "screen.appointments.follow.3"] },
       ]}
       aiKey="screen.appointments.ai"
+      apiModule="appointments"
     />
   );
 }
