@@ -9,13 +9,6 @@ import { useSector } from "@/context/SectorContext";
 import { colors } from "@/theme";
 import type { ModuleKey } from "@/types/sector";
 
-const moduleActions: string[] = [
-  "module.openApi",
-  "module.dataSync",
-  "module.aiAssist",
-  "module.mobileFirst",
-];
-
 export default function ModuleScreen() {
   const { id } = useLocalSearchParams<{ id: ModuleKey }>();
   const { sector } = useSector();
@@ -39,12 +32,21 @@ export default function ModuleScreen() {
           <Text style={styles.subtitle}>{t("module.readyText")}</Text>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>{t("module.actions")}</Text>
-          {moduleActions.map((actionKey) => (
-            <View key={actionKey} style={styles.action}>
-              <Ionicons name="flash-outline" size={18} color={sector.accent} />
-              <Text style={styles.actionText}>{t(actionKey)}</Text>
+        <View style={styles.workflowCard}>
+          <Text style={styles.cardTitle}>{t("module.workflow")}</Text>
+          {[
+            { icon: "create-outline", key: "module.workflow.capture" },
+            { icon: "sync-outline", key: "module.workflow.sync" },
+            { icon: "sparkles-outline", key: "module.workflow.ai" },
+          ].map((item) => (
+            <View key={item.key} style={styles.workflowRow}>
+              <View style={[styles.workflowIcon, { backgroundColor: `${sector.accent}18` }]}>
+                <Ionicons name={item.icon as never} size={19} color={sector.accent} />
+              </View>
+              <View style={styles.workflowCopy}>
+                <Text style={styles.workflowTitle}>{title}</Text>
+                <Text style={styles.workflowText}>{t(item.key)}</Text>
+              </View>
             </View>
           ))}
         </View>
@@ -66,6 +68,21 @@ export default function ModuleScreen() {
             <Ionicons name="sync-outline" size={24} color={sector.accent} />
             <Text style={styles.tileTitle}>{t("module.offlineReady")}</Text>
             <Text style={styles.tileText}>{t("common.planned")}</Text>
+          </View>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>{t("module.actions")}</Text>
+          <View style={styles.actionButtons}>
+            {[t("common.create"), t("common.see"), t("common.export"), t("common.notify")].map(
+              (action) => (
+                <View key={action} style={[styles.actionButton, { borderColor: sector.accent }]}>
+                  <Text style={[styles.actionButtonText, { color: sector.accent }]}>
+                    {action}
+                  </Text>
+                </View>
+              ),
+            )}
           </View>
         </View>
       </ScrollView>
@@ -108,6 +125,32 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
+  workflowCard: {
+    marginTop: 16,
+    padding: 18,
+    borderRadius: 22,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  workflowRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  workflowIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  workflowCopy: { flex: 1 },
+  workflowTitle: { color: colors.text, fontWeight: "900" },
+  workflowText: { color: colors.muted, marginTop: 3, lineHeight: 18 },
   cardTitle: { color: colors.text, fontWeight: "900", fontSize: 18, marginBottom: 10 },
   action: {
     flexDirection: "row",
@@ -130,4 +173,13 @@ const styles = StyleSheet.create({
   },
   tileTitle: { color: colors.text, fontWeight: "900", marginTop: 12, fontSize: 12 },
   tileText: { color: colors.muted, fontWeight: "700", marginTop: 6, fontSize: 11 },
+  actionButtons: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  actionButton: {
+    paddingHorizontal: 13,
+    paddingVertical: 10,
+    borderRadius: 999,
+    borderWidth: 1,
+    backgroundColor: colors.surface,
+  },
+  actionButtonText: { fontWeight: "900", fontSize: 12 },
 });

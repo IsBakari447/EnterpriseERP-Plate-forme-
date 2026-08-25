@@ -51,7 +51,7 @@ function normalizeSector(value?: string | null): SectorKey | null {
 export default function Dashboard() {
   const { authenticated, loading: authLoading, signOut, user } = useAuth();
   const { locale, ready: languageReady, setLocale, t } = useLanguage();
-  const { sector, ready: sectorReady, setSector } = useSector();
+  const { sector, ready: sectorReady, hasStoredSector, setAccountSector } = useSector();
   const [moduleStatuses, setModuleStatuses] = useState<ModuleStatusMap>({});
   const [apiOnline, setApiOnline] = useState<boolean | null>(null);
 
@@ -64,10 +64,10 @@ export default function Dashboard() {
   useEffect(() => {
     const userSector = normalizeSector(user?.company?.sector);
 
-    if (userSector) {
-      setSector(userSector);
+    if (userSector && !hasStoredSector) {
+      setAccountSector(userSector);
     }
-  }, [setSector, user?.company?.sector]);
+  }, [hasStoredSector, setAccountSector, user?.company?.sector]);
 
   useEffect(() => {
     if (!authenticated) return;
