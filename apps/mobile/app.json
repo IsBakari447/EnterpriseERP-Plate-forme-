@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "EnterpriseERP Cloud",
+    "slug": "enterpriseerp-cloud",
+    "scheme": "enterpriseerp",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "android": {
+      "package": "com.enterpriseerp.mobile"
+    },
+    "ios": {
+      "bundleIdentifier": "com.enterpriseerp.mobile"
+    },
+    "extra": {
+      "apiUrl": "https://enterpriseerp-api.onrender.com"
+    }
+  }
+}
