@@ -15,6 +15,21 @@ export const apiOriginUrl = configuredApiUrl.replace(/\/$/, "").endsWith("/api")
   : configuredApiUrl.replace(/\/$/, "");
 const apiBaseUrl = `${apiOriginUrl}/api`;
 
+function redirectToLogin() {
+  if (typeof window === "undefined") return;
+
+  const currentPath = window.location.pathname;
+  const isAuthPage =
+    currentPath === "/login" ||
+    currentPath === "/register" ||
+    currentPath === "/forgot-password" ||
+    currentPath === "/reset-password";
+
+  if (!isAuthPage) {
+    window.location.replace("/login?reason=session-expired");
+  }
+}
+
 export const apiClient = axios.create({
   baseURL: apiBaseUrl,
   headers: {
@@ -64,7 +79,11 @@ apiClient.interceptors.response.use(
           return apiClient(originalRequest);
         } catch {
           tokenStorage.clear();
+          redirectToLogin();
         }
+      } else {
+        tokenStorage.clear();
+        redirectToLogin();
       }
     }
 
