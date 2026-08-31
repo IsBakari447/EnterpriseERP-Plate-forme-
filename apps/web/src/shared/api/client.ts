@@ -15,17 +15,47 @@ export const apiOriginUrl = configuredApiUrl.replace(/\/$/, "").endsWith("/api")
   : configuredApiUrl.replace(/\/$/, "");
 const apiBaseUrl = `${apiOriginUrl}/api`;
 
+const publicRoutePrefixes = [
+  "/",
+  "/cloud",
+  "/commerce",
+  "/construction",
+  "/cookies",
+  "/demo",
+  "/dpa",
+  "/education",
+  "/faq",
+  "/forgot-password",
+  "/hotel",
+  "/industrie",
+  "/integrations",
+  "/legal",
+  "/login",
+  "/pricing",
+  "/privacy",
+  "/register",
+  "/reset-password",
+  "/restaurant",
+  "/roadmap",
+  "/roi",
+  "/sante",
+  "/security",
+  "/solutions",
+  "/status",
+  "/support",
+  "/transport",
+];
+
+function isPublicRoute(pathname: string) {
+  return publicRoutePrefixes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+}
+
 function redirectToLogin() {
   if (typeof window === "undefined") return;
 
   const currentPath = window.location.pathname;
-  const isAuthPage =
-    currentPath === "/login" ||
-    currentPath === "/register" ||
-    currentPath === "/forgot-password" ||
-    currentPath === "/reset-password";
 
-  if (!isAuthPage) {
+  if (!isPublicRoute(currentPath)) {
     window.location.replace("/login?reason=session-expired");
   }
 }

@@ -153,7 +153,7 @@ export default function DemoPage() {
           <input
             id="demo-name"
             className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3"
-            placeholder="Votre nom"
+            placeholder={t("demo.namePlaceholder")}
             value={form.name}
             onChange={(event) => updateField("name", event.target.value)}
             required
@@ -165,7 +165,7 @@ export default function DemoPage() {
           <input
             id="demo-email"
             className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3"
-            placeholder="vous@entreprise.com"
+            placeholder={t("demo.emailPlaceholder")}
             type="email"
             value={form.email}
             onChange={(event) => updateField("email", event.target.value)}
@@ -178,7 +178,7 @@ export default function DemoPage() {
           <textarea
             id="demo-need"
             className="mt-2 min-h-32 w-full rounded-lg border border-slate-200 px-4 py-3"
-            placeholder="CRM, facturation, stock, mobile, integrations..."
+            placeholder={t("demo.needPlaceholder")}
             value={form.need}
             onChange={(event) => updateField("need", event.target.value)}
             required

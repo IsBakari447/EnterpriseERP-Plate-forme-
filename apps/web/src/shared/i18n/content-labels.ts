@@ -30,7 +30,7 @@ const labelTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "l'hotellerie": "hotell",
     restaurant: "restaurang",
     commerce: "handelsverksamhet",
-    "entreprise de construction": "byggforetag",
+    "entreprise de construction": "byggföretag",
     "organisation de sante": "vardorganisation",
     etablissement: "utbildningsorganisation",
     "activite logistique": "logistikverksamhet",
@@ -734,7 +734,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
   },
   sv: {
     "Centralisez vos clients, ventes, factures, stock, equipe et indicateurs dans une plateforme SaaS moderne.":
-      "Centralisera kunder, forsaljning, fakturor, lager, team och KPI:er i en modern SaaS-plattform.",
+      "Centralisera kunder, försäljning, fakturor, lager, team och KPI:er i en modern SaaS-plattform.",
     "Visualisez les indicateurs essentiels, les alertes, les performances et les actions prioritaires depuis une seule interface.":
       "Se viktiga KPI:er, varningar, resultat och prioriterade atgarder fran ett enda granssnitt.",
     "L'IA recommande de prioriser les relances, le suivi du stock et les opportunites commerciales a fort impact.":
@@ -743,7 +743,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
       "Nar data ar utspridd tappar team tid och beslut blir langsammare.",
     "Donnees dispersees": "Utspridd data",
     "Clients, ventes, stock et factures sont souvent suivis dans plusieurs outils.":
-      "Kunder, forsaljning, lager och fakturor foljs ofta i flera verktyg.",
+      "Kunder, försäljning, lager och fakturor följs ofta i flera verktyg.",
     "Taches manuelles": "Manuella uppgifter",
     "Les doubles saisies et controles repetitifs ralentissent les equipes.":
       "Dubbelregistrering och upprepade kontroller saktar ner teamen.",
@@ -796,7 +796,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     Integrations: "Integrationer",
     "Permissions avancees": "Avancerade behorigheter",
     "Support prioritaire": "Prioriterad support",
-    "Ventes du mois": "Manadens forsaljning",
+    "Ventes du mois": "Månadens försäljning",
     Commandes: "Order",
     "Panier moyen": "Snittkorg",
     "CA Clients": "Kundomsattning",
@@ -883,7 +883,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Controler finance.export, audit.export et roles.manage.": "Kontrollera finance.export, audit.export och roles.manage.",
     "Preparation de l'activation prochaine.": "Forbereder kommande aktivering.",
     Sauvegardes: "Backuper",
-    "Suivre les backups et restaurations.": "Folj backuper och aterstallningar.",
+    "Suivre les backups et restaurations.": "Följ backuper och återställningar.",
     Conformite: "Efterlevnad",
     "Journaliser les changements de configuration.": "Logga konfigurationsandringar.",
     "Sessions et appareils": "Sessioner och enheter",
@@ -920,7 +920,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     Validation: "Validering",
     "Audit securite": "Sakerhetsaudit",
     "Inviter ou modifier un role": "Bjud in eller redigera roll",
-    "Achats / ventes": "Inkops / forsaljning",
+    "Achats / ventes": "Inköp / försäljning",
     "Paiements & relances": "Betalningar och uppfoljningar",
     Tresorerie: "Kassaflode",
     "Budget & risques": "Budget och risker",
@@ -1179,7 +1179,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Encaissements recuperables": "Atervinningsbara inbetalningar",
     "Economies annuelles estimees": "Uppskattade arliga besparingar",
     "Delai de retour estime": "Uppskattad aterbetalningstid",
-    "mois": "manader",
+    "mois": "månader",
     "Prospection IA": "AI-prospektering",
     "Canal": "Kanal",
     "secteur": "sektor",
@@ -1190,7 +1190,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Education": "Utbildning",
     "Telephone": "Telefon",
     "EnterpriseERP aide votre organisation a centraliser CRM, ventes, facturation et priorites IA.":
-      "EnterpriseERP hjalper din organisation att centralisera CRM, forsaljning, fakturering och AI-prioriteringar.",
+      "EnterpriseERP hjälper din organisation att centralisera CRM, försäljning, fakturering och AI-prioriteringar.",
     "Je vous propose une courte demonstration adaptee a votre activite cette semaine.":
       "Jag foreslar en kort demo anpassad till din verksamhet den har veckan.",
     "Bonjour, je vous contacte car beaucoup de PME perdent du temps entre CRM, factures, stock et relances. EnterpriseERP centralise ces operations dans une plateforme Cloud avec assistant IA. Seriez-vous disponible pour une courte demonstration cette semaine ?":
@@ -1284,7 +1284,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
       "Det gar inte att lasa produkterna. Kontrollera att API:t ar startat.",
     "Coordonnees": "Kontaktuppgifter",
     "Email, telephone, pays, responsable": "Email, telefon, land, ansvarig",
-    "42 800 EUR sur 12 mois": "42 800 EUR over 12 manader",
+    "42 800 EUR sur 12 mois": "42 800 EUR på 12 månader",
     "8 payees, 2 en attente": "8 betalda, 2 vantande",
     "14 historiques": "14 historiska order",
     "Produits achetes": "Kopta produkter",
@@ -1657,7 +1657,7 @@ Object.assign(contentTranslations.sv ??= {}, {
   "+2 pts vs objectif": "+2 punkter mot mal",
   "2 critiques": "2 kritiska",
   "+12% materiaux": "+12% material",
-  "Ventes du jour": "Dagens forsaljning",
+  "Ventes du jour": "Dagens försäljning",
   "Food cost": "Ravarukostnad",
   "Pertes": "Svinn",
   "Temps attente": "Vantetid",
@@ -1740,7 +1740,7 @@ Object.assign(contentTranslations.sv ??= {}, {
   "79 EUR/mois": "79 EUR/manad",
   "149 EUR/mois": "149 EUR/manad",
   "Pour demarrer avec CRM, stock et facturation.": "For att starta med CRM, lager och fakturering.",
-  "Pour les PME qui veulent piloter ventes, finance et operations.": "For SME som vill styra forsaljning, ekonomi och drift.",
+  "Pour les PME qui veulent piloter ventes, finance et operations.": "För SME som vill styra försäljning, ekonomi och drift.",
   "Pour les equipes multi-roles avec automatisations et rapports.": "For team med flera roller, automatisering och rapporter.",
   "Pour multi-sites, exigences avancees, SSO et integrations dediees.": "For multi-site, avancerade krav, SSO och dedikerade integrationer.",
   "Comparateur PME": "SME-jamforelse",
@@ -1762,7 +1762,7 @@ Object.assign(contentTranslations.sv ??= {}, {
   "Basique": "Bas",
   "Email": "Email",
   "Non": "Nej",
-  "CRM, ventes, stock, facturation, finance, RH": "CRM, forsaljning, lager, fakturering, ekonomi, HR",
+  "CRM, ventes, stock, facturation, finance, RH": "CRM, försäljning, lager, fakturering, ekonomi, HR",
   "Assistant IA": "AI-assistent",
   "API REST": "REST API",
   "Journal entreprise": "Foretagslogg",
