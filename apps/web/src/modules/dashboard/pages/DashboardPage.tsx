@@ -84,6 +84,11 @@ export default function DashboardPage() {
         session?.onboardingCompleted ?? session?.user.company?.onboardingCompleted;
       const cachedSector = session?.sector ?? session?.user.company?.sector ?? sectorKey;
 
+      if (!session) {
+        router.replace("/login");
+        return;
+      }
+
       if (cachedCompleted === false) {
         router.replace(`/onboarding?sector=${cachedSector}`);
         return;
@@ -96,8 +101,8 @@ export default function DashboardPage() {
           router.replace(`/onboarding?sector=${user.company.sector ?? "general"}`);
         }
       } catch {
-        if (active && !session) {
-          router.replace("/login");
+        if (active) {
+          router.replace("/login?reason=session-expired");
         }
       }
     }

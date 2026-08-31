@@ -13,14 +13,14 @@ const tabs: DemoTab[] = ["dashboard", "crm", "stock", "billing"];
 
 const tabRows: Record<DemoTab, string[][]> = {
   dashboard: [
-    ["Factures a relancer", "18", "Priorite"],
-    ["Stock critique", "12 SKU", "Action"],
-    ["Devis en attente", "42 800 EUR", "Relance"],
+    ["demo.live.row.invoices", "18", "demo.live.status.priority"],
+    ["demo.live.row.stock", "12 SKU", "demo.live.status.action"],
+    ["demo.live.row.quotes", "42 800 EUR", "demo.live.status.followUp"],
   ],
   crm: [
-    ["Nordic Retail AB", "Proposition", "12 800 EUR"],
-    ["Kamyla Group", "Negociation", "24 500 EUR"],
-    ["Nova Services", "Relance", "7 400 EUR"],
+    ["Nordic Retail AB", "demo.live.status.proposal", "12 800 EUR"],
+    ["Kamyla Group", "demo.live.status.negotiation", "24 500 EUR"],
+    ["Nova Services", "demo.live.status.followUp", "7 400 EUR"],
   ],
   stock: [
     ["Terminal mobile", "SKU-734001", "3"],
@@ -28,9 +28,9 @@ const tabRows: Record<DemoTab, string[][]> = {
     ["Pack cuisine", "REST-041", "12"],
   ],
   billing: [
-    ["FAC-2026-041", "Payee", "18 450 EUR"],
-    ["FAC-2026-042", "En attente", "7 850 EUR"],
-    ["FAC-2026-043", "En retard", "4 120 EUR"],
+    ["FAC-2026-041", "demo.live.status.paid", "18 450 EUR"],
+    ["FAC-2026-042", "demo.live.status.pending", "7 850 EUR"],
+    ["FAC-2026-043", "demo.live.status.overdue", "4 120 EUR"],
   ],
 };
 
@@ -130,7 +130,7 @@ export default function DemoLivePage() {
             {tabRows[activeTab].map((row) => (
               <div key={row.join("-")} className="grid gap-3 border-b border-slate-100 p-4 text-sm font-bold last:border-0 md:grid-cols-3">
                 {row.map((cell) => (
-                  <span key={cell}>{cell}</span>
+                  <span key={cell}>{cell.startsWith("demo.") ? t(cell) : cell}</span>
                 ))}
               </div>
             ))}
