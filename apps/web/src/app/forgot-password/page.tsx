@@ -53,6 +53,8 @@ export default function ForgotPasswordPage() {
           <label className="mt-8 block text-sm font-black text-slate-700" htmlFor="email">{t("auth.email")}</label>
           <input
             id="email"
+            name="email"
+            autoComplete="email"
             type="email"
             required
             value={email}

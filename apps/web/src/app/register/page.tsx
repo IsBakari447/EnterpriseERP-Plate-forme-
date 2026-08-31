@@ -86,6 +86,8 @@ export default function RegisterPage() {
           <label className="block">
             <span className="text-sm font-black text-slate-700">{t("auth.companyName")}</span>
             <input
+              name="organization"
+              autoComplete="organization"
               required
               value={companyName}
               onChange={(event) => setCompanyName(event.target.value)}
@@ -97,6 +99,8 @@ export default function RegisterPage() {
           <label className="block">
             <span className="text-sm font-black text-slate-700">{t("auth.fullName")}</span>
             <input
+              name="name"
+              autoComplete="name"
               required
               value={name}
               onChange={(event) => setName(event.target.value)}
@@ -109,6 +113,8 @@ export default function RegisterPage() {
         <label className="block">
           <span className="text-sm font-black text-slate-700">{t("auth.email")}</span>
           <input
+            name="email"
+            autoComplete="email"
             type="email"
             required
             value={email}
@@ -121,6 +127,8 @@ export default function RegisterPage() {
         <label className="block">
           <span className="text-sm font-black text-slate-700">{t("auth.password")}</span>
           <input
+            name="new-password"
+            autoComplete="new-password"
             type="password"
             required
             minLength={8}

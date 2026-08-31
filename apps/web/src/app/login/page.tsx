@@ -66,6 +66,8 @@ export default function LoginPage() {
         <label className="block">
           <span className="text-sm font-black text-slate-700">{t("auth.email")}</span>
           <input
+            name="email"
+            autoComplete="email"
             type="email"
             required
             value={email}
@@ -78,6 +80,8 @@ export default function LoginPage() {
         <label className="block">
           <span className="text-sm font-black text-slate-700">{t("auth.password")}</span>
           <input
+            name="password"
+            autoComplete="current-password"
             type="password"
             required
             minLength={8}

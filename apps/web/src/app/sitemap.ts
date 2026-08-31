@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/solutions", priority: 0.9, changeFrequency: "weekly" },
     { path: "/pricing", priority: 0.9, changeFrequency: "weekly" },
     { path: "/demo", priority: 0.9, changeFrequency: "weekly" },
+    { path: "/demo/live", priority: 0.85, changeFrequency: "weekly" },
     { path: "/integrations", priority: 0.8, changeFrequency: "monthly" },
     { path: "/security", priority: 0.8, changeFrequency: "monthly" },
     { path: "/status", priority: 0.7, changeFrequency: "daily" },
@@ -25,6 +26,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/transport", priority: 0.85, changeFrequency: "monthly" },
     { path: "/sante", priority: 0.85, changeFrequency: "monthly" },
     { path: "/education", priority: 0.85, changeFrequency: "monthly" },
+    { path: "/legal", priority: 0.4, changeFrequency: "yearly" },
+    { path: "/privacy", priority: 0.4, changeFrequency: "yearly" },
+    { path: "/cookies", priority: 0.35, changeFrequency: "yearly" },
+    { path: "/dpa", priority: 0.35, changeFrequency: "yearly" },
   ];
 
   return routes.map((route) => ({

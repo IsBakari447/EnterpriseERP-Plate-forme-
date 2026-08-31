@@ -60,6 +60,8 @@ export default function ResetPasswordPage() {
           <label className="block">
             <span className="text-sm font-black text-slate-700">{t("auth.email")}</span>
             <input
+              name="email"
+              autoComplete="email"
               type="email"
               required
               value={email}
@@ -71,6 +73,8 @@ export default function ResetPasswordPage() {
           <label className="block">
             <span className="text-sm font-black text-slate-700">{t("auth.code")}</span>
             <input
+              name="one-time-code"
+              autoComplete="one-time-code"
               required
               inputMode="numeric"
               maxLength={6}
@@ -84,6 +88,8 @@ export default function ResetPasswordPage() {
           <label className="block">
             <span className="text-sm font-black text-slate-700">{t("auth.newPassword")}</span>
             <input
+              name="new-password"
+              autoComplete="new-password"
               type="password"
               required
               minLength={8}
@@ -96,6 +102,8 @@ export default function ResetPasswordPage() {
           <label className="block">
             <span className="text-sm font-black text-slate-700">{t("auth.confirmPassword")}</span>
             <input
+              name="confirm-password"
+              autoComplete="new-password"
               type="password"
               required
               minLength={8}

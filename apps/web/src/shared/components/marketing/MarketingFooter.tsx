@@ -43,6 +43,12 @@ export default function MarketingFooter() {
       </div>
 
       <div className="border-t border-white/10 px-6 py-5 text-center text-sm text-slate-400">
+        <div className="mb-3 flex flex-wrap justify-center gap-4">
+          <a href="/legal" className="hover:text-white">{t("legal.mentions")}</a>
+          <a href="/privacy" className="hover:text-white">{t("legal.privacy")}</a>
+          <a href="/cookies" className="hover:text-white">{t("legal.cookies")}</a>
+          <a href="/dpa" className="hover:text-white">{t("legal.dpa")}</a>
+        </div>
         © 2026 EnterpriseERP. {t("marketing.footerSignature")}
       </div>
     </footer>

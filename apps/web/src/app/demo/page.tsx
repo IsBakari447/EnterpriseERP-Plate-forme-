@@ -98,7 +98,7 @@ export default function DemoPage() {
             {t("demo.text")}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href={`/dashboard?sector=${sector}`} className="rounded-2xl bg-[#FF7A00] px-5 py-3 font-black text-white">
+            <Link href={`/demo/live?sector=${sector}`} className="rounded-2xl bg-[#FF7A00] px-5 py-3 font-black text-white">
               {t("demo.tryNow")}
             </Link>
             <button type="button" onClick={resetDemo} className="rounded-2xl border border-slate-300 bg-white px-5 py-3 font-black text-night">
