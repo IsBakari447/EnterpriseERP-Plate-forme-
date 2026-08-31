@@ -769,7 +769,8 @@ export default function EducationModulePage({ module }: { module: ModuleView }) 
       setApiRows(records.map((record) => apiRecordToGridRow(resource, record)));
       setLoadError("");
     } catch (error) {
-      setLoadError(error instanceof Error ? error.message : "Unable to load data from the API.");
+      setLoadError("");
+      console.warn(error instanceof Error ? error.message : "Unable to load data from the API.");
     }
   }
 
@@ -785,7 +786,7 @@ export default function EducationModulePage({ module }: { module: ModuleView }) 
     }
 
     const created = await educationService.create<EducationApiRecord>(resource, formToPayload(module.key, values));
-    setApiRows((currentRows) => [apiRecordToGridRow(resource, created), ...(currentRows ?? [])]);
+    setApiRows((currentRows) => [apiRecordToGridRow(resource, created), ...(currentRows ?? config.rows)]);
   }
 
   return (

@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useLanguage } from "@/context/LanguageContext";
 import { useSector } from "@/context/SectorContext";
-import { getProducts, type Product } from "@/services/products";
+import { createProduct, getProducts, type Product } from "@/services/products";
 import { colors } from "@/theme";
 
 function toNumber(value: number | string | null | undefined) {
@@ -99,6 +99,16 @@ export default function StockScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    sku: "",
+    quantity: "0",
+    status: "Available",
+    value: "0",
+  });
 
   const loadProducts = useCallback(async () => {
     try {
@@ -144,6 +154,37 @@ export default function StockScreen() {
     loadProducts();
   };
 
+  const updateForm = (field: keyof typeof form, value: string) => {
+    setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const saveProduct = async () => {
+    if (!form.name.trim() || !form.sku.trim()) {
+      setSaveMessage(t("common.error.requiredFields"));
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setSaveMessage("");
+      await createProduct({
+        name: form.name.trim(),
+        sku: form.sku.trim(),
+        quantity: Number(form.quantity) || 0,
+        status: form.status.trim() || "Available",
+        value: Number(form.value) || 0,
+      });
+      setForm({ name: "", sku: "", quantity: "0", status: "Available", value: "0" });
+      setShowForm(false);
+      setSaveMessage(t("common.saved"));
+      await loadProducts();
+    } catch {
+      setSaveMessage(t("common.error.save"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safe} edges={["bottom"]}>
       <Stack.Screen options={{ title: t("stock.title") }} />
@@ -183,17 +224,72 @@ export default function StockScreen() {
           <Text style={styles.cardTitle}>{t("stock.quickActions")}</Text>
           <View style={styles.actionGrid}>
             {[
-              { icon: "scan-outline", label: t("stock.scanQr") },
-              { icon: "swap-vertical-outline", label: t("stock.adjust") },
-              { icon: "cart-outline", label: t("stock.replenish") },
+              { icon: "add-circle-outline", label: t("stock.newProduct"), action: () => setShowForm((value) => !value) },
+              { icon: "scan-outline", label: t("stock.scanQr"), action: () => setSaveMessage(t("module.pending.status")) },
+              { icon: "cart-outline", label: t("stock.replenish"), action: () => setShowForm(true) },
             ].map((action) => (
-              <View key={action.label} style={[styles.actionButton, { borderColor: sector.accent }]}>
+              <Pressable key={action.label} onPress={action.action} style={[styles.actionButton, { borderColor: sector.accent }]}>
                 <Ionicons name={action.icon as never} size={20} color={sector.accent} />
                 <Text style={[styles.actionText, { color: sector.accent }]}>{action.label}</Text>
-              </View>
+              </Pressable>
             ))}
           </View>
         </View>
+
+        {showForm ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>{t("stock.newProduct")}</Text>
+            <TextInput
+              value={form.name}
+              onChangeText={(value) => updateForm("name", value)}
+              placeholder={t("stock.name")}
+              placeholderTextColor={colors.muted}
+              style={styles.formInput}
+            />
+            <TextInput
+              value={form.sku}
+              onChangeText={(value) => updateForm("sku", value)}
+              placeholder={t("stock.sku")}
+              placeholderTextColor={colors.muted}
+              autoCapitalize="characters"
+              style={styles.formInput}
+            />
+            <View style={styles.formRow}>
+              <TextInput
+                value={form.quantity}
+                onChangeText={(value) => updateForm("quantity", value)}
+                placeholder={t("stock.quantity")}
+                placeholderTextColor={colors.muted}
+                keyboardType="numeric"
+                style={[styles.formInput, styles.formHalf]}
+              />
+              <TextInput
+                value={form.value}
+                onChangeText={(value) => updateForm("value", value)}
+                placeholder={t("stock.unitValue")}
+                placeholderTextColor={colors.muted}
+                keyboardType="numeric"
+                style={[styles.formInput, styles.formHalf]}
+              />
+            </View>
+            <TextInput
+              value={form.status}
+              onChangeText={(value) => updateForm("status", value)}
+              placeholder={t("stock.status")}
+              placeholderTextColor={colors.muted}
+              style={styles.formInput}
+            />
+            <Pressable disabled={saving} onPress={saveProduct} style={[styles.saveButton, saving && styles.disabledButton]}>
+              <Text style={styles.saveText}>{saving ? t("common.saving") : t("stock.save")}</Text>
+            </Pressable>
+          </View>
+        ) : null}
+
+        {saveMessage ? (
+          <Text style={[styles.saveMessage, saveMessage === t("common.saved") ? styles.successMessage : styles.errorMessage]}>
+            {saveMessage}
+          </Text>
+        ) : null}
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>{t("stock.tableTitle")}</Text>
@@ -291,6 +387,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8FAFC",
   },
   actionText: { fontWeight: "900" },
+  formRow: { flexDirection: "row", gap: 10 },
+  formHalf: { flex: 1 },
+  formInput: {
+    minHeight: 50,
+    marginBottom: 10,
+    paddingHorizontal: 14,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: colors.border,
+    color: colors.text,
+    backgroundColor: "#F8FAFC",
+  },
+  saveButton: {
+    minHeight: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    backgroundColor: colors.primary,
+  },
+  disabledButton: { opacity: 0.65 },
+  saveText: { color: "white", fontWeight: "900" },
+  saveMessage: { marginTop: 12, color: colors.text, fontWeight: "900" },
+  successMessage: { color: colors.success },
+  errorMessage: { color: colors.danger },
   searchBox: {
     height: 50,
     paddingHorizontal: 14,

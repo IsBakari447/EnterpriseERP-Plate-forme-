@@ -9,6 +9,14 @@ export type Client = {
   revenue?: number | string | null;
 };
 
+export type ClientInput = {
+  name: string;
+  email: string;
+  country: string;
+  status: string;
+  revenue?: number;
+};
+
 type ClientsEnvelope = {
   clients?: Client[];
   data?: Client[];
@@ -22,4 +30,11 @@ export async function getClients(): Promise<Client[]> {
   }
 
   return response.clients ?? response.data ?? [];
+}
+
+export async function createClient(payload: ClientInput): Promise<Client> {
+  return api<Client>("/api/clients", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }

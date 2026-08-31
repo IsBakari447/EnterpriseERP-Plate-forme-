@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Stack, router } from "expo-router";
+import { Stack } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
+  createClient,
   getClients,
   type Client,
 } from "@/services/clients";
@@ -67,6 +68,16 @@ export default function CrmScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    country: "",
+    status: "Active",
+    revenue: "0",
+  });
 
   const loadClients = useCallback(async () => {
     try {
@@ -79,7 +90,7 @@ export default function CrmScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     loadClients();
@@ -111,6 +122,37 @@ export default function CrmScreen() {
     loadClients();
   };
 
+  const updateForm = (field: keyof typeof form, value: string) => {
+    setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const saveClient = async () => {
+    if (!form.name.trim() || !form.email.trim()) {
+      setSaveMessage(t("common.error.requiredFields"));
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setSaveMessage("");
+      await createClient({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        country: form.country.trim(),
+        status: form.status.trim() || "Active",
+        revenue: Number(form.revenue) || 0,
+      });
+      setForm({ name: "", email: "", country: "", status: "Active", revenue: "0" });
+      setShowForm(false);
+      setSaveMessage(t("common.saved"));
+      await loadClients();
+    } catch {
+      setSaveMessage(t("common.error.save"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safe} edges={["bottom"]}>
       <Stack.Screen options={{ title: t("crm.title") }} />
@@ -124,13 +166,61 @@ export default function CrmScreen() {
         </View>
 
         <Pressable
-          onPress={() => router.push("/module/client-new")}
+          onPress={() => setShowForm((value) => !value)}
           accessibilityLabel={t("crm.add")}
           style={styles.addButton}
         >
-          <Ionicons name="add" size={24} color="white" />
+          <Ionicons name={showForm ? "close" : "add"} size={24} color="white" />
         </Pressable>
       </View>
+
+      {showForm ? (
+        <View style={styles.formCard}>
+          <Text style={styles.formTitle}>{t("crm.add")}</Text>
+          <TextInput
+            value={form.name}
+            onChangeText={(value) => updateForm("name", value)}
+            placeholder={t("crm.name")}
+            placeholderTextColor={colors.muted}
+            style={styles.formInput}
+          />
+          <TextInput
+            value={form.email}
+            onChangeText={(value) => updateForm("email", value)}
+            placeholder={t("login.email")}
+            placeholderTextColor={colors.muted}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            style={styles.formInput}
+          />
+          <View style={styles.formRow}>
+            <TextInput
+              value={form.country}
+              onChangeText={(value) => updateForm("country", value)}
+              placeholder={t("crm.country")}
+              placeholderTextColor={colors.muted}
+              style={[styles.formInput, styles.formHalf]}
+            />
+            <TextInput
+              value={form.revenue}
+              onChangeText={(value) => updateForm("revenue", value)}
+              placeholder={t("crm.revenue")}
+              placeholderTextColor={colors.muted}
+              keyboardType="numeric"
+              style={[styles.formInput, styles.formHalf]}
+            />
+          </View>
+          <Pressable disabled={saving} onPress={saveClient} style={[styles.saveButton, saving && styles.disabledButton]}>
+            <Text style={styles.saveText}>{saving ? t("common.saving") : t("crm.save")}</Text>
+          </Pressable>
+        </View>
+      ) : null}
+
+      {saveMessage ? (
+        <Text style={[styles.saveMessage, saveMessage === t("common.saved") ? styles.successMessage : styles.errorMessage]}>
+          {saveMessage}
+        </Text>
+      ) : null}
 
       <View style={styles.searchContainer}>
         <Ionicons
@@ -243,6 +333,63 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 16,
     backgroundColor: colors.surface,
+  },
+  formCard: {
+    marginHorizontal: 20,
+    marginBottom: 12,
+    padding: 16,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  formTitle: {
+    color: colors.text,
+    fontSize: 17,
+    fontWeight: "900",
+    marginBottom: 12,
+  },
+  formRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  formHalf: {
+    flex: 1,
+  },
+  formInput: {
+    minHeight: 48,
+    marginBottom: 10,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: colors.border,
+    color: colors.text,
+    backgroundColor: "#F8FAFC",
+  },
+  saveButton: {
+    minHeight: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 14,
+    backgroundColor: colors.primary,
+  },
+  disabledButton: {
+    opacity: 0.65,
+  },
+  saveText: {
+    color: "white",
+    fontWeight: "900",
+  },
+  saveMessage: {
+    marginHorizontal: 20,
+    marginBottom: 12,
+    fontWeight: "900",
+  },
+  successMessage: {
+    color: colors.success,
+  },
+  errorMessage: {
+    color: colors.danger,
   },
   searchInput: {
     flex: 1,

@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useLanguage } from "@/context/LanguageContext";
 import { useSector } from "@/context/SectorContext";
-import { getInvoices, type Invoice } from "@/services/invoices";
+import { createInvoice, getInvoices, type Invoice } from "@/services/invoices";
 import { colors } from "@/theme";
 
 function toNumber(value: number | string | null | undefined) {
@@ -99,6 +99,16 @@ export default function FacturationScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
+  const [form, setForm] = useState({
+    number: "",
+    customer: "",
+    amount: "0",
+    due: new Date().toISOString().slice(0, 10),
+    status: "Pending",
+  });
 
   const loadInvoices = useCallback(async () => {
     try {
@@ -153,6 +163,43 @@ export default function FacturationScreen() {
     loadInvoices();
   };
 
+  const updateForm = (field: keyof typeof form, value: string) => {
+    setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const saveInvoice = async () => {
+    if (!form.number.trim() || !form.customer.trim() || !form.due.trim()) {
+      setSaveMessage(t("common.error.requiredFields"));
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setSaveMessage("");
+      await createInvoice({
+        number: form.number.trim(),
+        customer: form.customer.trim(),
+        amount: Number(form.amount) || 0,
+        due: form.due.trim(),
+        status: form.status.trim() || "Pending",
+      });
+      setForm({
+        number: "",
+        customer: "",
+        amount: "0",
+        due: new Date().toISOString().slice(0, 10),
+        status: "Pending",
+      });
+      setShowForm(false);
+      setSaveMessage(t("common.saved"));
+      await loadInvoices();
+    } catch {
+      setSaveMessage(t("common.error.save"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safe} edges={["bottom"]}>
       <Stack.Screen options={{ title: t("billing.title") }} />
@@ -192,18 +239,71 @@ export default function FacturationScreen() {
           <Text style={styles.cardTitle}>{t("billing.quickActions")}</Text>
           <View style={styles.actionGrid}>
             {[
-              { icon: "add-circle-outline", label: t("billing.createInvoice") },
-              { icon: "document-attach-outline", label: t("billing.sendPdf") },
-              { icon: "card-outline", label: t("billing.recordPayment") },
-              { icon: "notifications-outline", label: t("billing.remind") },
+              { icon: "add-circle-outline", label: t("billing.createInvoice"), action: () => setShowForm((value) => !value) },
+              { icon: "document-attach-outline", label: t("billing.sendPdf"), action: () => setSaveMessage(t("module.pending.status")) },
+              { icon: "card-outline", label: t("billing.recordPayment"), action: () => setSaveMessage(t("module.pending.status")) },
+              { icon: "notifications-outline", label: t("billing.remind"), action: () => setSaveMessage(t("module.pending.status")) },
             ].map((action) => (
-              <View key={action.label} style={[styles.actionButton, { borderColor: sector.accent }]}>
+              <Pressable key={action.label} onPress={action.action} style={[styles.actionButton, { borderColor: sector.accent }]}>
                 <Ionicons name={action.icon as never} size={20} color={sector.accent} />
                 <Text style={[styles.actionText, { color: sector.accent }]}>{action.label}</Text>
-              </View>
+              </Pressable>
             ))}
           </View>
         </View>
+
+        {showForm ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>{t("billing.newInvoice")}</Text>
+            <TextInput
+              value={form.number}
+              onChangeText={(value) => updateForm("number", value)}
+              placeholder={t("billing.number")}
+              placeholderTextColor={colors.muted}
+              style={styles.formInput}
+            />
+            <TextInput
+              value={form.customer}
+              onChangeText={(value) => updateForm("customer", value)}
+              placeholder={t("billing.customer")}
+              placeholderTextColor={colors.muted}
+              style={styles.formInput}
+            />
+            <View style={styles.formRow}>
+              <TextInput
+                value={form.amount}
+                onChangeText={(value) => updateForm("amount", value)}
+                placeholder={t("billing.amount")}
+                placeholderTextColor={colors.muted}
+                keyboardType="numeric"
+                style={[styles.formInput, styles.formHalf]}
+              />
+              <TextInput
+                value={form.due}
+                onChangeText={(value) => updateForm("due", value)}
+                placeholder={t("billing.due")}
+                placeholderTextColor={colors.muted}
+                style={[styles.formInput, styles.formHalf]}
+              />
+            </View>
+            <TextInput
+              value={form.status}
+              onChangeText={(value) => updateForm("status", value)}
+              placeholder={t("billing.status")}
+              placeholderTextColor={colors.muted}
+              style={styles.formInput}
+            />
+            <Pressable disabled={saving} onPress={saveInvoice} style={[styles.saveButton, saving && styles.disabledButton]}>
+              <Text style={styles.saveText}>{saving ? t("common.saving") : t("billing.save")}</Text>
+            </Pressable>
+          </View>
+        ) : null}
+
+        {saveMessage ? (
+          <Text style={[styles.saveMessage, saveMessage === t("common.saved") ? styles.successMessage : styles.errorMessage]}>
+            {saveMessage}
+          </Text>
+        ) : null}
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>{t("billing.tableTitle")}</Text>
@@ -301,6 +401,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8FAFC",
   },
   actionText: { fontWeight: "900" },
+  formRow: { flexDirection: "row", gap: 10 },
+  formHalf: { flex: 1 },
+  formInput: {
+    minHeight: 50,
+    marginBottom: 10,
+    paddingHorizontal: 14,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: colors.border,
+    color: colors.text,
+    backgroundColor: "#F8FAFC",
+  },
+  saveButton: {
+    minHeight: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    backgroundColor: colors.primary,
+  },
+  disabledButton: { opacity: 0.65 },
+  saveText: { color: "white", fontWeight: "900" },
+  saveMessage: { marginTop: 12, color: colors.text, fontWeight: "900" },
+  successMessage: { color: colors.success },
+  errorMessage: { color: colors.danger },
   searchBox: {
     height: 50,
     paddingHorizontal: 14,

@@ -140,12 +140,36 @@ const icons: Partial<Record<ModuleKey, string>> = {
   parametres: "settings-outline",
 };
 
+const routes: Partial<Record<ModuleKey, string>> = {
+  dashboard: "/",
+  clients: "/module/crm",
+  crm: "/module/crm",
+  ventes: "/module/ventes",
+  commandes: "/module/ventes",
+  produits: "/module/stock",
+  stock: "/module/stock",
+  facturation: "/module/facturation",
+  devis: "/module/facturation",
+  "frais-scolaires": "/module/facturation",
+  finances: "/module/comptabilite",
+  comptabilite: "/module/comptabilite",
+  rh: "/module/rh",
+  presences: "/module/rh",
+  rapports: "/module/rapports",
+  statistiques: "/module/rapports",
+  reservations: "/module/rendez-vous",
+  "rendez-vous": "/module/rendez-vous",
+  production: "/module/production",
+  "ordres-fabrication": "/module/production",
+  "matieres-premieres": "/module/stock",
+};
+
 export const moduleMeta: Record<ModuleKey, ModuleMeta> = moduleKeys.reduce(
   (acc, key) => {
     acc[key] = {
       labelKey: `nav.${key}`,
       icon: icons[key] ?? "apps-outline",
-      route: key === "dashboard" ? "/" : `/module/${key}`,
+      route: routes[key] ?? `/module/${key}`,
     };
     return acc;
   },
