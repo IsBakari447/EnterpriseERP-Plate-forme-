@@ -2,6 +2,7 @@ import { Global, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_GUARD } from "@nestjs/core";
 import { PrismaService } from "../../prisma.service";
+import { AiService } from "../ai/ai.service";
 import { AuditService } from "../audit/audit.service";
 import { AuthGuard } from "../auth/auth.guard";
 import { JwtService } from "../auth/jwt.service";
@@ -19,6 +20,7 @@ import { PermissionsGuard } from "../security/permissions.guard";
   ],
   providers: [
     PrismaService,
+    AiService,
     JwtService,
     PasswordService,
     AuditService,
@@ -31,6 +33,6 @@ import { PermissionsGuard } from "../security/permissions.guard";
       useClass: PermissionsGuard,
     },
   ],
-  exports: [PrismaService, JwtService, PasswordService, AuditService, I18nModule],
+  exports: [PrismaService, AiService, JwtService, PasswordService, AuditService, I18nModule],
 })
 export class CoreModule {}

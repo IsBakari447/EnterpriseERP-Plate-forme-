@@ -8,16 +8,17 @@ import KPICard from "@shared/components/ui/KPICard";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { useSector } from "@shared/sector/SectorProvider";
 import { assistantKpis, suggestions } from "@modules/assistant/data";
-import { assistantService, type AssistantKpi, type AssistantSuggestion } from "../services/assistant.service";
+import { assistantService, type AssistantChatResponse, type AssistantKpi, type AssistantSuggestion } from "../services/assistant.service";
 
 export default function AssistantPage() {
   const { locale, t } = useI18n();
   const router = useRouter();
   const { sectorKey } = useSector();
   const [question, setQuestion] = useState("");
-  const [conversation, setConversation] = useState({
+  const [conversation, setConversation] = useState<AssistantChatResponse>({
     question: t("ai.sampleQuestion"),
     answer: t("ai.sampleAnswer"),
+    generatedBy: "EnterpriseERP AI",
   });
   const [kpis, setKpis] = useState<AssistantKpi[]>(assistantKpis);
   const [suggestionRows, setSuggestionRows] = useState<AssistantSuggestion[]>(suggestions);
@@ -111,6 +112,11 @@ export default function AssistantPage() {
             </div>
 
             <div className="ml-auto max-w-2xl rounded-2xl bg-gradient-to-r from-[#1E2A38] to-[#00C2A9] p-5 text-white">
+              {conversation.generatedBy && (
+                <div className="mb-3 inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-black uppercase tracking-wide text-white/80">
+                  {conversation.generatedBy}
+                </div>
+              )}
               {conversation.answer}
             </div>
           </div>

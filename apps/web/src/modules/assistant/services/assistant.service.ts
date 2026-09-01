@@ -14,6 +14,9 @@ export type AssistantSuggestion = {
 export type AssistantChatResponse = {
   question: string;
   answer: string;
+  intent?: string;
+  provider?: string;
+  generatedBy?: string;
 };
 
 async function getOrFallback<T>(path: string, fallback: T): Promise<T> {

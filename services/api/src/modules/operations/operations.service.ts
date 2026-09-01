@@ -1,4 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import { AiService } from "../../common/ai/ai.service";
+import { AuthenticatedUser } from "../../common/auth/current-user.decorator";
 
 type OperationKpi = {
   label: string;
@@ -31,6 +33,8 @@ type OperationItem = {
 
 @Injectable()
 export class OperationsService {
+  constructor(private readonly ai: AiService) {}
+
   getSalesKpis(): OperationKpi[] {
     return [
       { label: "Ventes du mois", labelKey: "api.sales.kpi.monthlySales", value: "86 450 EUR", change: "+16%" },
@@ -151,92 +155,8 @@ export class OperationsService {
     ];
   }
 
-  createAssistantAnswer(question: string, locale = "fr") {
-    const normalizedQuestion = question.trim();
-    const safeQuestion = normalizedQuestion.length > 0 ? normalizedQuestion : "";
-    const intent = safeQuestion.toLowerCase();
-
-    const responses = {
-      en: {
-        empty: "EnterpriseERP analysis: ask a question to receive an operational recommendation.",
-        report:
-          "EnterpriseERP AI report: review revenue, overdue invoices, stock alerts and priority actions. Recommended next step: export the executive summary and assign owners to the open risks.",
-        stock:
-          "EnterpriseERP stock insight: check critical quantities, supplier lead times and products below threshold. Recommended action: prepare replenishment and update purchase priorities.",
-        sales:
-          "EnterpriseERP sales insight: focus on qualified opportunities, overdue quotes and high-value customers. Recommended action: schedule follow-ups and convert warm prospects first.",
-        finance:
-          "EnterpriseERP finance insight: compare incoming cash, overdue invoices, outgoing payments and forecast. Recommended action: secure collections before launching new spending.",
-        hr:
-          "EnterpriseERP HR insight: review attendance, leave, contracts and missing employee documents. Recommended action: notify managers and validate sensitive HR changes.",
-        campaign:
-          "EnterpriseERP AI campaign: generate a concise message linked to the selected channel, sector and prospect context. Recommended action: send it to CRM and plan the next follow-up.",
-        generic: `EnterpriseERP analysis: prioritize actions related to "${safeQuestion}", review recent data and assign a responsible follow-up.`,
-      },
-      sv: {
-        empty: "EnterpriseERP-analys: stall en fraga for att fa en operativ rekommendation.",
-        report:
-          "EnterpriseERP AI-rapport: granska intakter, forfallna fakturor, lagervarningar och prioriterade atgarder. Nasta steg: exportera ledningssammanfattningen och tilldela ansvariga.",
-        stock:
-          "EnterpriseERP lagerinsikt: kontrollera kritiska kvantiteter, leverantorstider och artiklar under gransvarde. Rekommenderad atgard: forbered pafyllning och uppdatera inkopsprioriteringar.",
-        sales:
-          "EnterpriseERP saljinsikt: fokusera pa kvalificerade mojligheter, sena offerter och kunder med hogt varde. Rekommenderad atgard: planera uppfoljningar och konvertera varma prospekt forst.",
-        finance:
-          "EnterpriseERP finansinsikt: jamfor inkommande likviditet, forfallna fakturor, utbetalningar och prognos. Rekommenderad atgard: sakra betalningar innan nya kostnader startas.",
-        hr:
-          "EnterpriseERP HR-insikt: granska narvaro, ledighet, kontrakt och saknade personaldokument. Rekommenderad atgard: meddela ansvariga och validera kansliga HR-andringar.",
-        campaign:
-          "EnterpriseERP AI-kampanj: skapa ett kort meddelande kopplat till vald kanal, sektor och prospektkontext. Rekommenderad atgard: skicka till CRM och planera nasta uppfoljning.",
-        generic: `EnterpriseERP-analys: prioritera atgarder kopplade till "${safeQuestion}", granska senaste data och tilldela ansvarig uppfoljning.`,
-      },
-      fr: {
-        empty: "Analyse EnterpriseERP: posez une question pour obtenir une recommandation operationnelle.",
-        report:
-          "Rapport IA EnterpriseERP: verifiez le chiffre d'affaires, les factures en retard, les alertes stock et les actions prioritaires. Prochaine action recommandee: exporter la synthese dirigeant et assigner les risques ouverts.",
-        stock:
-          "Insight stock EnterpriseERP: controlez les quantites critiques, les delais fournisseurs et les produits sous seuil. Action recommandee: preparer le reassort et mettre a jour les priorites d'achat.",
-        sales:
-          "Insight ventes EnterpriseERP: concentrez-vous sur les opportunites qualifiees, les devis en retard et les clients a forte valeur. Action recommandee: planifier les relances et convertir les prospects chauds en premier.",
-        finance:
-          "Insight finance EnterpriseERP: comparez encaissements attendus, factures en retard, paiements sortants et prevision. Action recommandee: securiser les relances avant de lancer de nouvelles depenses.",
-        hr:
-          "Insight RH EnterpriseERP: verifiez presences, conges, contrats et documents collaborateurs manquants. Action recommandee: notifier les responsables et valider les changements RH sensibles.",
-        campaign:
-          "Campagne IA EnterpriseERP: genere un message court adapte au canal, au secteur et au contexte prospect. Action recommandee: l'envoyer au CRM et planifier la prochaine relance.",
-        generic: `Analyse EnterpriseERP: priorisez les actions liees a "${safeQuestion}", verifiez les donnees recentes et planifiez un suivi responsable.`,
-      },
-    };
-
-    const language = locale === "en" || locale === "sv" ? locale : "fr";
-    const copy = responses[language];
-
-    if (!safeQuestion) return { question: normalizedQuestion, answer: copy.empty };
-
-    if (intent.includes("report") || intent.includes("rapport") || intent.includes("summary") || intent.includes("resume")) {
-      return { question: normalizedQuestion, answer: copy.report };
-    }
-
-    if (intent.includes("stock") || intent.includes("inventory") || intent.includes("lager") || intent.includes("rupture")) {
-      return { question: normalizedQuestion, answer: copy.stock };
-    }
-
-    if (intent.includes("vente") || intent.includes("sales") || intent.includes("devis") || intent.includes("prospect") || intent.includes("crm")) {
-      return { question: normalizedQuestion, answer: copy.sales };
-    }
-
-    if (intent.includes("finance") || intent.includes("invoice") || intent.includes("facture") || intent.includes("cash") || intent.includes("paiement")) {
-      return { question: normalizedQuestion, answer: copy.finance };
-    }
-
-    if (intent.includes("rh") || intent.includes("hr") || intent.includes("employee") || intent.includes("employe") || intent.includes("conge")) {
-      return { question: normalizedQuestion, answer: copy.hr };
-    }
-
-    if (intent.includes("canal") || intent.includes("channel") || intent.includes("email") || intent.includes("linkedin") || intent.includes("whatsapp")) {
-      return { question: normalizedQuestion, answer: copy.campaign };
-    }
-
-    return { question: normalizedQuestion, answer: copy.generic };
+  createAssistantAnswer(user: AuthenticatedUser, question: string, locale = "fr") {
+    return this.ai.createAnswer(user, question, locale);
   }
 
   getSettingsSummary() {

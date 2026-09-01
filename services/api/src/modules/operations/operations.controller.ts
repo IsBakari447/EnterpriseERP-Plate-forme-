@@ -1,4 +1,6 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
+import { AuthenticatedUser, CurrentUser } from "../../common/auth/current-user.decorator";
+import { Permissions } from "../../common/security/permissions.decorator";
 import { OperationsService } from "./operations.service";
 
 @Controller()
@@ -66,18 +68,21 @@ export class OperationsController {
   }
 
   @Get("assistant/kpis")
+  @Permissions("ai.use")
   assistantKpis() {
     return this.operationsService.getAssistantKpis();
   }
 
   @Get("assistant/suggestions")
+  @Permissions("ai.use")
   assistantSuggestions() {
     return this.operationsService.getAssistantSuggestions();
   }
 
   @Post("assistant/chat")
-  assistantChat(@Body() body: { question?: string; locale?: string }) {
-    return this.operationsService.createAssistantAnswer(body.question ?? "", body.locale);
+  @Permissions("ai.use")
+  assistantChat(@CurrentUser() user: AuthenticatedUser, @Body() body: { question?: string; locale?: string }) {
+    return this.operationsService.createAssistantAnswer(user, body.question ?? "", body.locale);
   }
 
   @Get("settings/summary")
