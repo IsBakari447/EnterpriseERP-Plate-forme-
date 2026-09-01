@@ -10,7 +10,7 @@ export default function Button({
   return (
     <button
       type="button"
-      onClick={onClick ?? (() => window.dispatchEvent(new CustomEvent("enterpriseerp:open-command-palette")))}
+      onClick={onClick}
       className="rounded-xl bg-action px-6 py-3 font-semibold text-white shadow-lg hover:opacity-90"
     >
       {children}

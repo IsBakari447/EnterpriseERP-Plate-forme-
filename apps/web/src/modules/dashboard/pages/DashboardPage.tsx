@@ -134,6 +134,15 @@ export default function DashboardPage() {
       title={t("dashboard.title")}
       subtitle={`${dt(dashboard.label)} - ${t("dashboard.decisionSubtitle")}`}
       action={t("dashboard.action")}
+      onAction={() => {
+        const params = new URLSearchParams({
+          mode: "report",
+          sector: sectorKey,
+          period,
+        });
+
+        router.push(`/assistant?${params.toString()}`);
+      }}
     >
       <section className="rounded-3xl bg-white p-5 shadow ring-1 ring-slate-200">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">

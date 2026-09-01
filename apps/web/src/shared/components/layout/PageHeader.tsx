@@ -31,10 +31,16 @@ export default function PageHeader({
 
         <NotificationCenter />
 
-        {action && (
+        {action && onAction && (
           <Button onClick={onAction}>
             {action}
           </Button>
+        )}
+
+        {action && !onAction && (
+          <span className="rounded-xl bg-action px-6 py-3 font-semibold text-white shadow-lg">
+            {action}
+          </span>
         )}
 
         <UserMenu />
