@@ -4,6 +4,7 @@ import { useState } from "react";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import KPICard from "@shared/components/ui/KPICard";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { assistantService } from "@modules/assistant/services/assistant.service";
 
 const studioTools = [
   "translate",
@@ -15,17 +16,43 @@ const studioTools = [
 ] as const;
 
 export default function AiStudioPage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const [prompt, setPrompt] = useState("");
   const [output, setOutput] = useState(t("aiStudio.outputText"));
+  const [loading, setLoading] = useState(false);
 
-  function runTool(tool: (typeof studioTools)[number]) {
-    setPrompt(t(`aiStudio.tool.${tool}.text`));
-    setOutput(`${t(`aiStudio.tool.${tool}.title`)} - ${t("aiStudio.outputText")}`);
+  async function generateAiOutput(nextPrompt: string) {
+    if (!nextPrompt.trim()) {
+      setOutput(t("aiStudio.outputText"));
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await assistantService.chat(nextPrompt, t("aiStudio.outputText"), locale);
+      setOutput(response.answer);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function runTool(tool: (typeof studioTools)[number]) {
+    const nextPrompt = `${t(`aiStudio.tool.${tool}.title`)} - ${t(`aiStudio.tool.${tool}.text`)}`;
+    setPrompt(nextPrompt);
+    await generateAiOutput(nextPrompt);
   }
 
   return (
-    <ERPLayout title={t("nav.ai-studio")} subtitle={t("aiStudio.subtitle")} action={t("aiStudio.action")}>
+    <ERPLayout
+      title={t("nav.ai-studio")}
+      subtitle={t("aiStudio.subtitle")}
+      action={t("aiStudio.action")}
+      onAction={() => {
+        setPrompt("");
+        setOutput(t("aiStudio.outputText"));
+      }}
+    >
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {[
           { label: t("aiStudio.tools"), value: "6", change: t("auth.enterpriseReady") },
@@ -72,6 +99,13 @@ export default function AiStudioPage() {
             <p className="mt-3 leading-7 text-slate-600">
               {output}
             </p>
+            <button
+              type="button"
+              onClick={() => generateAiOutput(prompt)}
+              className="mt-5 rounded-xl bg-action px-5 py-3 text-sm font-black text-white"
+            >
+              {loading ? t("common.loading") : t("common.send")}
+            </button>
           </div>
         </div>
       </section>

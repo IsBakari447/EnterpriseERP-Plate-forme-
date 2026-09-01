@@ -8,6 +8,7 @@ import { useI18n } from "@shared/i18n/I18nProvider";
 import { useSector } from "@shared/sector/SectorProvider";
 import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
+import { assistantService } from "@modules/assistant/services/assistant.service";
 
 const emailTemplates = [
   "Commerce: relance apres visite boutique",
@@ -35,13 +36,21 @@ export default function AiSalesAgentPage() {
     tx("Bonjour, je vous contacte car beaucoup de PME perdent du temps entre CRM, factures, stock et relances. EnterpriseERP centralise ces operations dans une plateforme Cloud avec assistant IA. Seriez-vous disponible pour une courte demonstration cette semaine ?")
   );
   const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  function generate() {
+  async function generate() {
     const sectorLabel = t(`sector.${sectorKey}`);
+    const prompt = `${tx("Canal")} ${tx(channel)} - ${tx("secteur")} ${sectorLabel}: ${context || tx("Je vous propose une courte demonstration adaptee a votre activite cette semaine.")}`;
 
-    setOutput(
-      `${tx("Canal")} ${tx(channel)} - ${tx("secteur")} ${sectorLabel}: ${tx("EnterpriseERP aide votre organisation a centraliser CRM, ventes, facturation et priorites IA.")} ${context || tx("Je vous propose une courte demonstration adaptee a votre activite cette semaine.")}`
-    );
+    setLoading(true);
+    setCopied(false);
+
+    try {
+      const response = await assistantService.chat(prompt, t("ai.sampleAnswer"), locale);
+      setOutput(response.answer);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function copyOutput() {
@@ -50,7 +59,7 @@ export default function AiSalesAgentPage() {
   }
 
   return (
-    <ERPLayout title={t("nav.ai-sales-agent")} subtitle={t("salesAgent.subtitle")} action={t("salesAgent.action")}>
+    <ERPLayout title={t("nav.ai-sales-agent")} subtitle={t("salesAgent.subtitle")} action={t("salesAgent.action")} onAction={generate}>
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {[
           { label: t("salesAgent.generatedEmails"), value: "126", change: "+24%" },
@@ -93,7 +102,7 @@ export default function AiSalesAgentPage() {
             placeholder={t("salesAgent.contextPlaceholder")}
           />
           <button type="button" onClick={generate} className="mt-4 rounded-2xl bg-[#FF7A00] px-6 py-3 font-black text-white shadow-lg shadow-orange-500/20">
-            {t("salesAgent.generate")}
+            {loading ? t("common.loading") : t("salesAgent.generate")}
           </button>
         </div>
 

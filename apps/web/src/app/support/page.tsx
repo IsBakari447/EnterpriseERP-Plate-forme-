@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { assistantService } from "@modules/assistant/services/assistant.service";
 
 const supportAnswers = [
   {
@@ -53,31 +54,51 @@ const supportAnswers = [
   },
 ];
 
+function resolveSupportAnswer(question: string) {
+  const normalized = question.toLowerCase();
+
+  return (
+    supportAnswers.find((item) =>
+      item.keywords.some((keyword) => normalized.includes(keyword))
+    ) ?? {
+      titleKey: "support.defaultTitle",
+      answerKey: "support.defaultAnswer",
+      links: [
+        { labelKey: "support.openDashboard", href: "/dashboard" },
+        { labelKey: "support.link.aiStudio", href: "/ai-studio" },
+      ],
+    }
+  );
+}
+
 export default function SupportPage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const [question, setQuestion] = useState("");
   const [submittedQuestion, setSubmittedQuestion] = useState("");
+  const [aiAnswer, setAiAnswer] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const response = useMemo(() => {
-    const normalized = submittedQuestion.toLowerCase();
+  const response = useMemo(() => resolveSupportAnswer(submittedQuestion), [submittedQuestion]);
 
-    return (
-      supportAnswers.find((item) =>
-        item.keywords.some((keyword) => normalized.includes(keyword))
-      ) ?? {
-        titleKey: "support.defaultTitle",
-        answerKey: "support.defaultAnswer",
-        links: [
-          { labelKey: "support.openDashboard", href: "/dashboard" },
-          { labelKey: "support.link.aiStudio", href: "/ai-studio" },
-        ],
-      }
-    );
-  }, [submittedQuestion, t]);
+  async function askSupport(nextQuestion: string) {
+    const cleanQuestion = nextQuestion.trim() || t("support.defaultQuestion");
+    const fallback = t(resolveSupportAnswer(cleanQuestion).answerKey);
+
+    setSubmittedQuestion(cleanQuestion);
+    setAiAnswer("");
+    setLoading(true);
+
+    try {
+      const result = await assistantService.chat(`Support EnterpriseERP: ${cleanQuestion}`, fallback, locale);
+      setAiAnswer(result.answer);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmittedQuestion(question.trim() || t("support.defaultQuestion"));
+    askSupport(question);
   }
 
   return (
@@ -102,7 +123,7 @@ export default function SupportPage() {
                 type="button"
                 onClick={() => {
                   setQuestion(t(labelKey));
-                  setSubmittedQuestion(value);
+                  askSupport(value);
                 }}
                 className="rounded-2xl bg-white/10 p-4 text-left font-black transition hover:bg-white/15"
               >
@@ -125,7 +146,7 @@ export default function SupportPage() {
               />
             </label>
             <button type="submit" className="mt-4 rounded-2xl bg-[#FF7A00] px-6 py-3 font-black text-white shadow-lg shadow-orange-500/20">
-              {t("support.ask")}
+              {loading ? t("common.loading") : t("support.ask")}
             </button>
           </form>
 
@@ -133,7 +154,7 @@ export default function SupportPage() {
             <article className="mt-6 rounded-3xl border border-[#00C2A9]/20 bg-[#00C2A9]/5 p-5">
               <p className="text-sm font-black uppercase tracking-[0.14em] text-[#008f7d]">{t("support.aiSupport")}</p>
               <h3 className="mt-2 text-2xl font-black text-night">{t(response.titleKey)}</h3>
-              <p className="mt-3 leading-7 text-slate-600">{t(response.answerKey)}</p>
+              <p className="mt-3 leading-7 text-slate-600">{aiAnswer || t(response.answerKey)}</p>
               <div className="mt-5 flex flex-wrap gap-3">
                 {response.links.map((link) => (
                   <Link key={link.href} href={link.href} className="rounded-xl bg-white px-4 py-2 text-sm font-black text-night shadow ring-1 ring-slate-200">

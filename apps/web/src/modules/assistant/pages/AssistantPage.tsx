@@ -2,14 +2,18 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import KPICard from "@shared/components/ui/KPICard";
 import { useI18n } from "@shared/i18n/I18nProvider";
+import { useSector } from "@shared/sector/SectorProvider";
 import { assistantKpis, suggestions } from "@modules/assistant/data";
 import { assistantService, type AssistantKpi, type AssistantSuggestion } from "../services/assistant.service";
 
 export default function AssistantPage() {
   const { locale, t } = useI18n();
+  const router = useRouter();
+  const { sectorKey } = useSector();
   const [question, setQuestion] = useState("");
   const [conversation, setConversation] = useState({
     question: t("ai.sampleQuestion"),
@@ -17,6 +21,18 @@ export default function AssistantPage() {
   });
   const [kpis, setKpis] = useState<AssistantKpi[]>(assistantKpis);
   const [suggestionRows, setSuggestionRows] = useState<AssistantSuggestion[]>(suggestions);
+  const [loading, setLoading] = useState(false);
+
+  async function askAssistant(nextQuestion: string) {
+    setLoading(true);
+
+    try {
+      const nextConversation = await assistantService.chat(nextQuestion, t("ai.sampleAnswer"), locale);
+      setConversation(nextConversation);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     async function loadAssistant() {
@@ -32,11 +48,26 @@ export default function AssistantPage() {
     loadAssistant();
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("mode") !== "report") return;
+
+    const reportQuestion = [
+      t("ai.newReport"),
+      `sector=${params.get("sector") ?? sectorKey}`,
+      `period=${params.get("period") ?? "30d"}`,
+    ].join(" - ");
+
+    setQuestion(reportQuestion);
+    askAssistant(reportQuestion);
+    router.replace("/assistant");
+  }, [locale, router, sectorKey, t]);
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!question.trim()) return;
-    const nextConversation = await assistantService.chat(question, t("ai.sampleAnswer"), locale);
-    setConversation(nextConversation);
+    await askAssistant(question);
     setQuestion("");
   }
 
@@ -45,6 +76,11 @@ export default function AssistantPage() {
       title={t("ai.assistantTitle")}
       subtitle={t("ai.assistantSubtitle")}
       action={t("ai.newReport")}
+      onAction={() => {
+        const reportQuestion = `${t("ai.newReport")} - sector=${sectorKey}`;
+        setQuestion(reportQuestion);
+        askAssistant(reportQuestion);
+      }}
     >
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {kpis.map((kpi) => (
@@ -87,7 +123,7 @@ export default function AssistantPage() {
               placeholder={t("ai.askPlaceholder")}
             />
             <button type="submit" className="rounded-xl bg-action px-6 py-3 font-semibold text-white">
-              {t("common.send")}
+              {loading ? t("common.loading") : t("common.send")}
             </button>
           </form>
         </div>
@@ -103,7 +139,7 @@ export default function AssistantPage() {
                 onClick={async () => {
                   const text = t(item.key);
                   setQuestion(text);
-                  setConversation(await assistantService.chat(text, t("ai.sampleAnswer"), locale));
+                  await askAssistant(text);
                 }}
                 className="w-full rounded-xl bg-slate-50 p-4 text-left text-sm font-bold text-slate-700 transition hover:bg-cyan-50"
               >
