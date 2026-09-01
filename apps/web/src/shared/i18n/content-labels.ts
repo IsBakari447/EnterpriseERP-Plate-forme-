@@ -134,6 +134,8 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Custom quote": "Sur devis",
     "For validation without risk.": "Pour valider le produit sans risque.",
     "For SMEs that want to centralize operations.": "Pour les PME qui veulent centraliser leurs operations.",
+    "For multi-site organizations, dedicated integrations and advanced requirements.":
+      "Pour multi-sites, integrations et exigences avancees.",
     "For multi-site organizations, advanced requirements, SSO and dedicated integrations.":
       "Pour multi-sites, exigences avancees, SSO et integrations dediees.",
     "SME comparison": "Comparateur PME",
@@ -517,6 +519,8 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "A partir de 49 EUR/mois": "Starting at 49 EUR/month",
     "Pour les PME qui veulent centraliser leurs operations.": "For SMEs that want to centralize operations.",
     "Pour PME qui veulent centraliser leurs operations.": "For SMEs that want to centralize operations.",
+    "Pour multi-sites, integrations et exigences avancees.":
+      "For multi-site organizations, dedicated integrations and advanced requirements.",
     "Donnees de demonstration": "Demo data",
     "CRM, stock, factures": "CRM, inventory, invoices",
     "CRM, stock, ventes, factures": "CRM, inventory, sales, invoices",
@@ -1154,6 +1158,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Pour valider le produit sans risque.": "För att validera produkten utan risk.",
     "Pour les PME qui veulent centraliser leurs operations.": "För SME som vill centralisera sin drift.",
     "Pour PME qui veulent centraliser leurs operations.": "För SME som vill centralisera sin drift.",
+    "Pour multi-sites, integrations et exigences avancees.": "För multi-site, integrationer och avancerade krav.",
     "Pour multi-sites, exigences avancees, SSO et integrations dediees.":
       "För multi-site, avancerade krav, SSO och dedikerade integrationer.",
     "Donnees de demonstration": "Demodata",
