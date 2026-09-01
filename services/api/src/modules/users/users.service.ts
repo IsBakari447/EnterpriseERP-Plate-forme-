@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { UserRole, UserStatus } from "@prisma/client";
 import { AuditService } from "../../common/audit/audit.service";
+import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
 import { rolePermissions } from "../../common/security/permissions";
 import { PrismaService } from "../../prisma.service";
 
@@ -25,31 +26,8 @@ export class UsersService {
     private readonly audit: AuditService
   ) {}
 
-  private async getCompanyId() {
-    const company = await this.prisma.company.findFirst({
-      orderBy: { createdAt: "asc" },
-    });
-
-    if (!company) {
-      const created = await this.prisma.company.create({
-        data: {
-          name: "EnterpriseERP Demo",
-          sector: "general",
-          country: "Suede",
-          currency: "EUR",
-          language: "fr",
-          timezone: "Europe/Stockholm",
-        },
-      });
-
-      return created.id;
-    }
-
-    return company.id;
-  }
-
-  async findAll() {
-    const companyId = await this.getCompanyId();
+  async findAll(user: AuthenticatedUser) {
+    const companyId = requireTenant(user);
 
     return this.prisma.user.findMany({
       where: { companyId },
@@ -68,9 +46,9 @@ export class UsersService {
     });
   }
 
-  async findOne(id: string) {
-    const companyId = await this.getCompanyId();
-    const user = await this.prisma.user.findFirst({
+  async findOne(currentUser: AuthenticatedUser, id: string) {
+    const companyId = requireTenant(currentUser);
+    const foundUser = await this.prisma.user.findFirst({
       where: { id, companyId },
       select: {
         id: true,
@@ -85,20 +63,20 @@ export class UsersService {
       },
     });
 
-    if (!user) {
+    if (!foundUser) {
       throw new NotFoundException("Utilisateur introuvable");
     }
 
-    return user;
+    return foundUser;
   }
 
-  async create(data: CreateUserInput) {
+  async create(currentUser: AuthenticatedUser, data: CreateUserInput) {
     if (!data.name || !data.email) {
       throw new BadRequestException("Le nom et l'email sont obligatoires");
     }
 
-    const companyId = await this.getCompanyId();
-    const user = await this.prisma.user.create({
+    const companyId = requireTenant(currentUser);
+    const createdUser = await this.prisma.user.create({
       data: {
         companyId,
         name: data.name,
@@ -121,17 +99,17 @@ export class UsersService {
       module: "users",
       action: "create",
       entityType: "User",
-      entityId: user.id,
-      newValue: user,
+      entityId: createdUser.id,
+      newValue: createdUser,
     });
 
-    return user;
+    return createdUser;
   }
 
-  async update(id: string, data: UpdateUserInput) {
-    const existing = await this.findOne(id);
-    const companyId = await this.getCompanyId();
-    const user = await this.prisma.user.update({
+  async update(currentUser: AuthenticatedUser, id: string, data: UpdateUserInput) {
+    const existing = await this.findOne(currentUser, id);
+    const companyId = requireTenant(currentUser);
+    const updatedUser = await this.prisma.user.update({
       where: { id },
       data: {
         name: data.name,
@@ -154,20 +132,20 @@ export class UsersService {
       module: "users",
       action: "update",
       entityType: "User",
-      entityId: user.id,
+      entityId: updatedUser.id,
       oldValue: existing,
-      newValue: user,
+      newValue: updatedUser,
     });
 
-    return user;
+    return updatedUser;
   }
 
-  async invite(data: InviteUserInput) {
+  async invite(currentUser: AuthenticatedUser, data: InviteUserInput) {
     if (!data.email) {
       throw new BadRequestException("L'email est obligatoire");
     }
 
-    const companyId = await this.getCompanyId();
+    const companyId = requireTenant(currentUser);
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const invitation = await this.prisma.invitation.create({
       data: {
@@ -194,9 +172,9 @@ export class UsersService {
     return invitation;
   }
 
-  async remove(id: string) {
-    const existing = await this.findOne(id);
-    const companyId = await this.getCompanyId();
+  async remove(currentUser: AuthenticatedUser, id: string) {
+    const existing = await this.findOne(currentUser, id);
+    const companyId = requireTenant(currentUser);
     const deleted = await this.prisma.user.delete({ where: { id } });
 
     await this.audit.record({

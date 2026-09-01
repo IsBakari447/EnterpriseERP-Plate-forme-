@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { UserRole, UserStatus } from "@prisma/client";
+import { AuthenticatedUser, CurrentUser } from "../../common/auth/current-user.decorator";
 import { Permissions } from "../../common/security/permissions.decorator";
 import { UsersService } from "./users.service";
 
@@ -21,8 +22,8 @@ export class UsersController {
 
   @Get()
   @Permissions("users.read")
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@CurrentUser() user: AuthenticatedUser) {
+    return this.usersService.findAll(user);
   }
 
   @Get("roles")
@@ -33,31 +34,31 @@ export class UsersController {
 
   @Get(":id")
   @Permissions("users.read")
-  findOne(@Param("id") id: string) {
-    return this.usersService.findOne(id);
+  findOne(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
+    return this.usersService.findOne(user, id);
   }
 
   @Post()
   @Permissions("users.update")
-  create(@Body() body: CreateUserBody) {
-    return this.usersService.create(body);
+  create(@CurrentUser() user: AuthenticatedUser, @Body() body: CreateUserBody) {
+    return this.usersService.create(user, body);
   }
 
   @Post("invite")
   @Permissions("users.invite")
-  invite(@Body() body: InviteUserBody) {
-    return this.usersService.invite(body);
+  invite(@CurrentUser() user: AuthenticatedUser, @Body() body: InviteUserBody) {
+    return this.usersService.invite(user, body);
   }
 
   @Put(":id")
   @Permissions("users.update")
-  update(@Param("id") id: string, @Body() body: Partial<CreateUserBody>) {
-    return this.usersService.update(id, body);
+  update(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string, @Body() body: Partial<CreateUserBody>) {
+    return this.usersService.update(user, id, body);
   }
 
   @Delete(":id")
   @Permissions("users.update")
-  remove(@Param("id") id: string) {
-    return this.usersService.remove(id);
+  remove(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
+    return this.usersService.remove(user, id);
   }
 }
