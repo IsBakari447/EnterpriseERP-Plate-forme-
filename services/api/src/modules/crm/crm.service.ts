@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { AuditService } from "../../common/audit/audit.service";
 import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
 import { PrismaService } from "../../prisma.service";
 
@@ -10,9 +11,29 @@ type ClientInput = {
   revenue?: number;
 };
 
+const toClientCreateData = (data: ClientInput, companyId: string) => ({
+  name: data.name,
+  email: data.email,
+  country: data.country,
+  status: data.status,
+  revenue: data.revenue ?? 0,
+  companyId,
+});
+
+const toClientUpdateData = (data: Partial<ClientInput>) => ({
+  name: data.name,
+  email: data.email,
+  country: data.country,
+  status: data.status,
+  revenue: data.revenue,
+});
+
 @Injectable()
 export class CrmService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService
+  ) {}
 
   async findAll(user: AuthenticatedUser) {
     const companyId = requireTenant(user);
@@ -39,29 +60,64 @@ export class CrmService {
   async create(user: AuthenticatedUser, data: ClientInput) {
     const companyId = requireTenant(user);
 
-    return this.prisma.client.create({
-      data: {
-        ...data,
-        companyId,
-        revenue: data.revenue ?? 0,
-      },
+    const client = await this.prisma.client.create({
+      data: toClientCreateData(data, companyId),
     });
+
+    await this.audit.record({
+      companyId,
+      userId: user.sub,
+      module: "crm",
+      action: "create",
+      entityType: "Client",
+      entityId: client.id,
+      newValue: client,
+    });
+
+    return client;
   }
 
   async update(user: AuthenticatedUser, id: string, data: Partial<ClientInput>) {
-    await this.findOne(user, id);
+    const existing = await this.findOne(user, id);
+    const companyId = requireTenant(user);
 
-    return this.prisma.client.update({
+    const client = await this.prisma.client.update({
       where: { id },
-      data,
+      data: toClientUpdateData(data),
     });
+
+    await this.audit.record({
+      companyId,
+      userId: user.sub,
+      module: "crm",
+      action: "update",
+      entityType: "Client",
+      entityId: client.id,
+      oldValue: existing,
+      newValue: client,
+    });
+
+    return client;
   }
 
   async remove(user: AuthenticatedUser, id: string) {
-    await this.findOne(user, id);
+    const existing = await this.findOne(user, id);
+    const companyId = requireTenant(user);
 
-    return this.prisma.client.delete({
+    const client = await this.prisma.client.delete({
       where: { id },
     });
+
+    await this.audit.record({
+      companyId,
+      userId: user.sub,
+      module: "crm",
+      action: "delete",
+      entityType: "Client",
+      entityId: id,
+      oldValue: existing,
+    });
+
+    return client;
   }
 }

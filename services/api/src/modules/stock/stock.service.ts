@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { AuditService } from "../../common/audit/audit.service";
 import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
 import { PrismaService } from "../../prisma.service";
 
@@ -10,9 +11,29 @@ type ProductInput = {
   value: number;
 };
 
+const toProductCreateData = (data: ProductInput, companyId: string) => ({
+  name: data.name,
+  sku: data.sku,
+  quantity: data.quantity,
+  status: data.status,
+  value: data.value,
+  companyId,
+});
+
+const toProductUpdateData = (data: Partial<ProductInput>) => ({
+  name: data.name,
+  sku: data.sku,
+  quantity: data.quantity,
+  status: data.status,
+  value: data.value,
+});
+
 @Injectable()
 export class StockService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService
+  ) {}
 
   async findAll(user: AuthenticatedUser) {
     const companyId = requireTenant(user);
@@ -39,28 +60,64 @@ export class StockService {
   async create(user: AuthenticatedUser, data: ProductInput) {
     const companyId = requireTenant(user);
 
-    return this.prisma.product.create({
-      data: {
-        ...data,
-        companyId,
-      },
+    const product = await this.prisma.product.create({
+      data: toProductCreateData(data, companyId),
     });
+
+    await this.audit.record({
+      companyId,
+      userId: user.sub,
+      module: "stock",
+      action: "create",
+      entityType: "Product",
+      entityId: product.id,
+      newValue: product,
+    });
+
+    return product;
   }
 
   async update(user: AuthenticatedUser, id: string, data: Partial<ProductInput>) {
-    await this.findOne(user, id);
+    const existing = await this.findOne(user, id);
+    const companyId = requireTenant(user);
 
-    return this.prisma.product.update({
+    const product = await this.prisma.product.update({
       where: { id },
-      data,
+      data: toProductUpdateData(data),
     });
+
+    await this.audit.record({
+      companyId,
+      userId: user.sub,
+      module: "stock",
+      action: "update",
+      entityType: "Product",
+      entityId: product.id,
+      oldValue: existing,
+      newValue: product,
+    });
+
+    return product;
   }
 
   async remove(user: AuthenticatedUser, id: string) {
-    await this.findOne(user, id);
+    const existing = await this.findOne(user, id);
+    const companyId = requireTenant(user);
 
-    return this.prisma.product.delete({
+    const product = await this.prisma.product.delete({
       where: { id },
     });
+
+    await this.audit.record({
+      companyId,
+      userId: user.sub,
+      module: "stock",
+      action: "delete",
+      entityType: "Product",
+      entityId: id,
+      oldValue: existing,
+    });
+
+    return product;
   }
 }
