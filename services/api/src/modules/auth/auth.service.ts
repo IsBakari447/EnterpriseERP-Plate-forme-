@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
 import { createHash } from "crypto";
 import { UserRole } from "@prisma/client";
 import { JwtService } from "../../common/auth/jwt.service";
@@ -30,6 +30,8 @@ type RequestMeta = {
 
 @Injectable()
 export class AuthService {
+  private readonly loginAttempts = new Map<string, { count: number; resetAt: number; lockedUntil?: number }>();
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
@@ -49,6 +51,44 @@ export class AuthService {
     if (!password || password.length < 8) {
       throw new BadRequestException("Le mot de passe doit contenir au moins 8 caracteres");
     }
+  }
+
+  private getLoginRateKey(email: string, meta: RequestMeta) {
+    return `${meta.ipAddress ?? "unknown"}:${email}`;
+  }
+
+  private assertLoginAllowed(key: string) {
+    const now = Date.now();
+    const attempt = this.loginAttempts.get(key);
+
+    if (!attempt) return;
+
+    if (attempt.lockedUntil && attempt.lockedUntil > now) {
+      throw new HttpException("Trop de tentatives. Reessayez dans quelques minutes.", HttpStatus.TOO_MANY_REQUESTS);
+    }
+
+    if (attempt.resetAt <= now) {
+      this.loginAttempts.delete(key);
+    }
+  }
+
+  private recordFailedLogin(key: string) {
+    const now = Date.now();
+    const windowMs = 15 * 60 * 1000;
+    const maxAttempts = 8;
+    const attempt = this.loginAttempts.get(key);
+    const nextAttempt = attempt && attempt.resetAt > now ? attempt : { count: 0, resetAt: now + windowMs };
+    nextAttempt.count += 1;
+
+    if (nextAttempt.count >= maxAttempts) {
+      nextAttempt.lockedUntil = now + windowMs;
+    }
+
+    this.loginAttempts.set(key, nextAttempt);
+  }
+
+  private resetFailedLogin(key: string) {
+    this.loginAttempts.delete(key);
   }
 
   private splitName(name: string) {
@@ -198,15 +238,22 @@ export class AuthService {
 
   async login(input: LoginInput, meta: RequestMeta) {
     const email = this.normalizeEmail(input.email ?? "");
+    const rateKey = this.getLoginRateKey(email, meta);
+
+    this.assertLoginAllowed(rateKey);
+
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user || !this.password.verify(input.password, user.passwordHash)) {
+      this.recordFailedLogin(rateKey);
       throw new UnauthorizedException("Email ou mot de passe incorrect");
     }
 
     if (user.status !== "ACTIVE") {
       throw new UnauthorizedException("Compte non actif");
     }
+
+    this.resetFailedLogin(rateKey);
 
     await this.prisma.user.update({
       where: { id: user.id },

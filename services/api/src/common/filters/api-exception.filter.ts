@@ -13,7 +13,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
     const request = context.getRequest<{ method?: string; url?: string }>();
     const isHttpException = exception instanceof HttpException;
     const status = isHttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
-    const details = isHttpException ? exception.getResponse() : "Internal server error";
+    const details = status >= 500 ? "Internal server error" : isHttpException ? exception.getResponse() : "Internal server error";
     const requestId = randomUUID();
 
     if (status >= 500) {

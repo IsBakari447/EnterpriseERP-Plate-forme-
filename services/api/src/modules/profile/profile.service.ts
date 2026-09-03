@@ -151,7 +151,7 @@ export class ProfileService {
   }
 
   async updateAvatar(user: AuthenticatedUser, avatarUrl: string, meta: RequestMeta) {
-    const isExternalUrl = /^https?:\/\//i.test(avatarUrl ?? "");
+    const isExternalUrl = /^https:\/\//i.test(avatarUrl ?? "");
     const isInlineImage = /^data:image\/(png|jpeg|jpg|webp);base64,[a-z0-9+/=]+$/i.test(avatarUrl ?? "");
 
     if (!isExternalUrl && !isInlineImage) {
