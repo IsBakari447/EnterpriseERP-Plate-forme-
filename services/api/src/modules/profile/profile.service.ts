@@ -70,7 +70,13 @@ export class ProfileService {
             id: true,
             name: true,
             sector: true,
+            businessType: true,
+            country: true,
             currency: true,
+            language: true,
+            timezone: true,
+            dateFormat: true,
+            numberFormat: true,
           },
         },
       },
@@ -80,7 +86,17 @@ export class ProfileService {
       throw new NotFoundException("Profil introuvable");
     }
 
-    return profile;
+    return {
+      ...profile,
+      timezone:
+        profile.timezone === "Europe/Stockholm" && profile.company?.timezone
+          ? profile.company.timezone
+          : profile.timezone,
+      displayCurrency:
+        profile.displayCurrency === "EUR" && profile.company?.currency
+          ? profile.company.currency
+          : profile.displayCurrency,
+    };
   }
 
   async updateProfile(user: AuthenticatedUser, input: UpdateProfileInput, meta: RequestMeta) {

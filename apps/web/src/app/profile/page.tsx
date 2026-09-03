@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { countryOptions, currencyOptions } from "@config/country-packs";
 import ERPLayout from "@shared/components/layout/ERPLayout";
 import { profileService, type UserProfile } from "@modules/profile/profile.service";
 import { useI18n } from "@shared/i18n/I18nProvider";
@@ -25,6 +26,7 @@ const emptyProfile: UserProfile = {
   signature: "",
   role: "",
   status: "",
+  company: null,
 };
 
 export default function ProfilePage() {
@@ -137,8 +139,9 @@ export default function ProfilePage() {
             <h2 className="text-2xl font-black text-night">{t("account.preferences")}</h2>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               <Select label={t("language.label")} value={profile.language} onChange={(value) => update("language", value)} options={["fr", "en", "sv"]} />
-              <Select label={t("profile.timezone")} value={profile.timezone} onChange={(value) => update("timezone", value)} options={["Europe/Stockholm", "Europe/Paris", "UTC", "Africa/Kinshasa"]} />
-              <Select label={t("profile.displayCurrency")} value={profile.displayCurrency} onChange={(value) => update("displayCurrency", value)} options={["EUR", "USD", "SEK", "CDF"]} />
+              <ReadOnlyField label={t("onboarding.country")} value={profile.company?.country ? t(`country.${profile.company.country}`) : t("common.unavailable")} />
+              <Select label={t("profile.timezone")} value={profile.timezone} onChange={(value) => update("timezone", value)} options={Array.from(new Set(countryOptions.map((country) => country.timezone)))} />
+              <Select label={t("profile.displayCurrency")} value={profile.displayCurrency} onChange={(value) => update("displayCurrency", value)} options={currencyOptions} />
               <Select label={t("profile.theme")} value={profile.theme} onChange={(value) => update("theme", value)} options={["system", "light", "dark"]} />
             </div>
           </div>
@@ -207,6 +210,15 @@ function Select({ label, value, options, onChange }: { label: string; value: str
       <select value={value} onChange={(event) => onChange(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-[#00C2A9]">
         {options.map((option) => <option key={option}>{option}</option>)}
       </select>
+    </label>
+  );
+}
+
+function ReadOnlyField({ label, value }: { label: string; value: string }) {
+  return (
+    <label>
+      <span className="text-sm font-black text-slate-700">{label}</span>
+      <input value={value} readOnly className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-100 px-4 py-3 font-semibold text-slate-500 outline-none" />
     </label>
   );
 }

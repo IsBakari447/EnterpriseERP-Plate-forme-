@@ -280,7 +280,7 @@ export default function OnboardingPage() {
         });
       }
 
-      window.localStorage.setItem("enterpriseerp-sector", sector);
+      window.localStorage.setItem("enterpriseerp-sector", updatedCompany.sector);
       router.push("/dashboard");
     } catch (error) {
       if (isUnauthorizedError(error)) {

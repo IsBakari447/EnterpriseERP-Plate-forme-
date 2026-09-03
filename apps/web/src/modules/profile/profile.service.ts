@@ -22,6 +22,18 @@ export type UserProfile = {
   status: string;
   lastLoginAt?: string | null;
   passwordChangedAt?: string | null;
+  company?: {
+    id: string;
+    name: string;
+    sector: string;
+    businessType?: string | null;
+    country?: string | null;
+    currency: string;
+    language: string;
+    timezone: string;
+    dateFormat: string;
+    numberFormat: string;
+  } | null;
 };
 
 export type UserSessionDto = {

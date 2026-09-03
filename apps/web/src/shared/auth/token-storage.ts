@@ -19,10 +19,14 @@ export type AuthUser = {
     id: string;
     name: string;
     sector: string;
+    businessType?: string | null;
     enabledModules?: string[];
     country?: string | null;
     language: string;
     currency: string;
+    timezone?: string;
+    dateFormat?: string;
+    numberFormat?: string;
     onboardingCompleted?: boolean;
     onboardingCompletedAt?: string | null;
   } | null;
