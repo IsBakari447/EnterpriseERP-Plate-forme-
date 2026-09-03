@@ -14,6 +14,7 @@ import {
   companyService,
   type CompanyDto,
 } from "@modules/company/services/company.service";
+import type { BusinessTypeKey } from "@config/business-types";
 
 import type {
   SectorDefinition,
@@ -26,6 +27,7 @@ type SectorContextValue = {
 
   company: CompanyDto | null;
   companyName: string;
+  businessType: BusinessTypeKey | null;
   country: string | null;
   currency: string;
   enabledModules: string[];
@@ -192,6 +194,9 @@ export function SectorProvider({
       companyName:
         company?.name ??
         "EnterpriseERP",
+
+      businessType:
+        company?.businessType ?? null,
 
       country:
         company?.country ?? null,

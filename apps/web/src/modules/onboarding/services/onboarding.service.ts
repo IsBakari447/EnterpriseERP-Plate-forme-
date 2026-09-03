@@ -1,9 +1,12 @@
 import { apiClient } from "@shared/api/client";
+import type { BusinessTypeKey } from "@config/business-types";
 import type { CompanyDto } from "@modules/company/services/company.service";
 import type { ModuleKey, SectorKey } from "@shared/sector/types";
 
 export type OnboardingCompanyInput = {
-  name: string;
+  name?: string;
+  sector?: SectorKey;
+  businessType?: BusinessTypeKey | null;
 };
 
 export type OnboardingSettingsInput = {

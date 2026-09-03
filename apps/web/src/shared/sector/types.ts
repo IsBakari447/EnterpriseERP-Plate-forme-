@@ -7,6 +7,9 @@ export type SectorKey =
   | "education"
   | "transport"
   | "industrie"
+  | "hospitality"
+  | "agriculture"
+  | "livestock"
   | "hotel";
 
 export type ModuleKey =
@@ -73,6 +76,29 @@ export type ModuleKey =
   | "chambres"
   | "housekeeping"
   | "restaurant-hotel"
+  | "proprietes"
+  | "unites"
+  | "disponibilites"
+  | "nettoyage"
+  | "appartements"
+  | "locataires"
+  | "loyers"
+  | "depots"
+  | "services"
+  | "activites"
+  | "check-in"
+  | "parcelles"
+  | "cultures"
+  | "intrants"
+  | "recoltes"
+  | "traitements"
+  | "animaux"
+  | "production-lait"
+  | "alimentation"
+  | "soins"
+  | "lots"
+  | "ponte"
+  | "reproduction"
   | "parametres";
 
 export type SectorDefinition = {

@@ -2,6 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  businessTypeDefinitions,
+  getBusinessTypesForSector,
+  getDefaultBusinessTypeForSector,
+  getRecommendedModulesForBusinessType,
+  type BusinessTypeKey,
+} from "@config/business-types";
 import { sectorDefinitions, sectorOptions } from "@config/sectors";
 import { authService } from "@modules/auth/services/auth.service";
 import { onboardingService } from "@modules/onboarding/services/onboarding.service";
@@ -53,6 +60,9 @@ export default function OnboardingPage() {
   const { locale, t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
   const [sector, setSector] = useState<SectorKey>(getInitialSector);
+  const [businessType, setBusinessType] = useState<BusinessTypeKey | "">(() =>
+    getDefaultBusinessTypeForSector(getInitialSector())
+  );
   const [company, setCompany] = useState("EnterpriseERP");
   const [country, setCountry] = useState("SE");
   const [currency, setCurrency] = useState("EUR");
@@ -65,11 +75,17 @@ export default function OnboardingPage() {
   );
 
   const sectorConfig = sectorDefinitions[sector];
+  const businessTypes = getBusinessTypesForSector(sector);
   const progress = Math.round(((currentStep + 1) / steps.length) * 100);
 
   const recommendedModules = useMemo(
-    () => sectorConfig.modules.filter((module) => !["dashboard", "parametres"].includes(module)),
-    [sectorConfig.modules]
+    () => {
+      const businessModules = getRecommendedModulesForBusinessType(businessType);
+      const modules = businessModules ?? sectorConfig.modules;
+
+      return modules.filter((module) => !["dashboard", "parametres"].includes(module));
+    },
+    [businessType, sectorConfig.modules]
   );
 
   useEffect(() => {
@@ -90,6 +106,7 @@ export default function OnboardingPage() {
 
         setCompany(current.name || "EnterpriseERP");
         setSector(current.sector);
+        setBusinessType(current.businessType ?? getDefaultBusinessTypeForSector(current.sector));
         setCountry(normalizeCountry(current.country));
         setCurrency(current.currency || "EUR");
 
@@ -131,8 +148,20 @@ export default function OnboardingPage() {
   }
 
   function changeSector(nextSector: SectorKey) {
+    const nextBusinessType = getDefaultBusinessTypeForSector(nextSector);
+
     setSector(nextSector);
-    setSelectedModules(sectorDefinitions[nextSector].modules.slice(0, 8));
+    setBusinessType(nextBusinessType);
+    setSelectedModules(
+      (getRecommendedModulesForBusinessType(nextBusinessType) ?? sectorDefinitions[nextSector].modules).slice(0, 8)
+    );
+  }
+
+  function changeBusinessType(nextBusinessType: BusinessTypeKey) {
+    setBusinessType(nextBusinessType);
+    setSelectedModules(
+      businessTypeDefinitions[nextBusinessType].recommendedModules.slice(0, 8)
+    );
   }
 
   function parseInviteEmails() {
@@ -189,7 +218,7 @@ export default function OnboardingPage() {
       }
 
       await onboardingService.updateCompany({ name: company.trim() });
-      await onboardingService.updateSector(sector);
+      await onboardingService.updateCompany({ sector, businessType: businessType || null });
       await onboardingService.updateSettings({
         country: country.trim(),
         currency,
@@ -320,6 +349,29 @@ export default function OnboardingPage() {
                       <p className="mt-2 text-sm font-semibold text-slate-500">{t(`sector.${option.key}.description`)}</p>
                     </button>
                   ))}
+
+                  {businessTypes.length > 0 && (
+                    <div className="md:col-span-3 rounded-3xl border border-slate-200 bg-white p-5">
+                      <p className="text-sm font-black uppercase tracking-[0.16em] text-[#00A693]">
+                        {t("onboarding.businessType.title")}
+                      </p>
+                      <div className="mt-4 grid gap-3 md:grid-cols-3">
+                        {businessTypes.map((item) => (
+                          <button
+                            key={item.key}
+                            type="button"
+                            onClick={() => changeBusinessType(item.key)}
+                            className={`rounded-2xl border p-4 text-left transition ${
+                              businessType === item.key ? "border-[#00C2A9] bg-[#00C2A9]/10" : "border-slate-200 bg-slate-50 hover:border-[#00C2A9]"
+                            }`}
+                          >
+                            <h4 className="font-black text-night">{t(`businessType.${item.key}`)}</h4>
+                            <p className="mt-2 text-sm font-semibold text-slate-500">{t(`businessType.${item.key}.description`)}</p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

@@ -248,9 +248,88 @@ export const sectorDefinitions: Record<SectorKey, SectorDefinition> = {
       facturation: "Facturation",
     },
   },
+
+  hospitality: {
+    key: "hospitality",
+    name: "Hospitalite",
+    description: "Hotels, locations courte duree, appart'hotels, resorts et maisons d'hotes",
+    icon: "HOS",
+    modules: [
+      "dashboard",
+      "proprietes",
+      "unites",
+      "reservations",
+      "disponibilites",
+      "clients",
+      "housekeeping",
+      "maintenance",
+      "facturation",
+      "paiements",
+      "rh",
+      "finances",
+      ...commonModules,
+    ],
+    labels: {
+      rh: "Personnel",
+      facturation: "Facturation",
+      clients: "Clients",
+    },
+  },
+
+  agriculture: {
+    key: "agriculture",
+    name: "Agriculture",
+    description: "Exploitations agricoles, parcelles, cultures, intrants et recoltes",
+    icon: "AGR",
+    modules: [
+      "dashboard",
+      "parcelles",
+      "cultures",
+      "intrants",
+      "recoltes",
+      "stock",
+      "achats",
+      "ventes",
+      "fournisseurs",
+      "finances",
+      "rapports",
+      "assistant",
+      "parametres",
+    ],
+    labels: {
+      stock: "Stock agricole",
+      ventes: "Ventes recoltes",
+    },
+  },
+
+  livestock: {
+    key: "livestock",
+    name: "Elevage",
+    description: "Elevage, troupeaux, alimentation, soins, production et ventes",
+    icon: "LIV",
+    modules: [
+      "dashboard",
+      "animaux",
+      "lots",
+      "alimentation",
+      "soins",
+      "production",
+      "stock",
+      "ventes",
+      "achats",
+      "finances",
+      "rapports",
+      "assistant",
+      "parametres",
+    ],
+    labels: {
+      stock: "Stock alimentation",
+      ventes: "Ventes elevage",
+    },
+  },
 };
 
-export const sectorOptions = Object.values(sectorDefinitions);
+export const sectorOptions = Object.values(sectorDefinitions).filter((sector) => sector.key !== "hotel");
 
 type SectorFeature = {
   icon: string;
@@ -413,5 +492,8 @@ export const sectors: Record<Exclude<SectorKey, "general">, SectorConfig> = {
   education: buildSector("education", "l'education", "etablissement"),
   transport: buildSector("transport", "le transport", "activite logistique"),
   industrie: buildSector("industrie", "l'industrie", "production"),
+  hospitality: buildSector("hospitality", "l'hospitalite", "activite d'hospitalite"),
+  agriculture: buildSector("agriculture", "l'agriculture", "exploitation agricole"),
+  livestock: buildSector("livestock", "l'elevage", "activite d'elevage"),
   hotel: buildSector("hotel", "l'hotellerie", "hotel"),
 };

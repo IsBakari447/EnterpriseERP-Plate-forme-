@@ -1,10 +1,12 @@
 import { apiClient } from "@shared/api/client";
+import type { BusinessTypeKey } from "@config/business-types";
 import type { SectorKey } from "@shared/sector/types";
 
 export type CompanyDto = {
   id: string;
   name: string;
   sector: SectorKey;
+  businessType?: BusinessTypeKey | null;
   email?: string | null;
   phone?: string | null;
   address?: string | null;

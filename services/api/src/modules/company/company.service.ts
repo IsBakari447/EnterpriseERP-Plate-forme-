@@ -6,6 +6,7 @@ import { PrismaService } from "../../prisma.service";
 type UpdateCompanyInput = {
   name?: string;
   sector?: string;
+  businessType?: string | null;
   email?: string;
   phone?: string;
   address?: string;
@@ -33,7 +34,31 @@ export class CompanyService {
     "education",
     "transport",
     "industrie",
+    "hospitality",
+    "agriculture",
+    "livestock",
     "hotel",
+  ]);
+
+  private readonly allowedBusinessTypes = new Set([
+    "hotel",
+    "vacation_rental",
+    "furnished_apartment",
+    "guest_house",
+    "resort",
+    "aparthotel",
+    "preschool",
+    "primary_school",
+    "secondary_school",
+    "higher_education",
+    "training_center",
+    "crop_farm",
+    "market_garden",
+    "orchard",
+    "dairy_farm",
+    "poultry_farm",
+    "cattle_farm",
+    "mixed_farm",
   ]);
 
   private readonly allowedCurrencies = new Set(["EUR", "SEK", "USD", "CDF", "GBP"]);
@@ -52,9 +77,19 @@ export class CompanyService {
       throw new BadRequestException("Langue invalide");
     }
 
+    const businessType =
+      data.businessType === null
+        ? null
+        : data.businessType?.trim() || undefined;
+
+    if (businessType && !this.allowedBusinessTypes.has(businessType)) {
+      throw new BadRequestException("Type d'activite invalide");
+    }
+
     return {
       name: data.name?.trim() || undefined,
       sector: data.sector,
+      businessType,
       email: data.email?.trim() || undefined,
       phone: data.phone?.trim() || undefined,
       address: data.address?.trim() || undefined,

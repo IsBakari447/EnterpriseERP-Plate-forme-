@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { AuthenticatedUser, requireTenant } from "../auth/current-user.decorator";
 
@@ -11,6 +12,12 @@ type AiAnswer = {
   intent: AiIntent;
   provider: "enterpriseerp-rule-engine";
   generatedBy: "EnterpriseERP AI";
+};
+
+type AiContext = {
+  sector: string;
+  businessType: string | null;
+  enabledModules: string[];
 };
 
 const blockedPromptPatterns = [
@@ -29,14 +36,30 @@ const blockedPromptPatterns = [
 
 @Injectable()
 export class AiService {
-  constructor(private readonly audit: AuditService) {}
+  constructor(
+    private readonly audit: AuditService,
+    private readonly prisma: PrismaService
+  ) {}
 
   async createAnswer(user: AuthenticatedUser, question: string, locale = "fr"): Promise<AiAnswer> {
     const companyId = requireTenant(user);
     const normalizedQuestion = question.trim();
     const language = this.normalizeLocale(locale);
     const intent = this.detectIntent(normalizedQuestion);
-    const answer = this.buildAnswer(normalizedQuestion, language, intent);
+    const company = await this.prisma.company.findUnique({
+      where: { id: companyId },
+      select: {
+        sector: true,
+        businessType: true,
+        enabledModules: true,
+      },
+    });
+    const context: AiContext = {
+      sector: company?.sector ?? "general",
+      businessType: company?.businessType ?? null,
+      enabledModules: company?.enabledModules ?? [],
+    };
+    const answer = this.buildAnswer(normalizedQuestion, language, intent, context);
 
     await this.audit.record({
       companyId,
@@ -48,6 +71,7 @@ export class AiService {
         question: normalizedQuestion,
         locale: language,
         intent,
+        context,
       },
       newValue: {
         answer,
@@ -87,7 +111,8 @@ export class AiService {
     return "generic";
   }
 
-  private buildAnswer(question: string, locale: AiLocale, intent: AiIntent) {
+  private buildAnswer(question: string, locale: AiLocale, intent: AiIntent, context: AiContext) {
+    const contextLine = this.buildContextLine(locale, context);
     const copy = {
       en: {
         empty: "EnterpriseERP analysis: ask a question to receive an operational recommendation.",
@@ -145,6 +170,21 @@ export class AiService {
       },
     };
 
-    return copy[locale][intent];
+    return `${copy[locale][intent]} ${contextLine}`;
+  }
+
+  private buildContextLine(locale: AiLocale, context: AiContext) {
+    const modules = context.enabledModules.slice(0, 5).join(", ");
+    const businessType = context.businessType ? `, type ${context.businessType}` : "";
+
+    if (locale === "en") {
+      return `Context used: sector ${context.sector}${businessType}${modules ? `, active modules ${modules}` : ""}.`;
+    }
+
+    if (locale === "sv") {
+      return `Anvand kontext: sektor ${context.sector}${businessType}${modules ? `, aktiva moduler ${modules}` : ""}.`;
+    }
+
+    return `Contexte utilise: secteur ${context.sector}${businessType}${modules ? `, modules actifs ${modules}` : ""}.`;
   }
 }

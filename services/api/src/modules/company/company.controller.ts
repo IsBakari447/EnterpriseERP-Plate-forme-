@@ -6,6 +6,7 @@ import { CompanyService } from "./company.service";
 type UpdateCompanyInput = {
   name?: string;
   sector?: string;
+  businessType?: string | null;
   email?: string;
   phone?: string;
   address?: string;
