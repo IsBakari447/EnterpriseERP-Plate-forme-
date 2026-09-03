@@ -15,6 +15,12 @@ type AiAnswer = {
 };
 
 type AiContext = {
+  country: string | null;
+  currency: string;
+  language: string;
+  timezone: string;
+  dateFormat: string;
+  numberFormat: string;
   sector: string;
   businessType: string | null;
   enabledModules: string[];
@@ -51,10 +57,22 @@ export class AiService {
       select: {
         sector: true,
         businessType: true,
+        country: true,
+        currency: true,
+        language: true,
+        timezone: true,
+        dateFormat: true,
+        numberFormat: true,
         enabledModules: true,
       },
     });
     const context: AiContext = {
+      country: company?.country ?? null,
+      currency: company?.currency ?? "EUR",
+      language: company?.language ?? language,
+      timezone: company?.timezone ?? "Europe/Stockholm",
+      dateFormat: company?.dateFormat ?? "yyyy-MM-dd",
+      numberFormat: company?.numberFormat ?? "fr-FR",
       sector: company?.sector ?? "general",
       businessType: company?.businessType ?? null,
       enabledModules: company?.enabledModules ?? [],
@@ -178,13 +196,13 @@ export class AiService {
     const businessType = context.businessType ? `, type ${context.businessType}` : "";
 
     if (locale === "en") {
-      return `Context used: sector ${context.sector}${businessType}${modules ? `, active modules ${modules}` : ""}.`;
+      return `Context used: country ${context.country ?? "unset"}, currency ${context.currency}, timezone ${context.timezone}, sector ${context.sector}${businessType}${modules ? `, active modules ${modules}` : ""}.`;
     }
 
     if (locale === "sv") {
-      return `Anvand kontext: sektor ${context.sector}${businessType}${modules ? `, aktiva moduler ${modules}` : ""}.`;
+      return `Anvand kontext: land ${context.country ?? "ej valt"}, valuta ${context.currency}, tidszon ${context.timezone}, sektor ${context.sector}${businessType}${modules ? `, aktiva moduler ${modules}` : ""}.`;
     }
 
-    return `Contexte utilise: secteur ${context.sector}${businessType}${modules ? `, modules actifs ${modules}` : ""}.`;
+    return `Contexte utilise: pays ${context.country ?? "non defini"}, devise ${context.currency}, fuseau ${context.timezone}, secteur ${context.sector}${businessType}${modules ? `, modules actifs ${modules}` : ""}.`;
   }
 }

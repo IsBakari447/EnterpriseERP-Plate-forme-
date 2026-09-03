@@ -14,6 +14,8 @@ type UpdateCompanyInput = {
   currency?: string;
   language?: string;
   timezone?: string;
+  dateFormat?: string;
+  numberFormat?: string;
   enabledModules?: string[];
   onboardingCompleted?: boolean;
 };

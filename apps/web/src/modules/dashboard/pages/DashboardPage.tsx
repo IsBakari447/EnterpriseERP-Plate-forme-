@@ -22,18 +22,22 @@ import {
 } from "../data";
 import { translateDashboardText } from "../translations";
 
-function formatKpi(kpi: DecisionKpi, factor: number, currency: string) {
+function formatKpi(kpi: DecisionKpi, factor: number, currency: string, numberFormat: string) {
   const value = kpi.format === "percent" ? kpi.baseValue : kpi.baseValue * factor;
 
   if (kpi.format === "currency") {
-    return `${Math.round(value).toLocaleString("fr-FR")} ${currency}`;
+    return new Intl.NumberFormat(numberFormat, {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    }).format(value);
   }
 
   if (kpi.format === "percent") {
-    return `${value.toLocaleString("fr-FR")}%`;
+    return `${value.toLocaleString(numberFormat)}%`;
   }
 
-  return Math.round(value).toLocaleString("fr-FR");
+  return Math.round(value).toLocaleString(numberFormat);
 }
 
 function actionTone(action: PriorityAction) {
@@ -71,7 +75,7 @@ function priorityHref(action: PriorityAction) {
 export default function DashboardPage() {
   const router = useRouter();
   const { locale, t } = useI18n();
-  const { sectorKey, currency } = useSector();
+  const { sectorKey, currency, numberFormat } = useSector();
   const [period, setPeriod] = useState<PeriodKey>("30d");
   const [customizing, setCustomizing] = useState(false);
 
@@ -123,10 +127,10 @@ export default function DashboardPage() {
     () =>
       dashboard.kpis.map((kpi) => ({
         label: dt(kpi.label),
-        value: formatKpi(kpi, selectedPeriod.factor, currency),
+        value: formatKpi(kpi, selectedPeriod.factor, currency, numberFormat),
         change: `${kpi.change} - ${selectedPeriodLabel}`,
       })),
-    [dashboard.kpis, selectedPeriod.factor, selectedPeriodLabel, locale, currency]
+    [dashboard.kpis, selectedPeriod.factor, selectedPeriodLabel, locale, currency, numberFormat]
   );
 
   return (

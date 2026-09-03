@@ -1,6 +1,13 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { AuditService } from "../../common/audit/audit.service";
 import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
+import {
+  supportedCountries,
+  supportedCurrencies,
+  supportedDateFormats,
+  supportedNumberFormats,
+  supportedTimezones,
+} from "../../common/localization/country-packs";
 import { PrismaService } from "../../prisma.service";
 
 type UpdateCompanyInput = {
@@ -14,6 +21,8 @@ type UpdateCompanyInput = {
   currency?: string;
   language?: string;
   timezone?: string;
+  dateFormat?: string;
+  numberFormat?: string;
   enabledModules?: string[];
   onboardingCompleted?: boolean;
 };
@@ -61,7 +70,6 @@ export class CompanyService {
     "mixed_farm",
   ]);
 
-  private readonly allowedCurrencies = new Set(["EUR", "SEK", "USD", "CDF", "GBP"]);
   private readonly allowedLanguages = new Set(["fr", "en", "sv", "de", "es", "pt", "it", "nl"]);
 
   private sanitize(data: UpdateCompanyInput) {
@@ -69,12 +77,33 @@ export class CompanyService {
       throw new BadRequestException("Secteur invalide");
     }
 
-    if (data.currency && !this.allowedCurrencies.has(data.currency)) {
+    const country = data.country?.trim().toUpperCase();
+    const currency = data.currency?.trim().toUpperCase();
+    const dateFormat = data.dateFormat?.trim();
+    const numberFormat = data.numberFormat?.trim();
+
+    if (country && !supportedCountries.has(country)) {
+      throw new BadRequestException("Pays invalide");
+    }
+
+    if (currency && !supportedCurrencies.has(currency)) {
       throw new BadRequestException("Devise invalide");
     }
 
     if (data.language && !this.allowedLanguages.has(data.language)) {
       throw new BadRequestException("Langue invalide");
+    }
+
+    if (data.timezone && !supportedTimezones.has(data.timezone.trim())) {
+      throw new BadRequestException("Fuseau horaire invalide");
+    }
+
+    if (dateFormat && !supportedDateFormats.has(dateFormat)) {
+      throw new BadRequestException("Format de date invalide");
+    }
+
+    if (numberFormat && !supportedNumberFormats.has(numberFormat)) {
+      throw new BadRequestException("Format de nombre invalide");
     }
 
     const businessType =
@@ -93,10 +122,12 @@ export class CompanyService {
       email: data.email?.trim() || undefined,
       phone: data.phone?.trim() || undefined,
       address: data.address?.trim() || undefined,
-      country: data.country?.trim() || undefined,
-      currency: data.currency,
+      country: country || undefined,
+      currency,
       language: data.language,
       timezone: data.timezone?.trim() || undefined,
+      dateFormat,
+      numberFormat,
       enabledModules: Array.isArray(data.enabledModules)
         ? Array.from(new Set(data.enabledModules.filter(Boolean)))
         : undefined,
@@ -170,7 +201,11 @@ export class CompanyService {
       throw new BadRequestException("Le pays est obligatoire");
     }
 
-    if (!this.allowedCurrencies.has(company.currency)) {
+    if (!supportedCountries.has(company.country.trim().toUpperCase())) {
+      throw new BadRequestException("Pays invalide");
+    }
+
+    if (!supportedCurrencies.has(company.currency)) {
       throw new BadRequestException("Devise invalide");
     }
 

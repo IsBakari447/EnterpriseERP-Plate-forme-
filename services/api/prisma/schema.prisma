@@ -65,6 +65,8 @@ model Company {
   currency       String        @default("EUR")
   language       String        @default("fr")
   timezone       String        @default("Europe/Stockholm")
+  dateFormat     String        @default("yyyy-MM-dd")
+  numberFormat   String        @default("fr-FR")
   onboardingCompleted   Boolean   @default(false)
   onboardingCompletedAt DateTime?
   createdAt      DateTime      @default(now())

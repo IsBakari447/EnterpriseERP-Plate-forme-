@@ -13,6 +13,9 @@ export type OnboardingSettingsInput = {
   country: string;
   currency: string;
   language?: string;
+  timezone?: string;
+  dateFormat?: string;
+  numberFormat?: string;
 };
 
 export type OnboardingInviteInput = {

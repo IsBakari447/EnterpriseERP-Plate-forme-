@@ -1,0 +1,3 @@
+ALTER TABLE "Company"
+ADD COLUMN "dateFormat" TEXT NOT NULL DEFAULT 'yyyy-MM-dd',
+ADD COLUMN "numberFormat" TEXT NOT NULL DEFAULT 'fr-FR';

@@ -14,6 +14,8 @@ export type CompanyDto = {
   currency: string;
   language: string;
   timezone: string;
+  dateFormat: string;
+  numberFormat: string;
   enabledModules: string[];
   onboardingCompleted: boolean;
   onboardingCompletedAt?: string | null;

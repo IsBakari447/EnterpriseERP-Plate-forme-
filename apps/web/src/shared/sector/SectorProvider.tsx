@@ -30,6 +30,10 @@ type SectorContextValue = {
   businessType: BusinessTypeKey | null;
   country: string | null;
   currency: string;
+  language: string;
+  timezone: string;
+  dateFormat: string;
+  numberFormat: string;
   enabledModules: string[];
 
   loading: boolean;
@@ -204,6 +208,22 @@ export function SectorProvider({
       currency:
         company?.currency ??
         "EUR",
+
+      language:
+        company?.language ??
+        "fr",
+
+      timezone:
+        company?.timezone ??
+        "Europe/Stockholm",
+
+      dateFormat:
+        company?.dateFormat ??
+        "yyyy-MM-dd",
+
+      numberFormat:
+        company?.numberFormat ??
+        "fr-FR",
 
       enabledModules,
 

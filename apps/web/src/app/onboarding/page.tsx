@@ -9,6 +9,12 @@ import {
   getRecommendedModulesForBusinessType,
   type BusinessTypeKey,
 } from "@config/business-types";
+import {
+  countryOptions,
+  currencyOptions,
+  getCountryPack,
+  type CountryCode,
+} from "@config/country-packs";
 import { sectorDefinitions, sectorOptions } from "@config/sectors";
 import { authService } from "@modules/auth/services/auth.service";
 import { onboardingService } from "@modules/onboarding/services/onboarding.service";
@@ -23,23 +29,31 @@ type OnboardingStep = {
 
 const steps: OnboardingStep[] = [
   { key: "company" },
+  { key: "country" },
+  { key: "localization" },
   { key: "sector" },
-  { key: "settings" },
   { key: "modules" },
   { key: "users" },
   { key: "import" },
 ];
 
-const countryOptions = ["SE", "FR", "CD", "BE", "CA"] as const;
-
-function normalizeCountry(value?: string | null) {
+function normalizeCountry(value?: string | null): CountryCode {
   const normalized = (value ?? "").trim().toLowerCase();
 
   if (["suede", "sweden", "sverige", "se"].includes(normalized)) return "SE";
   if (["france", "fr"].includes(normalized)) return "FR";
+  if (["allemagne", "germany", "deutschland", "de"].includes(normalized)) return "DE";
+  if (["espagne", "spain", "espana", "es"].includes(normalized)) return "ES";
+  if (["cameroun", "cameroon", "cm"].includes(normalized)) return "CM";
+  if (["senegal", "sn"].includes(normalized)) return "SN";
+  if (["cote d'ivoire", "cote ivoire", "ivory coast", "ci"].includes(normalized)) return "CI";
   if (["rdc", "congo", "cd"].includes(normalized)) return "CD";
   if (["belgique", "belgium", "belgien", "be"].includes(normalized)) return "BE";
   if (["canada", "ca"].includes(normalized)) return "CA";
+  if (["etats-unis", "united states", "usa", "us"].includes(normalized)) return "US";
+  if (["royaume-uni", "united kingdom", "uk", "gb"].includes(normalized)) return "GB";
+  if (["suisse", "switzerland", "schweiz", "ch"].includes(normalized)) return "CH";
+  if (["japon", "japan", "jp"].includes(normalized)) return "JP";
 
   return "SE";
 }
@@ -64,8 +78,11 @@ export default function OnboardingPage() {
     getDefaultBusinessTypeForSector(getInitialSector())
   );
   const [company, setCompany] = useState("EnterpriseERP");
-  const [country, setCountry] = useState("SE");
-  const [currency, setCurrency] = useState("EUR");
+  const [country, setCountry] = useState<CountryCode>("SE");
+  const [currency, setCurrency] = useState<string>(getCountryPack("SE").currency);
+  const [timezone, setTimezone] = useState(getCountryPack("SE").timezone);
+  const [dateFormat, setDateFormat] = useState(getCountryPack("SE").dateFormat);
+  const [numberFormat, setNumberFormat] = useState(getCountryPack("SE").numberFormat);
   const [invites, setInvites] = useState("manager@entreprise.com");
   const [importStatus, setImportStatus] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "saving" | "error">("idle");
@@ -107,8 +124,14 @@ export default function OnboardingPage() {
         setCompany(current.name || "EnterpriseERP");
         setSector(current.sector);
         setBusinessType(current.businessType ?? getDefaultBusinessTypeForSector(current.sector));
-        setCountry(normalizeCountry(current.country));
-        setCurrency(current.currency || "EUR");
+        const currentCountry = normalizeCountry(current.country);
+        const currentPack = getCountryPack(currentCountry);
+
+        setCountry(currentCountry);
+        setCurrency(current.currency || currentPack.currency);
+        setTimezone(current.timezone || currentPack.timezone);
+        setDateFormat(current.dateFormat || currentPack.dateFormat);
+        setNumberFormat(current.numberFormat || currentPack.numberFormat);
 
         if (current.enabledModules?.length) {
           setSelectedModules(current.enabledModules as ModuleKey[]);
@@ -164,6 +187,16 @@ export default function OnboardingPage() {
     );
   }
 
+  function changeCountry(nextCountry: CountryCode) {
+    const pack = getCountryPack(nextCountry);
+
+    setCountry(nextCountry);
+    setCurrency(pack.currency);
+    setTimezone(pack.timezone);
+    setDateFormat(pack.dateFormat);
+    setNumberFormat(pack.numberFormat);
+  }
+
   function parseInviteEmails() {
     return invites
       .split(/[\n,;]+/)
@@ -177,17 +210,17 @@ export default function OnboardingPage() {
       return false;
     }
 
-    if (currentStep === 2 && !country.trim()) {
+    if (currentStep === 1 && !country.trim()) {
       setErrorMessage(t("onboarding.requiredCountry"));
       return false;
     }
 
-    if (currentStep === 3 && selectedModules.length === 0) {
+    if (currentStep === 4 && selectedModules.length === 0) {
       setErrorMessage(t("onboarding.requiredModule"));
       return false;
     }
 
-    if (currentStep === 4) {
+    if (currentStep === 5) {
       const invalidEmail = parseInviteEmails().find((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
 
       if (invalidEmail) {
@@ -223,6 +256,9 @@ export default function OnboardingPage() {
         country: country.trim(),
         currency,
         language: locale,
+        timezone,
+        dateFormat,
+        numberFormat,
       });
       await onboardingService.updateModules(selectedModules);
       await onboardingService.inviteUsers({ emails: parseInviteEmails() });
@@ -334,6 +370,59 @@ export default function OnboardingPage() {
               )}
 
               {currentStep === 1 && (
+                <div className="grid gap-4 md:grid-cols-2">
+                  {countryOptions.map((option) => (
+                    <button
+                      key={option.code}
+                      type="button"
+                      onClick={() => changeCountry(option.code)}
+                      className={`rounded-3xl border p-5 text-left transition ${
+                        country === option.code ? "border-[#00C2A9] bg-[#00C2A9]/10" : "border-slate-200 bg-slate-50 hover:border-[#00C2A9]"
+                      }`}
+                    >
+                      <h3 className="font-black">{t(`country.${option.code}`)}</h3>
+                      <p className="mt-2 text-sm font-semibold text-slate-500">
+                        {option.currency} / {option.locale} / {option.timezone}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {currentStep === 2 && (
+                <div className="grid gap-5 md:grid-cols-2">
+                  <label className="block">
+                    <span className="text-sm font-black text-slate-700">{t("onboarding.currency")}</span>
+                    <select value={currency} onChange={(event) => setCurrency(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none focus:border-[#00C2A9]">
+                      {currencyOptions.map((item) => <option key={item}>{item}</option>)}
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="text-sm font-black text-slate-700">{t("profile.timezone")}</span>
+                    <select value={timezone} onChange={(event) => setTimezone(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none focus:border-[#00C2A9]">
+                      {Array.from(new Set(countryOptions.map((item) => item.timezone))).map((item) => <option key={item}>{item}</option>)}
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="text-sm font-black text-slate-700">{t("onboarding.dateFormat")}</span>
+                    <select value={dateFormat} onChange={(event) => setDateFormat(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none focus:border-[#00C2A9]">
+                      {Array.from(new Set(countryOptions.map((item) => item.dateFormat))).map((item) => <option key={item}>{item}</option>)}
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="text-sm font-black text-slate-700">{t("onboarding.numberFormat")}</span>
+                    <select value={numberFormat} onChange={(event) => setNumberFormat(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none focus:border-[#00C2A9]">
+                      {Array.from(new Set(countryOptions.map((item) => item.numberFormat))).map((item) => <option key={item}>{item}</option>)}
+                    </select>
+                  </label>
+                  <div className="rounded-2xl bg-slate-50 p-5 md:col-span-2">
+                    <p className="font-black">{t("onboarding.taxTitle")}</p>
+                    <p className="mt-2 text-sm font-semibold text-slate-500">{t("onboarding.taxText")}</p>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 3 && (
                 <div className="grid gap-4 md:grid-cols-3">
                   {sectorOptions.map((option) => (
                     <button
@@ -375,32 +464,7 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              {currentStep === 2 && (
-                <div className="grid gap-5 md:grid-cols-3">
-                  <label className="block">
-                    <span className="text-sm font-black text-slate-700">{t("onboarding.country")}</span>
-                    <select value={country} onChange={(event) => setCountry(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none focus:border-[#00C2A9]">
-                      {countryOptions.map((item) => (
-                        <option key={item} value={item}>
-                          {t(`country.${item}`)}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="block">
-                    <span className="text-sm font-black text-slate-700">{t("onboarding.currency")}</span>
-                    <select value={currency} onChange={(event) => setCurrency(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none focus:border-[#00C2A9]">
-                      {["EUR", "SEK", "USD", "CDF"].map((item) => <option key={item}>{item}</option>)}
-                    </select>
-                  </label>
-                  <div className="rounded-2xl bg-slate-50 p-5">
-                    <p className="font-black">{t("onboarding.taxTitle")}</p>
-                    <p className="mt-2 text-sm font-semibold text-slate-500">{t("onboarding.taxText")}</p>
-                  </div>
-                </div>
-              )}
-
-              {currentStep === 3 && (
+              {currentStep === 4 && (
                 <div className="grid gap-3 md:grid-cols-3">
                   {recommendedModules.map((module) => (
                     <button
@@ -417,7 +481,7 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              {currentStep === 4 && (
+              {currentStep === 5 && (
                 <div className="grid gap-5 lg:grid-cols-[1fr_.8fr]">
                   <label className="block">
                     <span className="text-sm font-black text-slate-700">{t("onboarding.invites")}</span>
@@ -434,7 +498,7 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              {currentStep === 5 && (
+              {currentStep === 6 && (
                 <div className="grid gap-5 md:grid-cols-3">
                   {[
                     [t("nav.clients"), t("onboarding.importClients")],
