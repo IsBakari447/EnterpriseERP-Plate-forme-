@@ -3536,6 +3536,7 @@ Object.assign(dictionaries.fr, {
   "onboarding.invalidInvite": "Une adresse e-mail d'invitation est invalide.",
   "onboarding.saving": "Enregistrement...",
   "onboarding.fileReady": "fichier pret a importer.",
+  "profile.preferencesError": "Impossible d'enregistrer les preferences.",
 });
 
 Object.assign(dictionaries.en, {
@@ -3572,6 +3573,7 @@ Object.assign(dictionaries.en, {
   "onboarding.invalidInvite": "One invitation email address is invalid.",
   "onboarding.saving": "Saving...",
   "onboarding.fileReady": "file ready to import.",
+  "profile.preferencesError": "Unable to save preferences.",
 });
 
 Object.assign(dictionaries.sv, {
@@ -3608,6 +3610,7 @@ Object.assign(dictionaries.sv, {
   "onboarding.invalidInvite": "En e-postadress for inbjudan ar ogiltig.",
   "onboarding.saving": "Sparar...",
   "onboarding.fileReady": "fil redo att importeras.",
+  "profile.preferencesError": "Det gick inte att spara preferenserna.",
 });
 
 Object.assign(dictionaries.de, {
@@ -3644,6 +3647,7 @@ Object.assign(dictionaries.de, {
   "onboarding.invalidInvite": "Eine Einladungs-E-Mail ist ungueltig.",
   "onboarding.saving": "Speichern...",
   "onboarding.fileReady": "Datei bereit zum Import.",
+  "profile.preferencesError": "Einstellungen konnten nicht gespeichert werden.",
 });
 
 Object.assign(dictionaries.es, {
@@ -3680,6 +3684,7 @@ Object.assign(dictionaries.es, {
   "onboarding.invalidInvite": "Un email de invitacion no es valido.",
   "onboarding.saving": "Guardando...",
   "onboarding.fileReady": "archivo listo para importar.",
+  "profile.preferencesError": "No se pudieron guardar las preferencias.",
 });
 
 Object.assign(dictionaries.pt, {
@@ -3716,6 +3721,7 @@ Object.assign(dictionaries.pt, {
   "onboarding.invalidInvite": "Um email de convite e invalido.",
   "onboarding.saving": "A guardar...",
   "onboarding.fileReady": "ficheiro pronto para importar.",
+  "profile.preferencesError": "Nao foi possivel guardar as preferencias.",
 });
 
 Object.assign(dictionaries.it, {
@@ -3752,6 +3758,7 @@ Object.assign(dictionaries.it, {
   "onboarding.invalidInvite": "Un indirizzo email di invito non e valido.",
   "onboarding.saving": "Salvataggio...",
   "onboarding.fileReady": "file pronto per l'importazione.",
+  "profile.preferencesError": "Impossibile salvare le preferenze.",
 });
 
 Object.assign(dictionaries.nl, {
@@ -3788,6 +3795,7 @@ Object.assign(dictionaries.nl, {
   "onboarding.invalidInvite": "Een uitnodigingsmail is ongeldig.",
   "onboarding.saving": "Opslaan...",
   "onboarding.fileReady": "bestand klaar om te importeren.",
+  "profile.preferencesError": "Voorkeuren konden niet worden opgeslagen.",
 });
 
 

@@ -160,6 +160,23 @@ export class CompanyService {
       data: sanitized,
     });
 
+    const shouldSyncUserPreferences = Boolean(
+      sanitized.language ||
+        sanitized.timezone ||
+        sanitized.currency
+    );
+
+    if (shouldSyncUserPreferences) {
+      await this.prisma.user.update({
+        where: { id: user.sub },
+        data: {
+          language: sanitized.language,
+          timezone: sanitized.timezone,
+          displayCurrency: sanitized.currency,
+        },
+      });
+    }
+
     await this.audit.record({
       companyId: company.id,
       userId: user.sub,
