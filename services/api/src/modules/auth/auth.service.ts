@@ -1,5 +1,5 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
-import { createHash } from "crypto";
+import { createHash, randomInt } from "crypto";
 import { UserRole } from "@prisma/client";
 import { JwtService } from "../../common/auth/jwt.service";
 import { PasswordService } from "../../common/auth/password.service";
@@ -28,9 +28,16 @@ type RequestMeta = {
   userAgent?: string;
 };
 
+type PasswordResetEntry = {
+  codeHash: string;
+  expiresAt: number;
+  attempts: number;
+};
+
 @Injectable()
 export class AuthService {
   private readonly loginAttempts = new Map<string, { count: number; resetAt: number; lockedUntil?: number }>();
+  private readonly passwordResetCodes = new Map<string, PasswordResetEntry>();
 
   constructor(
     private readonly prisma: PrismaService,
@@ -51,6 +58,10 @@ export class AuthService {
     if (!password || password.length < 8) {
       throw new BadRequestException("Le mot de passe doit contenir au moins 8 caracteres");
     }
+  }
+
+  private createResetCode() {
+    return String(randomInt(0, 1_000_000)).padStart(6, "0");
   }
 
   private getLoginRateKey(email: string, meta: RequestMeta) {
@@ -336,6 +347,109 @@ export class AuthService {
     });
 
     return { success: true };
+  }
+
+  async forgotPassword(input: { email?: string }, meta: RequestMeta) {
+    const email = this.normalizeEmail(input.email ?? "");
+
+    if (email) {
+      const user = await this.prisma.user.findUnique({
+        where: { email },
+        select: { id: true, companyId: true, email: true },
+      });
+
+      if (user) {
+        const code = this.createResetCode();
+        this.passwordResetCodes.set(email, {
+          codeHash: this.hashToken(code),
+          expiresAt: Date.now() + 15 * 60 * 1000,
+          attempts: 0,
+        });
+
+        await this.audit.record({
+          companyId: user.companyId ?? undefined,
+          userId: user.id,
+          module: "auth",
+          action: "password_reset_requested",
+          entityType: "User",
+          entityId: user.id,
+          ipAddress: meta.ipAddress,
+        });
+
+        if (process.env.NODE_ENV !== "production") {
+          return {
+            message: "Un code de verification a ete envoye si le compte existe.",
+            resetCode: code,
+          };
+        }
+      }
+    }
+
+    return { message: "Un code de verification a ete envoye si le compte existe." };
+  }
+
+  async resetPassword(input: { email?: string; code?: string; password?: string; confirmPassword?: string }, meta: RequestMeta) {
+    const email = this.normalizeEmail(input.email ?? "");
+    const code = String(input.code ?? "").trim();
+    const entry = this.passwordResetCodes.get(email);
+
+    if (!email || !code || !entry || entry.expiresAt < Date.now()) {
+      throw new BadRequestException("Le code est invalide ou expire.");
+    }
+
+    if (entry.attempts >= 5) {
+      this.passwordResetCodes.delete(email);
+      throw new BadRequestException("Le code est invalide ou expire.");
+    }
+
+    entry.attempts += 1;
+
+    if (entry.codeHash !== this.hashToken(code)) {
+      throw new BadRequestException("Le code est invalide ou expire.");
+    }
+
+    if (input.password !== input.confirmPassword) {
+      throw new BadRequestException("Les mots de passe ne correspondent pas.");
+    }
+
+    this.validatePassword(input.password ?? "");
+
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: { id: true, companyId: true },
+    });
+
+    if (!user) {
+      throw new BadRequestException("Le code est invalide ou expire.");
+    }
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordHash: this.password.hash(input.password ?? ""),
+        passwordChangedAt: new Date(),
+      },
+    });
+    await this.prisma.userSession.updateMany({
+      where: { userId: user.id },
+      data: {
+        revokedAt: new Date(),
+        refreshTokenHash: null,
+      },
+    });
+    this.passwordResetCodes.delete(email);
+
+    await this.audit.record({
+      companyId: user.companyId ?? undefined,
+      userId: user.id,
+      module: "auth",
+      action: "password_reset_completed",
+      entityType: "User",
+      entityId: user.id,
+      ipAddress: meta.ipAddress,
+    });
+
+    return { message: "Mot de passe mis a jour avec succes." };
   }
 
   async me(userId: string) {

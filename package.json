@@ -12,11 +12,12 @@
     "build": "npm run build:web && npm run build:api",
     "build:web": "npm --prefix apps/web run build",
     "build:api": "npm --prefix services/api run build",
+    "typecheck:mobile": "npm --prefix apps/mobile run typecheck",
     "start:web": "npm --prefix apps/web run start",
     "start:api": "npm --prefix services/api run start",
     "prisma:generate": "npm --prefix services/api run prisma:generate",
     "prisma:deploy": "npm --prefix services/api run prisma:deploy",
-    "qa": "npm run build && npm --prefix services/api exec prisma validate -- --schema services/api/prisma/schema.prisma",
+    "qa": "npm run build && npm run typecheck:mobile && npm --prefix services/api exec prisma validate -- --schema services/api/prisma/schema.prisma",
     "security:tenant-isolation": "npm --prefix services/api run security:tenant-isolation"
   }
 }

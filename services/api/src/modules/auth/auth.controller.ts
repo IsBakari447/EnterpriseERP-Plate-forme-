@@ -32,6 +32,17 @@ type RefreshBody = {
   refreshToken: string;
 };
 
+type ForgotPasswordBody = {
+  email?: string;
+};
+
+type ResetPasswordBody = {
+  email?: string;
+  code?: string;
+  password?: string;
+  confirmPassword?: string;
+};
+
 @Controller("auth")
 @TenantOptional()
 export class AuthController {
@@ -53,6 +64,18 @@ export class AuthController {
   @Post("refresh")
   refresh(@Body() body: RefreshBody, @Req() request: AuthenticatedRequest) {
     return this.authService.refresh(body.refreshToken, this.getMeta(request));
+  }
+
+  @Public()
+  @Post("forgot-password")
+  forgotPassword(@Body() body: ForgotPasswordBody, @Req() request: AuthenticatedRequest) {
+    return this.authService.forgotPassword(body, this.getMeta(request));
+  }
+
+  @Public()
+  @Post("reset-password")
+  resetPassword(@Body() body: ResetPasswordBody, @Req() request: AuthenticatedRequest) {
+    return this.authService.resetPassword(body, this.getMeta(request));
   }
 
   @Post("logout")

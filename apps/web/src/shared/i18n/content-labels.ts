@@ -607,6 +607,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Impossible d'envoyer la demande pour le moment.": "Unable to send the request right now.",
     "Mot de passe mis a jour avec succes.": "Password updated successfully.",
     "Le code est invalide ou expire.": "The code is invalid or expired.",
+    "Les mots de passe ne correspondent pas.": "Passwords do not match.",
     "Calculateur ROI": "ROI calculator",
     "Estimez les economies annuelles avec EnterpriseERP.": "Estimate annual savings with EnterpriseERP.",
     "Ajustez vos volumes et voyez rapidement l'impact potentiel sur le temps administratif, les relances et le retour sur investissement.":
@@ -1246,6 +1247,7 @@ const contentTranslations: Partial<Record<Locale, Record<string, string>>> = {
     "Impossible d'envoyer la demande pour le moment.": "Det gar inte att skicka begaran just nu.",
     "Mot de passe mis a jour avec succes.": "Losenordet har uppdaterats.",
     "Le code est invalide ou expire.": "Koden ar ogiltig eller har gatt ut.",
+    "Les mots de passe ne correspondent pas.": "Losenorden matchar inte.",
     "Calculateur ROI": "ROI-kalkylator",
     "Estimez les economies annuelles avec EnterpriseERP.": "Berakna arliga besparingar med EnterpriseERP.",
     "Ajustez vos volumes et voyez rapidement l'impact potentiel sur le temps administratif, les relances et le retour sur investissement.":

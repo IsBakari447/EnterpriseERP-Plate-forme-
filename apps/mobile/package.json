@@ -30,5 +30,10 @@
   "devDependencies": {
     "@types/react": "~19.1.10",
     "typescript": "~5.9.2"
+  },
+  "overrides": {
+    "decode-uri-component": "0.5.0",
+    "postcss": "8.5.28",
+    "uuid": "14.0.2"
   }
 }
