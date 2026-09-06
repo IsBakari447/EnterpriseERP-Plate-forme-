@@ -29,6 +29,15 @@ type OperationItem = {
   role?: string;
   roleKey?: string;
   contract?: string;
+  email?: string;
+  phone?: string;
+  department?: string;
+  manager?: string;
+  startDate?: string;
+  salary?: string;
+  leaveBalance?: string;
+  documents?: string;
+  nextAction?: string;
 };
 
 @Injectable()
@@ -97,9 +106,69 @@ export class OperationsService {
 
   getEmployees(): OperationItem[] {
     return [
-      { id: "emp-1", name: "Amina Diallo", title: "Amina Diallo", role: "Responsable ventes", roleKey: "api.hr.role.salesLead", subtitleKey: "api.hr.role.salesLead", contract: "CDI", value: "CDI", status: "present", statusKey: "status.present" },
-      { id: "emp-2", name: "Lucas Martin", title: "Lucas Martin", role: "Comptable", roleKey: "api.hr.role.accountant", subtitleKey: "api.hr.role.accountant", contract: "CDI", value: "CDI", status: "leave", statusKey: "status.leave" },
-      { id: "emp-3", name: "Sara Lindstrom", title: "Sara Lindstrom", role: "Support client", roleKey: "api.hr.role.support", subtitleKey: "api.hr.role.support", contract: "CDD", value: "CDD", status: "present", statusKey: "status.present" },
+      {
+        id: "emp-1",
+        name: "Amina Diallo",
+        title: "Amina Diallo",
+        role: "Sales manager",
+        roleKey: "api.hr.role.salesLead",
+        subtitleKey: "api.hr.role.salesLead",
+        contract: "CDI",
+        value: "CDI",
+        status: "Present",
+        statusKey: "status.present",
+        email: "amina.diallo@enterpriseerp.com",
+        phone: "+46 70 110 22 33",
+        department: "Sales",
+        manager: "Ladifa Makouet",
+        startDate: "2023-03-14",
+        salary: "4 200 EUR",
+        leaveBalance: "18 days",
+        documents: "Contract, ID, payroll",
+        nextAction: "Review quarterly objectives",
+      },
+      {
+        id: "emp-2",
+        name: "Lucas Martin",
+        title: "Lucas Martin",
+        role: "Accountant",
+        roleKey: "api.hr.role.accountant",
+        subtitleKey: "api.hr.role.accountant",
+        contract: "CDI",
+        value: "CDI",
+        status: "Leave",
+        statusKey: "status.leave",
+        email: "lucas.martin@enterpriseerp.com",
+        phone: "+46 70 330 44 55",
+        department: "Finance",
+        manager: "Ladifa Makouet",
+        startDate: "2022-09-01",
+        salary: "4 450 EUR",
+        leaveBalance: "6 days",
+        documents: "Contract, certifications",
+        nextAction: "Validate accounting export rights",
+      },
+      {
+        id: "emp-3",
+        name: "Sara Lindstrom",
+        title: "Sara Lindstrom",
+        role: "Customer support",
+        roleKey: "api.hr.role.support",
+        subtitleKey: "api.hr.role.support",
+        contract: "CDD",
+        value: "CDD",
+        status: "Present",
+        statusKey: "status.present",
+        email: "sara.lindstrom@enterpriseerp.com",
+        phone: "+46 70 660 77 88",
+        department: "Support",
+        manager: "Amina Diallo",
+        startDate: "2024-01-08",
+        salary: "3 650 EUR",
+        leaveBalance: "12 days",
+        documents: "Contract, onboarding file",
+        nextAction: "Assign customer onboarding queue",
+      },
     ];
   }
 

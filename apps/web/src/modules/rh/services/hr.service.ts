@@ -12,6 +12,15 @@ export type Employee = {
   role: string;
   contract: string;
   status: string;
+  email?: string;
+  phone?: string;
+  department?: string;
+  manager?: string;
+  startDate?: string;
+  salary?: string;
+  leaveBalance?: string;
+  documents?: string;
+  nextAction?: string;
 };
 
 async function getOrFallback<T>(path: string, fallback: T): Promise<T> {

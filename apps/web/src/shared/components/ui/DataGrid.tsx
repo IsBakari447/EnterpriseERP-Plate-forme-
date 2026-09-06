@@ -16,10 +16,12 @@ export default function DataGrid<T extends Record<string, string | number | unde
   columns,
   data,
   actions,
+  onRowClick,
 }: {
   columns: Column<T>[];
   data: T[];
   actions?: (row: T) => React.ReactNode;
+  onRowClick?: (row: T) => void;
 }) {
   const { locale } = useI18n();
   const [search, setSearch] = useState("");
@@ -88,13 +90,28 @@ export default function DataGrid<T extends Record<string, string | number | unde
 
           <tbody>
             {filteredData.map((row, index) => (
-              <tr key={index} className="border-t border-slate-100 hover:bg-slate-50">
+              <tr
+                key={index}
+                className={`border-t border-slate-100 hover:bg-slate-50 ${onRowClick ? "cursor-pointer focus-within:bg-slate-50" : ""}`}
+                onClick={() => onRowClick?.(row)}
+              >
                 {columns.map((column) => {
                   const value = row[column.key];
 
                   return (
                     <td key={String(column.key)} className="p-4">
-                      {column.badge ? (
+                      {onRowClick && column.key === columns[0]?.key ? (
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            onRowClick(row);
+                          }}
+                          className="text-left font-bold text-night underline-offset-4 hover:text-turquoise hover:underline focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
+                        >
+                          {tFixed(String(value ?? ""))}
+                        </button>
+                      ) : column.badge ? (
                         <Badge color={badgeColor(String(value))}>{tFixed(String(value))}</Badge>
                       ) : (
                         <span className="font-medium text-slate-700">{tFixed(String(value ?? ""))}</span>
