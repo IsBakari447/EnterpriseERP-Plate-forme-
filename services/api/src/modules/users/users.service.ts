@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { UserRole, UserStatus } from "@prisma/client";
 import { AuditService } from "../../common/audit/audit.service";
 import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
 import { rolePermissions } from "../../common/security/permissions";
+import { assertEmail, assertRequiredFields } from "../../common/validation/erp-validation";
 import { PrismaService } from "../../prisma.service";
 
 type CreateUserInput = {
@@ -71,9 +72,9 @@ export class UsersService {
   }
 
   async create(currentUser: AuthenticatedUser, data: CreateUserInput) {
-    if (!data.name || !data.email) {
-      throw new BadRequestException("Le nom et l'email sont obligatoires");
-    }
+    assertRequiredFields(data as unknown as Record<string, unknown>, ["name", "email"]);
+    assertEmail(data.email);
+    this.assertCanAssignRole(currentUser, data.role);
 
     const companyId = requireTenant(currentUser);
     const createdUser = await this.prisma.user.create({
@@ -109,6 +110,8 @@ export class UsersService {
   async update(currentUser: AuthenticatedUser, id: string, data: UpdateUserInput) {
     const existing = await this.findOne(currentUser, id);
     const companyId = requireTenant(currentUser);
+    assertEmail(data.email);
+    this.assertCanAssignRole(currentUser, data.role);
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: {
@@ -141,9 +144,9 @@ export class UsersService {
   }
 
   async invite(currentUser: AuthenticatedUser, data: InviteUserInput) {
-    if (!data.email) {
-      throw new BadRequestException("L'email est obligatoire");
-    }
+    assertRequiredFields(data as unknown as Record<string, unknown>, ["email"]);
+    assertEmail(data.email);
+    this.assertCanAssignRole(currentUser, data.role);
 
     const companyId = requireTenant(currentUser);
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
@@ -194,5 +197,19 @@ export class UsersService {
       role,
       permissions,
     }));
+  }
+
+  private assertCanAssignRole(currentUser: AuthenticatedUser, role?: UserRole) {
+    if (!role) {
+      return;
+    }
+
+    const inheritedPermissions = rolePermissions[currentUser.role] ?? [];
+    const tokenPermissions = currentUser.permissions ?? [];
+    const canManageRoles = [...inheritedPermissions, ...tokenPermissions].includes("roles.manage");
+
+    if (!canManageRoles) {
+      throw new ForbiddenException("Insufficient permission to assign roles.");
+    }
   }
 }

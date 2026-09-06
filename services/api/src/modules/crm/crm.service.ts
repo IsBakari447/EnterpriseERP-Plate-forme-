@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { AuditService } from "../../common/audit/audit.service";
 import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
+import { assertEmail, assertNonNegativeNumber, assertRequiredFields } from "../../common/validation/erp-validation";
 import { PrismaService } from "../../prisma.service";
 
 type ClientInput = {
@@ -59,6 +60,9 @@ export class CrmService {
 
   async create(user: AuthenticatedUser, data: ClientInput) {
     const companyId = requireTenant(user);
+    assertRequiredFields(data as unknown as Record<string, unknown>, ["name", "email"]);
+    assertEmail(data.email);
+    assertNonNegativeNumber(data.revenue, "revenue");
 
     const client = await this.prisma.client.create({
       data: toClientCreateData(data, companyId),
@@ -80,6 +84,8 @@ export class CrmService {
   async update(user: AuthenticatedUser, id: string, data: Partial<ClientInput>) {
     const existing = await this.findOne(user, id);
     const companyId = requireTenant(user);
+    assertEmail(data.email);
+    assertNonNegativeNumber(data.revenue, "revenue");
 
     const client = await this.prisma.client.update({
       where: { id },

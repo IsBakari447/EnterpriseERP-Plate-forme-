@@ -93,13 +93,7 @@ export const educationService = {
       return data;
     } catch (error) {
       const message = getApiErrorMessage(error, "Unable to save. Check the information.");
-      if (message !== "Unable to save. Check the information.") {
-        throw new Error(message);
-      }
-
-      const records = readLocalRecords(resource);
-      writeLocalRecords(resource, [localRecord, ...records]);
-      return localRecord as T;
+      throw new Error(message);
     }
   },
 
@@ -118,12 +112,7 @@ export const educationService = {
       return data;
     } catch (error) {
       const message = getApiErrorMessage(error, "Unable to save. Check the information.");
-      if (message !== "Unable to save. Check the information.") {
-        throw new Error(message);
-      }
-
-      writeLocalRecords(resource, records.map((record) => (record.id === id ? updatedRecord : record)));
-      return updatedRecord as T;
+      throw new Error(message);
     }
   },
 
@@ -132,9 +121,7 @@ export const educationService = {
       await apiClient.delete(`/education/${resource}/${id}`);
     } catch (error) {
       const message = getApiErrorMessage(error, "Unable to save. Check the information.");
-      if (message !== "Unable to save. Check the information.") {
-        throw new Error(message);
-      }
+      throw new Error(message);
     }
 
     writeLocalRecords(resource, readLocalRecords(resource).filter((record) => record.id !== id));

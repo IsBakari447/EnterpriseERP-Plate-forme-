@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { AuditService } from "../../common/audit/audit.service";
 import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
+import { assertNonNegativeNumber, assertRequiredFields, assertValidDate } from "../../common/validation/erp-validation";
 import { PrismaService } from "../../prisma.service";
 
 type InvoiceInput = {
@@ -59,6 +60,9 @@ export class FacturationService {
 
   async create(user: AuthenticatedUser, data: InvoiceInput) {
     const companyId = requireTenant(user);
+    assertRequiredFields(data as unknown as Record<string, unknown>, ["number", "customer", "due"]);
+    assertNonNegativeNumber(data.amount, "amount");
+    assertValidDate(data.due, "due date");
 
     const invoice = await this.prisma.invoice.create({
       data: toInvoiceCreateData(data, companyId),
@@ -80,6 +84,8 @@ export class FacturationService {
   async update(user: AuthenticatedUser, id: string, data: Partial<InvoiceInput>) {
     const existing = await this.findOne(user, id);
     const companyId = requireTenant(user);
+    assertNonNegativeNumber(data.amount, "amount");
+    assertValidDate(data.due, "due date");
 
     const invoice = await this.prisma.invoice.update({
       where: { id },

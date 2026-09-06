@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
+import { assertNonNegativeNumber, assertRequiredFields, assertValidDate } from "../../common/validation/erp-validation";
 import { PrismaService } from "../../prisma.service";
 
 export type EducationResource =
@@ -131,14 +132,7 @@ export class EducationService {
   }
 
   private validateRequiredFields(config: ResourceConfig, data: Record<string, unknown>) {
-    const missingFields = config.requiredFields.filter((field) => {
-      const value = data[field];
-      return value === undefined || value === null || String(value).trim() === "";
-    });
-
-    if (missingFields.length > 0) {
-      throw new BadRequestException("Missing required fields.");
-    }
+    assertRequiredFields(data, config.requiredFields);
   }
 
   private handlePrismaError(resource: EducationResource, error: unknown): never {
@@ -164,12 +158,14 @@ export class EducationService {
 
     for (const field of config.dateFields) {
       if (typeof data[field] === "string" && data[field]) {
+        assertValidDate(data[field], field);
         data[field] = new Date(data[field]);
       }
     }
 
     for (const field of config.numberFields) {
       if (data[field] !== undefined && data[field] !== null && data[field] !== "") {
+        assertNonNegativeNumber(data[field], field);
         data[field] = Number(data[field]);
       }
     }

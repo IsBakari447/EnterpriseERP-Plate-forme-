@@ -1,4 +1,5 @@
 import { apiClient } from "@shared/api/client";
+import { getApiErrorMessage } from "@shared/api/errors";
 
 export type ClientDto = {
   id?: string;
@@ -73,10 +74,8 @@ export const clientService = {
       const clients = readLocalClients();
       writeLocalClients([savedClient, ...clients.filter((item) => item.id !== savedClient.id)]);
       return savedClient;
-    } catch {
-      const clients = readLocalClients();
-      writeLocalClients([nextClient, ...clients]);
-      return nextClient;
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, "Unable to save. Check the information."));
     }
   },
 
@@ -99,17 +98,16 @@ export const clientService = {
       const savedClient = normalizeClient(data);
       writeLocalClients(clients.map((item) => (item.id === id ? savedClient : item)));
       return savedClient;
-    } catch {
-      writeLocalClients(clients.map((item) => (item.id === id ? updated : item)));
-      return updated;
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, "Unable to save. Check the information."));
     }
   },
 
   async remove(id: string): Promise<void> {
     try {
       await apiClient.delete(`/clients/${id}`);
-    } catch {
-      // Delete locally even when the remote API is unavailable.
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, "Unable to save. Check the information."));
     }
 
     writeLocalClients(readLocalClients().filter((client) => client.id !== id));

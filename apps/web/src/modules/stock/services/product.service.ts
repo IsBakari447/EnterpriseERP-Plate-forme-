@@ -1,4 +1,5 @@
 import { apiClient } from "@shared/api/client";
+import { getApiErrorMessage } from "@shared/api/errors";
 import { products as fallbackProducts } from "../data";
 
 export type ProductDto = {
@@ -96,10 +97,8 @@ export const productService = {
       const products = readLocalProducts();
       writeLocalProducts([savedProduct, ...products.filter((item) => item.id !== savedProduct.id)]);
       return savedProduct;
-    } catch {
-      const products = readLocalProducts();
-      writeLocalProducts([nextProduct, ...products]);
-      return nextProduct;
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, "Unable to save. Check the information."));
     }
   },
 
@@ -122,17 +121,16 @@ export const productService = {
       const savedProduct = normalizeProduct(data);
       writeLocalProducts(products.map((item) => (item.id === id ? savedProduct : item)));
       return savedProduct;
-    } catch {
-      writeLocalProducts(products.map((item) => (item.id === id ? updated : item)));
-      return updated;
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, "Unable to save. Check the information."));
     }
   },
 
   async remove(id: string): Promise<void> {
     try {
       await apiClient.delete(`/products/${id}`);
-    } catch {
-      // Delete locally even when the remote API is unavailable.
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, "Unable to save. Check the information."));
     }
 
     writeLocalProducts(readLocalProducts().filter((product) => product.id !== id));

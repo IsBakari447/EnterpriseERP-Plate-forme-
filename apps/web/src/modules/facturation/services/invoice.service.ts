@@ -1,4 +1,5 @@
 import { apiClient } from "@shared/api/client";
+import { getApiErrorMessage } from "@shared/api/errors";
 import { invoices as fallbackInvoices } from "../data";
 
 export type InvoiceDto = {
@@ -95,18 +96,16 @@ export const invoiceService = {
       const invoices = readLocalInvoices();
       writeLocalInvoices([savedInvoice, ...invoices.filter((item) => item.id !== savedInvoice.id)]);
       return savedInvoice;
-    } catch {
-      const invoices = readLocalInvoices();
-      writeLocalInvoices([nextInvoice, ...invoices]);
-      return nextInvoice;
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, "Unable to save. Check the information."));
     }
   },
 
   async remove(id: string): Promise<void> {
     try {
       await apiClient.delete(`/invoices/${id}`);
-    } catch {
-      // Delete locally even when the remote API is unavailable.
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, "Unable to save. Check the information."));
     }
 
     writeLocalInvoices(readLocalInvoices().filter((invoice) => invoice.id !== id));

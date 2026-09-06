@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { AuditService } from "../../common/audit/audit.service";
 import { AuthenticatedUser, requireTenant } from "../../common/auth/current-user.decorator";
+import { assertNonNegativeNumber, assertRequiredFields } from "../../common/validation/erp-validation";
 import { PrismaService } from "../../prisma.service";
 
 type ProductInput = {
@@ -59,6 +60,9 @@ export class StockService {
 
   async create(user: AuthenticatedUser, data: ProductInput) {
     const companyId = requireTenant(user);
+    assertRequiredFields(data as unknown as Record<string, unknown>, ["name", "sku"]);
+    assertNonNegativeNumber(data.quantity, "quantity");
+    assertNonNegativeNumber(data.value, "value");
 
     const product = await this.prisma.product.create({
       data: toProductCreateData(data, companyId),
@@ -80,6 +84,8 @@ export class StockService {
   async update(user: AuthenticatedUser, id: string, data: Partial<ProductInput>) {
     const existing = await this.findOne(user, id);
     const companyId = requireTenant(user);
+    assertNonNegativeNumber(data.quantity, "quantity");
+    assertNonNegativeNumber(data.value, "value");
 
     const product = await this.prisma.product.update({
       where: { id },
