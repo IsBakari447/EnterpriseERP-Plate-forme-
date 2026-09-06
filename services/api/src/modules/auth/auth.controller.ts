@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Req } from "@nestjs/common";
 import { Public } from "../../common/auth/public.decorator";
+import { TenantOptional } from "../../common/tenant/tenant-optional.decorator";
 import { AuthService } from "./auth.service";
 
 type AuthenticatedRequest = {
@@ -32,6 +33,7 @@ type RefreshBody = {
 };
 
 @Controller("auth")
+@TenantOptional()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

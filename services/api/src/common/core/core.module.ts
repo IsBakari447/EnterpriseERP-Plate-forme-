@@ -9,6 +9,7 @@ import { JwtService } from "../auth/jwt.service";
 import { PasswordService } from "../auth/password.service";
 import { I18nModule } from "../i18n/i18n.module";
 import { PermissionsGuard } from "../security/permissions.guard";
+import { TenantGuard } from "../tenant/tenant.guard";
 
 @Global()
 @Module({
@@ -27,6 +28,10 @@ import { PermissionsGuard } from "../security/permissions.guard";
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: TenantGuard,
     },
     {
       provide: APP_GUARD,
