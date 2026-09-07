@@ -2,6 +2,7 @@
 
 import Sidebar from "@shared/components/layout/Sidebar";
 import PageHeader from "@shared/components/layout/PageHeader";
+import MobileShell from "@shared/components/layout/MobileShell";
 
 export default function ERPLayout({
   title,
@@ -19,8 +20,9 @@ export default function ERPLayout({
   return (
     <main className="min-h-screen bg-[#F4F7FB]">
       <Sidebar />
+      <MobileShell />
 
-      <section className="p-5 lg:ml-64 lg:p-8 xl:p-10">
+      <section className="w-full overflow-x-hidden px-4 py-5 sm:px-5 lg:ml-64 lg:p-8 xl:p-10">
         <PageHeader
           title={title}
           subtitle={subtitle}

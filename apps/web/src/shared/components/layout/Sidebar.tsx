@@ -69,7 +69,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-full w-64 flex-col border-r border-white/10 bg-night px-4 py-5 text-white">
+    <aside className="fixed left-0 top-0 z-40 hidden h-full w-64 flex-col border-r border-white/10 bg-night px-4 py-5 text-white lg:flex">
       <Link href="/" className="mb-5 flex items-center gap-3">
         <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white p-1.5 shadow-sm">
           <Image

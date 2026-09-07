@@ -15,18 +15,18 @@ export default function PageHeader({
   onAction?: () => void;
 }) {
   return (
-    <header className="mb-8 flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
-      <div>
-        <h1 className="text-3xl font-bold text-night lg:text-4xl">
+    <header className="mb-6 flex flex-col justify-between gap-4 lg:mb-8 lg:flex-row lg:items-center">
+      <div className="min-w-0">
+        <h1 className="text-2xl font-bold leading-tight text-night sm:text-3xl lg:text-4xl">
           {title}
         </h1>
 
-        <p className="mt-1 text-slate-500">
+        <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-500 sm:text-base">
           {subtitle}
         </p>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 sm:gap-3 lg:overflow-visible lg:pb-0">
         <CommandPalette />
 
         <NotificationCenter />
