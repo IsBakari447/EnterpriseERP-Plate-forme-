@@ -22,6 +22,123 @@ model Client {
   @@index([companyId])
 }
 
+model SalesOrder {
+  id        String   @id @default(cuid())
+  companyId String
+  number    String
+  customer  String
+  amount    Float    @default(0)
+  status    String   @default("pending")
+  orderDate DateTime @default(now())
+  dueDate   DateTime?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, number])
+  @@index([companyId])
+  @@index([orderDate])
+  @@index([status])
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  companyId String
+  invoiceId String?
+  reference String
+  customer  String?
+  amount    Float    @default(0)
+  method    String?
+  status    String   @default("received")
+  paidAt    DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  invoice   Invoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+
+  @@unique([companyId, reference])
+  @@index([companyId])
+  @@index([invoiceId])
+  @@index([paidAt])
+  @@index([status])
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  companyId String
+  label     String
+  category  String?
+  supplier  String?
+  amount    Float    @default(0)
+  status    String   @default("pending")
+  expenseDate DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([expenseDate])
+  @@index([status])
+}
+
+model ReportView {
+  id        String   @id @default(cuid())
+  companyId String
+  name      String
+  type      String   @default("custom")
+  status    String   @default("ready")
+  schedule  String?
+  lastRunAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@index([status])
+}
+
+model Appointment {
+  id        String   @id @default(cuid())
+  companyId String
+  title     String
+  clientName String?
+  scheduledAt DateTime
+  endAt     DateTime?
+  status    String   @default("scheduled")
+  location  String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+model ProductionOrder {
+  id        String   @id @default(cuid())
+  companyId String
+  number    String
+  productName String
+  quantity  Int      @default(0)
+  plannedCost Float  @default(0)
+  actualCost  Float?
+  progress  Int      @default(0)
+  status    String   @default("planned")
+  dueDate   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, number])
+  @@index([companyId])
+  @@index([status])
+  @@index([dueDate])
+}
+
 model Product {
   id        String   @id @default(cuid())
   companyId String?
@@ -48,6 +165,7 @@ model Invoice {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  payments  Payment[]
 
   @@index([companyId])
 }
@@ -79,6 +197,12 @@ model Company {
   clients        Client[]
   products       Product[]
   invoices       Invoice[]
+  salesOrders    SalesOrder[]
+  payments       Payment[]
+  expenses       Expense[]
+  reportViews    ReportView[]
+  appointments   Appointment[]
+  productionOrders ProductionOrder[]
   educationStudents EducationStudent[]
   educationTeachers EducationTeacher[]
   educationClasses  EducationClass[]

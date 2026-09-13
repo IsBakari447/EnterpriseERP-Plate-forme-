@@ -15,15 +15,33 @@ type ModulesResponse = {
   modules: ApiModule[];
 };
 
+type CompanyModulesResponse = {
+  enabledModules: string[];
+};
+
 export type ModuleStatusMap = Partial<
   Record<ModuleKey, ApiModuleStatus>
 >;
 
 const apiToMobileModule: Record<string, ModuleKey | undefined> = {
   crm: "crm",
+  clients: "crm",
   stock: "stock",
+  inventory: "stock",
+  products: "stock",
   facturation: "facturation",
+  invoices: "facturation",
+  billing: "facturation",
+  sales: "ventes",
+  hr: "rh",
+  finance: "comptabilite",
+  accounting: "comptabilite",
+  reports: "rapports",
+  appointments: "rendez-vous",
+  reservations: "rendez-vous",
+  production: "production",
   ai: "assistant",
+  assistant: "assistant",
 };
 
 export async function getModuleStatuses(): Promise<ModuleStatusMap> {
@@ -38,4 +56,16 @@ export async function getModuleStatuses(): Promise<ModuleStatusMap> {
 
     return result;
   }, {});
+}
+
+export async function getCompanyEnabledModules(): Promise<ModuleKey[]> {
+  const response = await api<CompanyModulesResponse>(endpoints.companyModules);
+
+  return Array.from(
+    new Set(
+      response.enabledModules
+        .map((module) => apiToMobileModule[module] ?? (module as ModuleKey))
+        .filter(Boolean),
+    ),
+  );
 }

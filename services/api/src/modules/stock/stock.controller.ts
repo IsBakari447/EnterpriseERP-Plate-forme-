@@ -2,14 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common"
 import { CurrentUser, AuthenticatedUser } from "../../common/auth/current-user.decorator";
 import { Permissions } from "../../common/security/permissions.decorator";
 import { StockService } from "./stock.service";
-
-type ProductInput = {
-  name: string;
-  sku: string;
-  quantity: number;
-  status: string;
-  value: number;
-};
+import { CreateProductDto, UpdateProductDto } from "./dto/product.dto";
 
 @Controller("products")
 export class StockController {
@@ -29,13 +22,13 @@ export class StockController {
 
   @Post()
   @Permissions("stock.adjust")
-  create(@CurrentUser() user: AuthenticatedUser, @Body() body: ProductInput) {
+  create(@CurrentUser() user: AuthenticatedUser, @Body() body: CreateProductDto) {
     return this.stockService.create(user, body);
   }
 
   @Put(":id")
   @Permissions("stock.adjust")
-  update(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string, @Body() body: Partial<ProductInput>) {
+  update(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string, @Body() body: UpdateProductDto) {
     return this.stockService.update(user, id, body);
   }
 

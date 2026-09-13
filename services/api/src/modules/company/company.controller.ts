@@ -2,23 +2,7 @@ import { Body, Controller, Get, Patch, Post, Put } from "@nestjs/common";
 import { CurrentUser, AuthenticatedUser } from "../../common/auth/current-user.decorator";
 import { Permissions } from "../../common/security/permissions.decorator";
 import { CompanyService } from "./company.service";
-
-type UpdateCompanyInput = {
-  name?: string;
-  sector?: string;
-  businessType?: string | null;
-  email?: string;
-  phone?: string;
-  address?: string;
-  country?: string;
-  currency?: string;
-  language?: string;
-  timezone?: string;
-  dateFormat?: string;
-  numberFormat?: string;
-  enabledModules?: string[];
-  onboardingCompleted?: boolean;
-};
+import { UpdateCompanyDto, UpdateCompanyModulesDto } from "./dto/company.dto";
 
 @Controller("company")
 export class CompanyController {
@@ -38,19 +22,19 @@ export class CompanyController {
 
   @Put()
   @Permissions("company.update")
-  updateCurrentCompany(@CurrentUser() user: AuthenticatedUser, @Body() body: UpdateCompanyInput) {
+  updateCurrentCompany(@CurrentUser() user: AuthenticatedUser, @Body() body: UpdateCompanyDto) {
     return this.companyService.updateCurrentCompany(user, body);
   }
 
   @Patch()
   @Permissions("company.update")
-  patchCurrentCompany(@CurrentUser() user: AuthenticatedUser, @Body() body: UpdateCompanyInput) {
+  patchCurrentCompany(@CurrentUser() user: AuthenticatedUser, @Body() body: UpdateCompanyDto) {
     return this.companyService.updateCurrentCompany(user, body);
   }
 
   @Patch("current")
   @Permissions("company.update")
-  patchCurrentCompanyAlias(@CurrentUser() user: AuthenticatedUser, @Body() body: UpdateCompanyInput) {
+  patchCurrentCompanyAlias(@CurrentUser() user: AuthenticatedUser, @Body() body: UpdateCompanyDto) {
     return this.companyService.updateCurrentCompany(user, body);
   }
 
@@ -62,7 +46,7 @@ export class CompanyController {
 
   @Patch("current/modules")
   @Permissions("company.update")
-  updateCurrentModules(@CurrentUser() user: AuthenticatedUser, @Body() body: { enabledModules?: string[] }) {
+  updateCurrentModules(@CurrentUser() user: AuthenticatedUser, @Body() body: UpdateCompanyModulesDto) {
     return this.companyService.updateCurrentModules(user, body.enabledModules ?? []);
   }
 

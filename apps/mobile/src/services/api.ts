@@ -1,9 +1,14 @@
 import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 
-export const API_URL =
+const configuredApiUrl =
+  process.env.EXPO_PUBLIC_API_URL ??
+  process.env.NEXT_PUBLIC_API_URL ??
   Constants.expoConfig?.extra?.apiUrl ??
   "https://enterpriseerp-api.onrender.com";
+
+export const API_URL =
+  configuredApiUrl.replace(/\/api\/?$/, "").replace(/\/$/, "");
 
 const ACCESS_TOKEN_KEY = "enterpriseerp.accessToken";
 const REFRESH_TOKEN_KEY = "enterpriseerp.refreshToken";
@@ -12,11 +17,11 @@ export const endpoints = {
   health: "/health",
   readiness: "/health/ready",
   login: "/api/auth/login",
-  register: "/api/auth/register",
   me: "/api/auth/me",
   refresh: "/api/auth/refresh",
   logout: "/api/auth/logout",
-  modules: "/api/modules",
+  modules: "/api/platform/modules",
+  companyModules: "/api/company/current/modules",
   platform: "/api/platform/foundation",
 } as const;
 

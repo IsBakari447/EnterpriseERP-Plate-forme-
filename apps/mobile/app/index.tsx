@@ -14,46 +14,27 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { KpiCard } from "@/components/KpiCard";
 import { ModuleCard } from "@/components/ModuleCard";
+import { normalizeSectorKey } from "@/config/sectors";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSector } from "@/context/SectorContext";
 import { locales } from "@/i18n";
+import type { Locale } from "@/i18n";
 import { checkApiHealth } from "@/services/api";
-import { getModuleStatuses, type ModuleStatusMap } from "@/services/modules";
+import {
+  getCompanyEnabledModules,
+  getModuleStatuses,
+  type ModuleStatusMap,
+} from "@/services/modules";
 import { colors } from "@/theme";
-import type { SectorKey } from "@/types/sector";
-
-function normalizeSector(value?: string | null): SectorKey | null {
-  if (!value) return null;
-
-  const key = value.toLowerCase();
-
-  if (key === "retail") return "commerce";
-  if (key === "health") return "sante";
-  if (key === "industry") return "industrie";
-
-  if (
-    key === "general" ||
-    key === "restaurant" ||
-    key === "commerce" ||
-    key === "education" ||
-    key === "sante" ||
-    key === "transport" ||
-    key === "industrie" ||
-    key === "hotel" ||
-    key === "construction"
-  ) {
-    return key;
-  }
-
-  return null;
-}
+import type { ModuleKey } from "@/types/sector";
 
 export default function Dashboard() {
   const { authenticated, loading: authLoading, signOut, user } = useAuth();
   const { locale, ready: languageReady, setLocale, t } = useLanguage();
-  const { sector, ready: sectorReady, hasStoredSector, setAccountSector } = useSector();
+  const { sector, sectorKey, ready: sectorReady, setAccountSector, clearAccountSector } = useSector();
   const [moduleStatuses, setModuleStatuses] = useState<ModuleStatusMap>({});
+  const [enabledModules, setEnabledModules] = useState<ModuleKey[] | null>(null);
   const [apiOnline, setApiOnline] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -63,19 +44,35 @@ export default function Dashboard() {
   }, [authLoading, authenticated]);
 
   useEffect(() => {
-    const userSector = normalizeSector(user?.company?.sector);
+    const userSector = normalizeSectorKey(user?.company?.sector);
 
-    if (userSector && !hasStoredSector) {
-      setAccountSector(userSector);
+    if (userSector && userSector !== sectorKey) {
+      void setAccountSector(userSector);
     }
-  }, [hasStoredSector, setAccountSector, user?.company?.sector]);
+  }, [sectorKey, setAccountSector, user?.company?.sector]);
+
+  useEffect(() => {
+    const accountLanguage = user?.company?.language;
+
+    if (
+      (accountLanguage === "fr" || accountLanguage === "en" || accountLanguage === "sv") &&
+      accountLanguage !== locale
+    ) {
+      void setLocale(accountLanguage as Locale);
+    }
+  }, [locale, setLocale, user?.company?.language]);
 
   useEffect(() => {
     if (!authenticated) return;
 
-    getModuleStatuses()
-      .then(setModuleStatuses)
-      .catch(() => setModuleStatuses({}));
+    Promise.all([
+      getModuleStatuses()
+        .then(setModuleStatuses)
+        .catch(() => setModuleStatuses({})),
+      getCompanyEnabledModules()
+        .then(setEnabledModules)
+        .catch(() => setEnabledModules(null)),
+    ]);
 
     checkApiHealth()
       .then(() => setApiOnline(true))
@@ -84,10 +81,16 @@ export default function Dashboard() {
 
   const handleSignOut = async () => {
     await signOut();
+    await clearAccountSector();
     router.replace("/login");
   };
 
-  if (authLoading || !sectorReady || !languageReady || !authenticated) {
+  const visibleModules =
+    enabledModules && enabledModules.length > 0
+      ? sector.modules.filter((module) => enabledModules.includes(module))
+      : sector.modules;
+
+  if (authLoading || !sectorReady || !languageReady || !authenticated || !user?.company) {
     return (
       <View style={styles.loader}>
         <ActivityIndicator color={colors.primary} />
@@ -165,28 +168,41 @@ export default function Dashboard() {
           </View>
         </View>
 
-        <Pressable
-          onPress={() => router.push("/sectors")}
-          style={[styles.sector, { backgroundColor: sector.accent }]}
-        >
+        <View style={[styles.sector, { backgroundColor: sector.accent }]}>
           <View>
             <Text style={styles.sectorHint}>{t("dashboard.activeSector")}</Text>
             <Text style={styles.sectorName}>{t(sector.labelKey)}</Text>
+            <Text style={styles.sectorSource}>{t("dashboard.sectorFromAccount")}</Text>
           </View>
-          <Ionicons name="chevron-forward" size={24} color="white" />
-        </Pressable>
+          <Ionicons name="lock-closed-outline" size={22} color="white" />
+        </View>
 
         <Text style={styles.section}>{t("dashboard.overview")}</Text>
         <View style={styles.grid}>
-          {sector.kpis.map((kpi) => (
-            <KpiCard
-              key={kpi.key}
-              label={t(kpi.labelKey)}
-              value={kpi.value}
-              trend={t(kpi.trendKey)}
-              accent={sector.accent}
-            />
-          ))}
+          <KpiCard
+            label={t("accountProfile.companyName")}
+            value={user.company.name ?? "EnterpriseERP"}
+            trend={t("dashboard.sectorFromAccount")}
+            accent={sector.accent}
+          />
+          <KpiCard
+            label={t("dashboard.activeSector")}
+            value={t(sector.labelKey)}
+            trend={user.company.country ?? t("accountProfile.companyContext")}
+            accent={sector.accent}
+          />
+          <KpiCard
+            label={t("accountProfile.currency")}
+            value={user.company.currency ?? "-"}
+            trend={user.company.language ?? locale}
+            accent={sector.accent}
+          />
+          <KpiCard
+            label={t("dashboard.modules")}
+            value={String(visibleModules.length)}
+            trend={enabledModules ? t("dashboard.modulesFromAccount") : t("dashboard.modulesFromSector")}
+            accent={sector.accent}
+          />
         </View>
 
         <View style={styles.commandCenter}>
@@ -203,25 +219,15 @@ export default function Dashboard() {
           </View>
         </View>
 
-        <View style={styles.panel}>
-          <Text style={styles.panelTitle}>{t("dashboard.priorityActions")}</Text>
-          {sector.priorityActionKeys.map((actionKey) => (
-            <View key={actionKey} style={styles.actionRow}>
-              <Ionicons name="alert-circle-outline" size={18} color={sector.accent} />
-              <Text style={styles.actionText}>{t(actionKey)}</Text>
-            </View>
-          ))}
-        </View>
-
         <View style={styles.sectionRow}>
           <Text style={styles.section}>{t("dashboard.modules")}</Text>
           <Text style={[styles.count, { color: sector.accent }]}>
-            {sector.modules.length} {t("dashboard.activeModules")}
+            {visibleModules.length} {t("dashboard.activeModules")}
           </Text>
         </View>
 
         <View style={styles.moduleGrid}>
-          {sector.modules.map((module) => (
+          {visibleModules.map((module) => (
             <ModuleCard
               key={module}
               module={module}
@@ -233,12 +239,10 @@ export default function Dashboard() {
 
         <View style={styles.split}>
           <View style={styles.panelHalf}>
-            <Text style={styles.panelTitle}>{t("dashboard.recentActivity")}</Text>
-            {sector.recentActivityKeys.map((eventKey) => (
-              <Text key={eventKey} style={styles.timelineItem}>
-                {t(eventKey)}
-              </Text>
-            ))}
+            <Text style={styles.panelTitle}>{t("accountProfile.companyContext")}</Text>
+            <Text style={styles.timelineItem}>{user.company.name ?? "EnterpriseERP"}</Text>
+            <Text style={styles.timelineItem}>{t(sector.labelKey)}</Text>
+            <Text style={styles.timelineItem}>{user.company.timezone ?? "-"}</Text>
           </View>
 
           <View style={styles.panelHalf}>
@@ -339,6 +343,7 @@ const styles = StyleSheet.create({
   },
   sectorHint: { color: "#DBEAFE", fontSize: 12, fontWeight: "700" },
   sectorName: { color: "white", fontWeight: "900", fontSize: 22, marginTop: 4 },
+  sectorSource: { color: "#E0F2FE", fontWeight: "800", fontSize: 12, marginTop: 8 },
   section: { color: colors.text, fontWeight: "900", fontSize: 18, marginTop: 24, marginBottom: 14 },
   sectionRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   count: { fontWeight: "800", marginTop: 14 },

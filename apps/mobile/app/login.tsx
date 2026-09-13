@@ -126,8 +126,9 @@ export default function LoginScreen() {
             )}
           </Pressable>
 
-          <Pressable onPress={() => router.push("/register")} style={styles.linkButton}>
-            <Text style={styles.linkText}>{t("login.createAccount")}</Text>
+          <Pressable onPress={() => router.push("/register")} style={styles.accessNotice}>
+            <Ionicons name="shield-checkmark-outline" size={18} color={colors.primary} />
+            <Text style={styles.accessNoticeText}>{t("login.mobileAccess")}</Text>
           </Pressable>
         </View>
       </KeyboardAvoidingView>
@@ -233,12 +234,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "800",
   },
-  linkButton: {
+  accessNotice: {
+    flexDirection: "row",
     alignItems: "center",
+    gap: 8,
     marginTop: 18,
+    padding: 13,
+    borderRadius: 14,
+    backgroundColor: "#ECFDF5",
   },
-  linkText: {
-    color: colors.primary,
+  accessNoticeText: {
+    flex: 1,
+    color: colors.primaryDark,
     fontWeight: "800",
+    lineHeight: 19,
   },
 });

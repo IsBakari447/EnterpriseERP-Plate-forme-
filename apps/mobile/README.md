@@ -2,7 +2,7 @@
 
 Application mobile Expo/React Native adaptable par secteur et concue pour l'API NestJS d'EnterpriseERP Cloud.
 
-Cette version mobile n'est pas une copie reduite du web. Elle privilegie les usages terrain : connexion securisee, secteur actif, KPI rapides, actions prioritaires, modules accessibles au toucher, et etats API clairs.
+Cette version mobile est l'extension mobile du projet web EnterpriseERP Cloud. Les comptes, roles, secteurs, preferences, modules et donnees viennent du SaaS web et de l'API. La creation de compte reste reservee a l'administrateur dans l'application web.
 
 ## Installation
 
@@ -29,13 +29,13 @@ N'utilisez pas `localhost` depuis un telephone physique : cela pointerait vers l
 ## Fonctionnalites finalisees
 
 - Connexion via `/api/auth/login`.
-- Creation de compte via `/api/auth/register`.
+- Pas de creation de compte autonome dans le mobile : l'administrateur cree les comptes depuis EnterpriseERP Cloud web.
 - Stockage securise access token + refresh token avec `expo-secure-store`.
 - Rafraichissement automatique du token via `/api/auth/refresh`.
 - Chargement de l'utilisateur via `/api/auth/me`.
-- Choix et persistance du secteur actif.
+- Synchronisation du secteur actif, de la langue et des preferences depuis le compte EnterpriseERP Cloud, sans selection locale du secteur dans le mobile.
 - Support multilingue mobile FR / EN / SV.
-- Secteurs alignes avec EnterpriseERP Cloud : entreprise generale, restauration, commerce, construction, sante, education, transport, industrie et hotellerie.
+- Secteurs alignes avec EnterpriseERP Cloud : entreprise generale, restauration, commerce, construction, sante, education, transport, industrie, hebergement, agriculture et elevage.
 - Dashboard mobile avec KPI, actions prioritaires, modules, activite recente et etat API.
 - CRM mobile connecte a `/api/clients`.
 - Ecrans modules generiques prets pour les flux terrain.

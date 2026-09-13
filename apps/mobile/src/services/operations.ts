@@ -6,7 +6,8 @@ export type ModuleApiKey =
   | "reports"
   | "accounting"
   | "appointments"
-  | "production";
+  | "production"
+  | "assistant";
 
 export type ApiMetric = {
   label?: string;
@@ -35,6 +36,7 @@ export type ApiListItem = {
   role?: string;
   roleKey?: string;
   contract?: string;
+  key?: string;
 };
 
 const moduleEndpoints: Record<ModuleApiKey, { kpis: string; items: string }> = {
@@ -44,6 +46,7 @@ const moduleEndpoints: Record<ModuleApiKey, { kpis: string; items: string }> = {
   accounting: { kpis: "/api/accounting/kpis", items: "/api/accounting/items" },
   appointments: { kpis: "/api/appointments/kpis", items: "/api/appointments/items" },
   production: { kpis: "/api/production/kpis", items: "/api/production/items" },
+  assistant: { kpis: "/api/assistant/kpis", items: "/api/assistant/suggestions" },
 };
 
 export async function getModuleKpis(module: ModuleApiKey) {

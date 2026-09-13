@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useLanguage } from "@/context/LanguageContext";
@@ -32,8 +32,8 @@ type MobileModuleWorkspaceProps = {
   titleKey: string;
   subtitleKey: string;
   icon: keyof typeof Ionicons.glyphMap;
-  metrics: Metric[];
-  sections: ModuleSection[];
+  metrics?: Metric[];
+  sections?: ModuleSection[];
   aiKey: string;
   apiModule?: ModuleApiKey;
 };
@@ -42,8 +42,8 @@ export function MobileModuleWorkspace({
   titleKey,
   subtitleKey,
   icon,
-  metrics,
-  sections,
+  metrics = [],
+  sections = [],
   aiKey,
   apiModule,
 }: MobileModuleWorkspaceProps) {
@@ -91,7 +91,7 @@ export function MobileModuleWorkspace({
   }, [apiModule]);
 
   const displayedMetrics = useMemo<Metric[]>(() => {
-    if (apiMetrics.length === 0) {
+    if (!apiModule) {
       return metrics;
     }
 
@@ -102,7 +102,7 @@ export function MobileModuleWorkspace({
       hintKey: metric.changeKey,
       hint: metric.change,
     }));
-  }, [apiMetrics, metrics]);
+  }, [apiMetrics, apiModule, metrics]);
 
   const getMetricLabel = (metric: Metric) =>
     metric.labelKey ? t(metric.labelKey) : metric.label ?? "";
@@ -116,7 +116,11 @@ export function MobileModuleWorkspace({
   };
 
   const getItemTitle = (item: ApiListItem) =>
-    item.titleKey ? t(item.titleKey) : item.title ?? item.name ?? item.number ?? item.id ?? "-";
+    item.titleKey
+      ? t(item.titleKey)
+      : item.key
+        ? t(item.key)
+        : item.title ?? item.name ?? item.number ?? item.id ?? "-";
 
   const getItemSubtitle = (item: ApiListItem) =>
     item.subtitleKey ? t(item.subtitleKey) : item.subtitle ?? item.customer ?? item.role ?? "";
@@ -168,27 +172,46 @@ export function MobileModuleWorkspace({
           </View>
         ) : null}
 
-        <View style={styles.metrics}>
-          {displayedMetrics.map((metric, index) => (
-            <View key={`${metric.labelKey ?? metric.label ?? "metric"}-${index}`} style={styles.metricCard}>
-              <Text style={styles.metricLabel}>{getMetricLabel(metric)}</Text>
-              <Text style={styles.metricValue}>{metric.value}</Text>
-              <Text style={[styles.metricHint, { color: sector.accent }]}>{getMetricHint(metric)}</Text>
-            </View>
-          ))}
-        </View>
-
-        {sections.map((section) => (
-          <View key={section.titleKey} style={styles.card}>
-            <Text style={styles.cardTitle}>{t(section.titleKey)}</Text>
-            {section.items.map((itemKey) => (
-              <View key={itemKey} style={styles.itemRow}>
-                <View style={[styles.itemDot, { backgroundColor: sector.accent }]} />
-                <Text style={styles.itemText}>{t(itemKey)}</Text>
+        {apiModule && isLoadingApi ? (
+          <View style={styles.loadingCard}>
+            <ActivityIndicator color={sector.accent} />
+            <Text style={styles.mutedText}>{t("module.apiLoading")}</Text>
+          </View>
+        ) : apiModule && hasApiError ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>{t("module.apiErrorTitle")}</Text>
+            <Text style={styles.mutedText}>{t("module.apiError")}</Text>
+          </View>
+        ) : displayedMetrics.length > 0 ? (
+          <View style={styles.metrics}>
+            {displayedMetrics.map((metric, index) => (
+              <View key={`${metric.labelKey ?? metric.label ?? "metric"}-${index}`} style={styles.metricCard}>
+                <Text style={styles.metricLabel}>{getMetricLabel(metric)}</Text>
+                <Text style={styles.metricValue}>{metric.value}</Text>
+                <Text style={[styles.metricHint, { color: sector.accent }]}>{getMetricHint(metric)}</Text>
               </View>
             ))}
           </View>
-        ))}
+        ) : apiModule ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>{t("module.apiData")}</Text>
+            <Text style={styles.mutedText}>{t("module.apiEmpty")}</Text>
+          </View>
+        ) : null}
+
+        {!apiModule
+          ? sections.map((section) => (
+              <View key={section.titleKey} style={styles.card}>
+                <Text style={styles.cardTitle}>{t(section.titleKey)}</Text>
+                {section.items.map((itemKey) => (
+                  <View key={itemKey} style={styles.itemRow}>
+                    <View style={[styles.itemDot, { backgroundColor: sector.accent }]} />
+                    <Text style={styles.itemText}>{t(itemKey)}</Text>
+                  </View>
+                ))}
+              </View>
+            ))
+          : null}
 
         {apiModule ? (
           <View style={styles.card}>
@@ -263,6 +286,17 @@ const styles = StyleSheet.create({
   title: { color: "white", fontSize: 30, lineHeight: 37, fontWeight: "900" },
   subtitle: { color: "#D6E4F3", fontSize: 15, lineHeight: 22 },
   metrics: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 16 },
+  loadingCard: {
+    marginTop: 16,
+    padding: 18,
+    borderRadius: 23,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
   apiState: {
     flexDirection: "row",
     alignItems: "center",

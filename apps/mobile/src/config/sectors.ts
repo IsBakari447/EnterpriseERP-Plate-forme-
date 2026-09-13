@@ -276,6 +276,113 @@ export const sectors: Record<SectorKey, SectorDefinition> = {
     priorityActionKeys: ["action.confirmArrivals", "action.assignHousekeeping", "action.closeInvoices"],
     recentActivityKeys: ["activity.guestCheckedIn", "activity.roomCleaned", "activity.bookingPaid"],
   }),
+  hospitality: defineSector({
+    key: "hospitality",
+    labelKey: "sector.hospitality",
+    descriptionKey: "sector.description.hospitality",
+    icon: "business-outline",
+    accent: "#0F766E",
+    modules: [
+      "dashboard",
+      "proprietes",
+      "unites",
+      "reservations",
+      "disponibilites",
+      "clients",
+      "housekeeping",
+      "maintenance",
+      "facturation",
+      "paiements",
+      "rh",
+      "finances",
+      ...commonModules,
+    ],
+    kpis: [
+      { key: "occupancy", labelKey: "kpi.occupancy", value: "78%", trendKey: "trend.month" },
+      { key: "reservations", labelKey: "kpi.reservations", value: "64", trendKey: "trend.live" },
+      { key: "rooms", labelKey: "kpi.availableUnits", value: "12", trendKey: "trend.booked" },
+    ],
+    priorityActionKeys: ["action.confirmArrivals", "action.assignHousekeeping", "action.closeInvoices"],
+    recentActivityKeys: ["activity.guestCheckedIn", "activity.roomCleaned", "activity.bookingPaid"],
+  }),
+  agriculture: defineSector({
+    key: "agriculture",
+    labelKey: "sector.agriculture",
+    descriptionKey: "sector.description.agriculture",
+    icon: "leaf-outline",
+    accent: "#16A34A",
+    modules: [
+      "dashboard",
+      "parcelles",
+      "cultures",
+      "intrants",
+      "recoltes",
+      "stock",
+      "achats",
+      "ventes",
+      "fournisseurs",
+      "finances",
+      "rapports",
+      "assistant",
+      "parametres",
+    ],
+    kpis: [
+      { key: "plots", labelKey: "kpi.plots", value: "24", trendKey: "trend.month" },
+      { key: "harvests", labelKey: "kpi.harvests", value: "18.4 t", trendKey: "trend.live" },
+      { key: "inputs", labelKey: "kpi.inputs", value: "6", trendKey: "trend.low" },
+    ],
+    priorityActionKeys: ["action.planHarvests", "action.checkInputs", "action.prepareSales"],
+    recentActivityKeys: ["activity.cropUpdated", "activity.harvestRecorded", "activity.inputAdjusted"],
+  }),
+  livestock: defineSector({
+    key: "livestock",
+    labelKey: "sector.livestock",
+    descriptionKey: "sector.description.livestock",
+    icon: "paw-outline",
+    accent: "#A16207",
+    modules: [
+      "dashboard",
+      "animaux",
+      "lots",
+      "alimentation",
+      "soins",
+      "production",
+      "stock",
+      "ventes",
+      "achats",
+      "finances",
+      "rapports",
+      "assistant",
+      "parametres",
+    ],
+    kpis: [
+      { key: "animals", labelKey: "kpi.animals", value: "486", trendKey: "trend.month" },
+      { key: "production", labelKey: "kpi.production", value: "92%", trendKey: "trend.online" },
+      { key: "care", labelKey: "kpi.care", value: "8", trendKey: "trend.watch" },
+    ],
+    priorityActionKeys: ["action.feedStock", "action.planCare", "action.productionFollowup"],
+    recentActivityKeys: ["activity.animalChecked", "activity.feedAdjusted", "activity.productionRecorded"],
+  }),
 };
 
-export const sectorList = Object.values(sectors);
+export const sectorList = Object.values(sectors).filter((sector) => sector.key !== "hotel");
+
+export function normalizeSectorKey(value?: string | null): SectorKey | null {
+  if (!value) return null;
+
+  const key = value.trim().toLowerCase();
+  const aliases: Record<string, SectorKey> = {
+    retail: "commerce",
+    health: "sante",
+    healthcare: "sante",
+    industry: "industrie",
+    manufacturing: "industrie",
+    hotel: "hospitality",
+    hotellerie: "hospitality",
+    hospitality: "hospitality",
+  };
+
+  const normalized = aliases[key] ?? key;
+
+  return normalized in sectors ? (normalized as SectorKey) : null;
+}

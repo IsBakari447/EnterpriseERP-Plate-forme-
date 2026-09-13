@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { AuthenticatedUser, CurrentUser } from "../../common/auth/current-user.decorator";
 import { Permissions } from "../../common/security/permissions.decorator";
+import { EducationRecordDto } from "./dto/education-record.dto";
 import { type EducationResource, EducationService } from "./education.service";
 
 @Controller("education")
@@ -21,8 +22,8 @@ export class EducationController {
 
   @Post(":resource")
   @Permissions("education.manage")
-  create(@CurrentUser() user: AuthenticatedUser, @Param("resource") resource: EducationResource, @Body() body: Record<string, unknown>) {
-    return this.educationService.create(user, resource, body);
+  create(@CurrentUser() user: AuthenticatedUser, @Param("resource") resource: EducationResource, @Body() body: EducationRecordDto) {
+    return this.educationService.create(user, resource, body as Record<string, unknown>);
   }
 
   @Put(":resource/:id")
@@ -31,9 +32,9 @@ export class EducationController {
     @CurrentUser() user: AuthenticatedUser,
     @Param("resource") resource: EducationResource,
     @Param("id") id: string,
-    @Body() body: Record<string, unknown>
+    @Body() body: EducationRecordDto
   ) {
-    return this.educationService.update(user, resource, id, body);
+    return this.educationService.update(user, resource, id, body as Record<string, unknown>);
   }
 
   @Delete(":resource/:id")

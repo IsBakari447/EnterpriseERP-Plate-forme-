@@ -12,10 +12,8 @@ import {
   login,
   logout,
   me,
-  register,
   type LoginCredentials,
   type CurrentUser,
-  type RegisterPayload,
 } from "@/services/auth";
 
 type AuthContextValue = {
@@ -23,7 +21,6 @@ type AuthContextValue = {
   loading: boolean;
   user: CurrentUser | null;
   signIn: (credentials: LoginCredentials) => Promise<void>;
-  signUp: (payload: RegisterPayload) => Promise<void>;
   signOut: () => Promise<void>;
   reloadUser: () => Promise<void>;
 };
@@ -58,14 +55,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (credentials: LoginCredentials) => {
-    const response = await login(credentials);
-    setUser(response.user ?? null);
-    setAuthenticated(true);
-  };
-
-  const signUp = async (payload: RegisterPayload) => {
-    const response = await register(payload);
-    setUser(response.user ?? null);
+    await login(credentials);
+    const currentUser = await me();
+    setUser(currentUser);
     setAuthenticated(true);
   };
 
@@ -86,7 +78,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       user,
       signIn,
-      signUp,
       signOut,
       reloadUser,
     }),

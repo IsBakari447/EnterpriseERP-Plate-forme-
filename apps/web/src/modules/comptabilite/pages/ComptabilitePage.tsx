@@ -1,42 +1,55 @@
 "use client";
 
-import ERPLayout from "@shared/components/layout/ERPLayout";
-import KPICard from "@shared/components/ui/KPICard";
-import DataGrid from "@shared/components/ui/DataGrid";
-import { useI18n } from "@shared/i18n/I18nProvider";
+import OperationCrudPage from "@modules/operations/components/OperationCrudPage";
+import type { OperationCrudConfig, OperationField, OperationRow } from "@modules/operations/services/operationCrud.service";
 import { comptabiliteKpis, entries } from "@modules/comptabilite/data";
+import { useI18n } from "@shared/i18n/I18nProvider";
+
+const config: OperationCrudConfig = {
+  kpisPath: "/accounting/kpis",
+  listPath: "/accounting/items",
+  createPath: "/expenses",
+  updatePath: (id) => `/expenses/${id}`,
+  deletePath: (id) => `/expenses/${id}`,
+};
+
+const fields: OperationField[] = [
+  { key: "label", label: "Libelle", required: true },
+  { key: "category", label: "Categorie", defaultValue: "operations" },
+  { key: "supplier", label: "Fournisseur" },
+  { key: "amount", label: "Montant", type: "number", defaultValue: 0 },
+  { key: "status", label: "Statut", defaultValue: "pending" },
+  { key: "expenseDate", label: "Date", type: "date", defaultValue: new Date().toISOString().slice(0, 10) },
+];
+
+const fallbackRows: OperationRow[] = entries.map((entry) => ({
+  id: entry.ref,
+  title: entry.label,
+  subtitle: entry.type,
+  value: entry.amount,
+  status: entry.status,
+}));
 
 export default function ComptabilitePage() {
   const { t } = useI18n();
 
   return (
-    <ERPLayout
+    <OperationCrudPage
       title={t("accounting.title")}
       subtitle={t("accounting.subtitle")}
       action={t("accounting.action")}
-    >
-      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {comptabiliteKpis.map((kpi) => (
-          <KPICard key={kpi.label} {...kpi} />
-        ))}
-      </section>
-
-      <section className="mt-8 rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
-        <h2 className="mb-5 text-xl font-bold text-night">
-          {t("accounting.entries")}
-        </h2>
-
-        <DataGrid
-          columns={[
-            { key: "ref", label: t("accounting.reference") },
-            { key: "label", label: t("accounting.label") },
-            { key: "type", label: t("common.type") },
-            { key: "amount", label: t("common.amount") },
-            { key: "status", label: t("common.status"), badge: true },
-          ]}
-          data={entries}
-        />
-      </section>
-    </ERPLayout>
+      listTitle={t("accounting.entries")}
+      formTitle={t("accounting.action")}
+      kpis={comptabiliteKpis}
+      rows={fallbackRows}
+      columns={[
+        { key: "title", label: t("accounting.label") },
+        { key: "subtitle", label: t("common.type") },
+        { key: "value", label: t("common.amount") },
+        { key: "status", label: t("common.status"), badge: true },
+      ]}
+      fields={fields}
+      config={config}
+    />
   );
 }

@@ -8,8 +8,8 @@ type Value = {
   sector: SectorDefinition;
   ready: boolean;
   hasStoredSector: boolean;
-  setSector: (key: SectorKey) => Promise<void>;
-  setAccountSector: (key: SectorKey) => void;
+  setAccountSector: (key: SectorKey) => Promise<void>;
+  clearAccountSector: () => Promise<void>;
 };
 const Context = createContext<Value | null>(null);
 
@@ -23,13 +23,15 @@ export function SectorProvider({ children }: { children: ReactNode }) {
       setHasStoredSector(true);
     }
   }).finally(() => setReady(true)); }, []);
-  const setSector = useCallback(async (key: SectorKey) => {
+  const setAccountSector = useCallback(async (key: SectorKey) => {
     setKey(key);
     setHasStoredSector(true);
     await AsyncStorage.setItem("enterpriseerp.sector", key);
   }, []);
-  const setAccountSector = useCallback((key: SectorKey) => {
-    setKey(key);
+  const clearAccountSector = useCallback(async () => {
+    setKey("general");
+    setHasStoredSector(false);
+    await AsyncStorage.removeItem("enterpriseerp.sector");
   }, []);
   const value = useMemo(
     () => ({
@@ -37,10 +39,10 @@ export function SectorProvider({ children }: { children: ReactNode }) {
       sector: sectors[sectorKey],
       ready,
       hasStoredSector,
-      setSector,
       setAccountSector,
+      clearAccountSector,
     }),
-    [sectorKey, ready, hasStoredSector, setSector, setAccountSector],
+    [sectorKey, ready, hasStoredSector, setAccountSector, clearAccountSector],
   );
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

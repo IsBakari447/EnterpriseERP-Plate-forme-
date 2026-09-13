@@ -1,60 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import ERPLayout from "@shared/components/layout/ERPLayout";
-import KPICard from "@shared/components/ui/KPICard";
-import DataGrid from "@shared/components/ui/DataGrid";
-import { useI18n } from "@shared/i18n/I18nProvider";
+import OperationCrudPage from "@modules/operations/components/OperationCrudPage";
+import type { OperationCrudConfig, OperationField, OperationRow } from "@modules/operations/services/operationCrud.service";
 import { orders, ventesKpis } from "@modules/ventes/data";
-import { salesService, type SalesKpi, type SalesOrder } from "../services/sales.service";
+import { useI18n } from "@shared/i18n/I18nProvider";
+
+const config: OperationCrudConfig = {
+  kpisPath: "/sales/kpis",
+  listPath: "/sales/orders",
+  createPath: "/sales/orders",
+  updatePath: (id) => `/sales/orders/${id}`,
+  deletePath: (id) => `/sales/orders/${id}`,
+};
+
+const fields: OperationField[] = [
+  { key: "number", label: "Commande", required: true, defaultValue: `CMD-${new Date().getFullYear()}-` },
+  { key: "customer", label: "Client", required: true },
+  { key: "amount", label: "Montant", type: "number", defaultValue: 0 },
+  { key: "status", label: "Statut", defaultValue: "pending" },
+  { key: "orderDate", label: "Date", type: "date", defaultValue: new Date().toISOString().slice(0, 10) },
+  { key: "dueDate", label: "Echeance", type: "date" },
+];
+
+const fallbackRows: OperationRow[] = orders.map((order) => ({
+  ...order,
+  id: order.number,
+  title: order.number,
+  subtitle: order.customer,
+  value: order.amount,
+  meta: order.date,
+}));
 
 export default function VentesPage() {
   const { t } = useI18n();
-  const [kpis, setKpis] = useState<SalesKpi[]>(ventesKpis);
-  const [salesOrders, setSalesOrders] = useState<SalesOrder[]>(orders);
-
-  useEffect(() => {
-    async function loadSales() {
-      const [nextKpis, nextOrders] = await Promise.all([
-        salesService.getKpis(),
-        salesService.getOrders(),
-      ]);
-
-      setKpis(nextKpis);
-      setSalesOrders(nextOrders);
-    }
-
-    loadSales();
-  }, []);
 
   return (
-    <ERPLayout
+    <OperationCrudPage
       title={t("sales.title")}
       subtitle={t("sales.subtitle")}
       action={t("sales.action")}
-    >
-      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {kpis.map((kpi) => (
-          <KPICard key={kpi.label} {...kpi} />
-        ))}
-      </section>
-
-      <section className="mt-8 rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
-        <h2 className="mb-5 text-xl font-bold text-night">
-          {t("sales.recentOrders")}
-        </h2>
-
-        <DataGrid
-          columns={[
-            { key: "number", label: t("sales.order") },
-            { key: "customer", label: t("common.client") },
-            { key: "amount", label: t("common.amount") },
-            { key: "date", label: t("common.date") },
-            { key: "status", label: t("common.status"), badge: true },
-          ]}
-          data={salesOrders}
-        />
-      </section>
-    </ERPLayout>
+      listTitle={t("sales.recentOrders")}
+      formTitle={t("sales.action")}
+      kpis={ventesKpis}
+      rows={fallbackRows}
+      columns={[
+        { key: "number", label: t("sales.order") },
+        { key: "customer", label: t("common.client") },
+        { key: "amount", label: t("common.amount") },
+        { key: "meta", label: t("common.date") },
+        { key: "status", label: t("common.status"), badge: true },
+      ]}
+      fields={fields}
+      config={config}
+    />
   );
 }

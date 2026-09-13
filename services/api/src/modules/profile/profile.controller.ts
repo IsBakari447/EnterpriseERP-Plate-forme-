@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Req } from "@nestjs/common";
 import { CurrentUser, AuthenticatedUser } from "../../common/auth/current-user.decorator";
+import { UpdateAvatarDto, UpdatePasswordDto, UpdateProfileDto } from "./dto/profile.dto";
 import { ProfileService } from "./profile.service";
 
 type RequestMeta = {
@@ -19,7 +20,7 @@ export class ProfileController {
   @Put()
   updateProfile(
     @CurrentUser() user: AuthenticatedUser,
-    @Body() body: unknown,
+    @Body() body: UpdateProfileDto,
     @Req() request: RequestMeta
   ) {
     return this.profileService.updateProfile(user, body as never, this.getMeta(request));
@@ -28,7 +29,7 @@ export class ProfileController {
   @Post("avatar")
   updateAvatar(
     @CurrentUser() user: AuthenticatedUser,
-    @Body() body: { avatarUrl: string },
+    @Body() body: UpdateAvatarDto,
     @Req() request: RequestMeta
   ) {
     return this.profileService.updateAvatar(user, body.avatarUrl, this.getMeta(request));
@@ -42,7 +43,7 @@ export class ProfileController {
   @Put("password")
   updatePassword(
     @CurrentUser() user: AuthenticatedUser,
-    @Body() body: { currentPassword: string; newPassword: string },
+    @Body() body: UpdatePasswordDto,
     @Req() request: RequestMeta
   ) {
     return this.profileService.updatePassword(user, body, this.getMeta(request));

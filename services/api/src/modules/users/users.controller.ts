@@ -1,20 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
-import { UserRole, UserStatus } from "@prisma/client";
 import { AuthenticatedUser, CurrentUser } from "../../common/auth/current-user.decorator";
 import { Permissions } from "../../common/security/permissions.decorator";
+import { CreateUserDto, InviteUserDto, UpdateUserDto } from "./dto/user.dto";
 import { UsersService } from "./users.service";
-
-type CreateUserBody = {
-  name: string;
-  email: string;
-  role?: UserRole;
-  status?: UserStatus;
-};
-
-type InviteUserBody = {
-  email: string;
-  role?: UserRole;
-};
 
 @Controller("users")
 export class UsersController {
@@ -40,19 +28,19 @@ export class UsersController {
 
   @Post()
   @Permissions("users.update")
-  create(@CurrentUser() user: AuthenticatedUser, @Body() body: CreateUserBody) {
+  create(@CurrentUser() user: AuthenticatedUser, @Body() body: CreateUserDto) {
     return this.usersService.create(user, body);
   }
 
   @Post("invite")
   @Permissions("users.invite")
-  invite(@CurrentUser() user: AuthenticatedUser, @Body() body: InviteUserBody) {
+  invite(@CurrentUser() user: AuthenticatedUser, @Body() body: InviteUserDto) {
     return this.usersService.invite(user, body);
   }
 
   @Put(":id")
   @Permissions("users.update")
-  update(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string, @Body() body: Partial<CreateUserBody>) {
+  update(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string, @Body() body: UpdateUserDto) {
     return this.usersService.update(user, id, body);
   }
 

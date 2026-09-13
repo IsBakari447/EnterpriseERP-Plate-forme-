@@ -2,14 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common"
 import { CurrentUser, AuthenticatedUser } from "../../common/auth/current-user.decorator";
 import { Permissions } from "../../common/security/permissions.decorator";
 import { FacturationService } from "./facturation.service";
-
-type InvoiceInput = {
-  number: string;
-  customer: string;
-  amount: number;
-  due: string;
-  status: string;
-};
+import { CreateInvoiceDto, UpdateInvoiceDto } from "./dto/invoice.dto";
 
 @Controller("invoices")
 export class FacturationController {
@@ -29,13 +22,13 @@ export class FacturationController {
 
   @Post()
   @Permissions("invoice.create")
-  create(@CurrentUser() user: AuthenticatedUser, @Body() body: InvoiceInput) {
+  create(@CurrentUser() user: AuthenticatedUser, @Body() body: CreateInvoiceDto) {
     return this.facturationService.create(user, body);
   }
 
   @Put(":id")
   @Permissions("invoice.create")
-  update(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string, @Body() body: Partial<InvoiceInput>) {
+  update(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string, @Body() body: UpdateInvoiceDto) {
     return this.facturationService.update(user, id, body);
   }
 

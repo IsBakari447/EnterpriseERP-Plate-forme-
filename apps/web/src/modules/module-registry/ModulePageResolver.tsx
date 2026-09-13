@@ -8,7 +8,10 @@ import EducationModulePage from "@modules/education/EducationModulePage";
 import FacturationPage from "@modules/facturation/pages/FacturationPage";
 import GenericModulePage from "@modules/generic-module/GenericModulePage";
 import ParametresPage from "@modules/parametres/pages/ParametresPage";
+import ProductionPage from "@modules/production/pages/ProductionPage";
+import RapportsPage from "@modules/rapports/pages/RapportsPage";
 import RHPage from "@modules/rh/pages/RHPage";
+import RendezVousPage from "@modules/rendez-vous/pages/RendezVousPage";
 import StockPage from "@modules/stock/pages/StockPage";
 import VentesPage from "@modules/ventes/pages/VentesPage";
 import { useSector } from "@shared/sector/SectorProvider";
@@ -62,6 +65,18 @@ export default function ModulePageResolver({ module }: { module: ModuleView }) {
 
   if (module.key === "rh") {
     return <RHPage />;
+  }
+
+  if (module.key === "rapports") {
+    return <RapportsPage />;
+  }
+
+  if (module.key === "rendez-vous") {
+    return <RendezVousPage />;
+  }
+
+  if (module.key === "production" || module.key === "ordres-fabrication") {
+    return <ProductionPage />;
   }
 
   if (module.key === "comptabilite" || module.key === "finances") {

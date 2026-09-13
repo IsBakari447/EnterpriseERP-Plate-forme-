@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { RequestMethod } from "@nestjs/common";
+import { RequestMethod, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
@@ -8,7 +8,11 @@ import { ApiExceptionFilter } from "./common/filters/api-exception.filter";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = Number(process.env.PORT ?? 4000);
-  const corsOrigins = (process.env.CORS_ORIGIN ?? "http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,https://enterpriseerp-web.onrender.com")
+  const isProduction = process.env.NODE_ENV === "production";
+  const defaultCorsOrigin = isProduction
+    ? "https://enterpriseerp-web.onrender.com"
+    : "http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,https://enterpriseerp-web.onrender.com";
+  const corsOrigins = (process.env.CORS_ORIGIN ?? defaultCorsOrigin)
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);
@@ -21,7 +25,7 @@ async function bootstrap() {
   );
   app.enableCors({
     origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
-      if (!origin || corsOrigins.includes("*") || corsOrigins.includes(origin)) {
+      if (!origin || (!isProduction && corsOrigins.includes("*")) || corsOrigins.includes(origin)) {
         callback(null, true);
         return;
       }
@@ -31,7 +35,7 @@ async function bootstrap() {
         /^https?:\/\/(10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})(:\d+)?$/i.test(origin);
       const isEnterpriseErpRenderOrigin = /^https:\/\/enterpriseerp-[\w-]+\.onrender\.com$/i.test(origin);
 
-      callback(null, isLocalDevOrigin || isEnterpriseErpRenderOrigin);
+      callback(null, !isProduction && (isLocalDevOrigin || isEnterpriseErpRenderOrigin));
     },
     credentials: true,
   });
@@ -42,6 +46,16 @@ async function bootstrap() {
       { path: "health/ready", method: RequestMethod.GET },
     ],
   });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    })
+  );
   app.useGlobalFilters(new ApiExceptionFilter());
 
   await app.listen(port);
