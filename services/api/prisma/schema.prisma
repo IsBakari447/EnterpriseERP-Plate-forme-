@@ -9,16 +9,17 @@ datasource db {
 
 model Client {
   id        String   @id @default(cuid())
-  companyId String?
+  companyId String
   name      String
-  email     String   @unique
+  email     String
   country   String
   status    String
   revenue   Float    @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
+  @@unique([companyId, email])
   @@index([companyId])
 }
 
@@ -141,32 +142,34 @@ model ProductionOrder {
 
 model Product {
   id        String   @id @default(cuid())
-  companyId String?
+  companyId String
   name      String
-  sku       String   @unique
+  sku       String
   quantity  Int      @default(0)
   status    String
   value     Float    @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
+  @@unique([companyId, sku])
   @@index([companyId])
 }
 
 model Invoice {
   id        String   @id @default(cuid())
-  companyId String?
-  number    String   @unique
+  companyId String
+  number    String
   customer  String
   amount    Float    @default(0)
   due       DateTime
   status    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   payments  Payment[]
 
+  @@unique([companyId, number])
   @@index([companyId])
 }
 

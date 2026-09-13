@@ -17,6 +17,27 @@ function getInitialSector(): SectorKey {
   return value && value in sectorDefinitions ? (value as SectorKey) : "general";
 }
 
+function getRegisterErrorKey(message: string) {
+  const normalized = message
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  if (normalized.includes("existe deja") || normalized.includes("already exists") || normalized.includes("email already")) {
+    return "auth.accountExists";
+  }
+
+  if (normalized.includes("mot de passe") || normalized.includes("password")) {
+    return "auth.passwordTooShort";
+  }
+
+  if (normalized.includes("obligatoire") || normalized.includes("required")) {
+    return "auth.requiredFields";
+  }
+
+  return null;
+}
+
 export default function RegisterPage() {
   const router = useRouter();
   const { locale, t } = useI18n();
@@ -45,10 +66,11 @@ export default function RegisterPage() {
       router.push(`/onboarding?sector=${sector}`);
     } catch (error) {
       const message = getApiErrorMessage(error, t("auth.registerError"));
-      const accountExists = isExistingAccountError(message);
+      const localizedErrorKey = getRegisterErrorKey(message);
+      const accountExists = isExistingAccountError(message) || localizedErrorKey === "auth.accountExists";
 
       setStatus(accountExists ? "account-exists" : "error");
-      setErrorMessage(accountExists ? t("auth.accountExists") : message);
+      setErrorMessage(localizedErrorKey ? t(localizedErrorKey) : message);
     }
   }
 

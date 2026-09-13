@@ -329,10 +329,54 @@ async function verifyOperations(ctx: TestContext, service: OperationsService) {
     amount: 200,
     companyId: ctx.companyAId,
   } as never);
+  const invoiceAForPayment = await ctx.prisma.invoice.create({
+    data: {
+      companyId: ctx.companyAId,
+      number: `PAY-INV-A-${ctx.companyAId}`,
+      customer: "Tenant A Customer",
+      amount: 125,
+      due: new Date("2026-12-31"),
+      status: "pending",
+    },
+  });
+  const invoiceBForPayment = await ctx.prisma.invoice.create({
+    data: {
+      companyId: ctx.companyBId,
+      number: `PAY-INV-B-${ctx.companyBId}`,
+      customer: "Tenant B Customer",
+      amount: 225,
+      due: new Date("2026-12-31"),
+      status: "pending",
+    },
+  });
+  const linkedPaymentB = await service.createPayment(ctx.ownerB, {
+    invoiceId: invoiceBForPayment.id,
+    reference: `PAY-B-LINKED-${ctx.companyBId}`,
+    customer: "Tenant B Customer",
+    amount: 225,
+  });
   assert(paymentB.companyId === ctx.companyBId, "Payment create must ignore frontend companyId override");
+  assert(linkedPaymentB.invoiceId === invoiceBForPayment.id, "Payment create did not link a same-tenant invoice");
   assert(!(await service.listPayments(ctx.ownerB)).some((payment) => payment.id === paymentA.id), "Payments list leaked another tenant");
+  await expectNotFound(
+    () =>
+      service.createPayment(ctx.ownerB, {
+        invoiceId: invoiceAForPayment.id,
+        reference: `PAY-B-CROSS-INVOICE-${ctx.companyBId}`,
+        amount: 999,
+      }),
+    "Payment create cross-tenant invoice"
+  );
   await expectNotFound(() => service.updatePayment(ctx.ownerB, paymentA.id, { amount: 999 }), "Payment update cross-tenant");
+  await expectNotFound(
+    () => service.updatePayment(ctx.ownerB, paymentB.id, { invoiceId: invoiceAForPayment.id }),
+    "Payment update cross-tenant invoice"
+  );
   await expectNotFound(() => service.deletePayment(ctx.ownerB, paymentA.id), "Payment delete cross-tenant");
+  assert(
+    (await ctx.prisma.payment.findUniqueOrThrow({ where: { id: paymentB.id } })).invoiceId === null,
+    "Payment cross-tenant invoice update changed data"
+  );
 
   const expenseA = await service.createExpense(ctx.ownerA, {
     label: "Tenant A Expense",

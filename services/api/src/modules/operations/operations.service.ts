@@ -359,10 +359,12 @@ export class OperationsService {
 
   async createPayment(user: AuthenticatedUser, data: PaymentInput) {
     const { companyId } = await this.getCompany(user);
+    const invoiceId = await this.resolveTenantInvoiceId(companyId, data.invoiceId);
+
     return this.prisma.payment.create({
       data: {
         companyId,
-        invoiceId: data.invoiceId ?? undefined,
+        invoiceId: invoiceId ?? undefined,
         reference: data.reference,
         customer: data.customer ?? undefined,
         amount: data.amount ?? 0,
@@ -376,10 +378,15 @@ export class OperationsService {
   async updatePayment(user: AuthenticatedUser, id: string, data: Partial<PaymentInput>) {
     const { companyId } = await this.getCompany(user);
     await this.requirePayment(companyId, id);
-    return this.prisma.payment.update({
-      where: { id },
+    const invoiceId =
+      Object.prototype.hasOwnProperty.call(data, "invoiceId")
+        ? await this.resolveTenantInvoiceId(companyId, data.invoiceId)
+        : undefined;
+
+    const payment = await this.prisma.payment.updateMany({
+      where: { id, companyId },
       data: {
-        invoiceId: data.invoiceId,
+        invoiceId,
         reference: data.reference,
         customer: data.customer,
         amount: data.amount,
@@ -388,12 +395,17 @@ export class OperationsService {
         paidAt: data.paidAt ? new Date(data.paidAt) : undefined,
       },
     });
+
+    if (payment.count !== 1) throw new NotFoundException("Payment not found");
+    return this.requirePayment(companyId, id);
   }
 
   async deletePayment(user: AuthenticatedUser, id: string) {
     const { companyId } = await this.getCompany(user);
-    await this.requirePayment(companyId, id);
-    return this.prisma.payment.delete({ where: { id } });
+    const existing = await this.requirePayment(companyId, id);
+    const payment = await this.prisma.payment.deleteMany({ where: { id, companyId } });
+    if (payment.count !== 1) throw new NotFoundException("Payment not found");
+    return existing;
   }
 
   async listExpenses(user: AuthenticatedUser) {
@@ -797,6 +809,20 @@ export class OperationsService {
     const item = await this.prisma.payment.findFirst({ where: { id, companyId } });
     if (!item) throw new NotFoundException("Payment not found");
     return item;
+  }
+
+  private async resolveTenantInvoiceId(companyId: string, invoiceId?: string | null) {
+    if (invoiceId === undefined) return undefined;
+    const normalizedInvoiceId = invoiceId?.trim();
+    if (!normalizedInvoiceId) return null;
+
+    const invoice = await this.prisma.invoice.findFirst({
+      where: { id: normalizedInvoiceId, companyId },
+      select: { id: true },
+    });
+
+    if (!invoice) throw new NotFoundException("Invoice not found");
+    return invoice.id;
   }
 
   private async requireExpense(companyId: string, id: string) {

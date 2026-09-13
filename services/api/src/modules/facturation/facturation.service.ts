@@ -87,10 +87,14 @@ export class FacturationService {
     assertNonNegativeNumber(data.amount, "amount");
     assertValidDate(data.due, "due date");
 
-    const invoice = await this.prisma.invoice.update({
-      where: { id },
+    const updateResult = await this.prisma.invoice.updateMany({
+      where: { id, companyId },
       data: toInvoiceUpdateData(data),
     });
+    if (updateResult.count !== 1) {
+      throw new NotFoundException("Facture introuvable");
+    }
+    const invoice = await this.findOne(user, id);
 
     await this.audit.record({
       companyId,
@@ -110,7 +114,10 @@ export class FacturationService {
     const existing = await this.findOne(user, id);
     const companyId = requireTenant(user);
 
-    const invoice = await this.prisma.invoice.delete({ where: { id } });
+    const deleteResult = await this.prisma.invoice.deleteMany({ where: { id, companyId } });
+    if (deleteResult.count !== 1) {
+      throw new NotFoundException("Facture introuvable");
+    }
 
     await this.audit.record({
       companyId,
@@ -122,6 +129,6 @@ export class FacturationService {
       oldValue: existing,
     });
 
-    return invoice;
+    return existing;
   }
 }

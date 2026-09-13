@@ -1,6 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
 import { createHash, randomInt } from "crypto";
-import { UserRole } from "@prisma/client";
+import { Prisma, UserRole } from "@prisma/client";
 import { JwtService } from "../../common/auth/jwt.service";
 import { PasswordService } from "../../common/auth/password.service";
 import { AuditService } from "../../common/audit/audit.service";
@@ -173,78 +173,90 @@ export class AuthService {
       throw new BadRequestException("Un compte existe deja avec cet email");
     }
 
-    const company = await this.prisma.company.create({
-      data: {
-        name: input.companyName,
-        sector: input.sector ?? "general",
-        language: input.language ?? "fr",
-      },
-    });
-    const ownerRole = await this.prisma.role.create({
-      data: {
-        companyId: company.id,
-        key: "OWNER",
-        name: "Owner",
-        description: "Full company owner access",
-        system: true,
-      },
-    });
-    const ownerPermissions = await this.prisma.permission.findMany({
-      where: {
-        key: {
-          in: rolePermissions.OWNER,
-        },
-      },
-      select: { id: true },
-    });
-    if (ownerPermissions.length > 0) {
-      await this.prisma.rolePermission.createMany({
-        data: ownerPermissions.map((permission) => ({
-          roleId: ownerRole.id,
-          permissionId: permission.id,
-        })),
-        skipDuplicates: true,
+    try {
+      const { company, user } = await this.prisma.$transaction(async (tx) => {
+        const company = await tx.company.create({
+          data: {
+            name: input.companyName,
+            sector: input.sector ?? "general",
+            language: input.language ?? "fr",
+          },
+        });
+        const ownerRole = await tx.role.create({
+          data: {
+            companyId: company.id,
+            key: "OWNER",
+            name: "Owner",
+            description: "Full company owner access",
+            system: true,
+          },
+        });
+        const ownerPermissions = await tx.permission.findMany({
+          where: {
+            key: {
+              in: rolePermissions.OWNER,
+            },
+          },
+          select: { id: true },
+        });
+        if (ownerPermissions.length > 0) {
+          await tx.rolePermission.createMany({
+            data: ownerPermissions.map((permission) => ({
+              roleId: ownerRole.id,
+              permissionId: permission.id,
+            })),
+            skipDuplicates: true,
+          });
+        }
+        const user = await tx.user.create({
+          data: {
+            companyId: company.id,
+            name: input.name,
+            ...this.splitName(input.name),
+            email,
+            passwordHash: this.password.hash(input.password),
+            language: input.language ?? "fr",
+            role: "OWNER",
+            status: "ACTIVE",
+            emailVerifiedAt: new Date(),
+          },
+        });
+        await tx.membership.create({
+          data: {
+            companyId: company.id,
+            userId: user.id,
+            roleId: ownerRole.id,
+            legacyRole: "OWNER",
+            status: "ACTIVE",
+          },
+        });
+
+        return { company, user };
       });
-    }
-    const user = await this.prisma.user.create({
-      data: {
-        companyId: company.id,
-        name: input.name,
-        ...this.splitName(input.name),
-        email,
-        passwordHash: this.password.hash(input.password),
-        language: input.language ?? "fr",
-        role: "OWNER",
-        status: "ACTIVE",
-        emailVerifiedAt: new Date(),
-      },
-    });
-    await this.prisma.membership.create({
-      data: {
+
+      await this.audit.record({
         companyId: company.id,
         userId: user.id,
-        roleId: ownerRole.id,
-        legacyRole: "OWNER",
-        status: "ACTIVE",
-      },
-    });
+        module: "auth",
+        action: "register",
+        entityType: "User",
+        entityId: user.id,
+        ipAddress: meta.ipAddress,
+        newValue: {
+          company: company.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
 
-    await this.audit.record({
-      companyId: company.id,
-      userId: user.id,
-      module: "auth",
-      action: "register",
-      entityType: "User",
-      entityId: user.id,
-      ipAddress: meta.ipAddress,
-      newValue: {
-        company: company.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
+      return this.createTokenResponse(user, { rememberMe: true, deviceName: "Initial registration" }, meta);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+        throw new BadRequestException("Un compte existe deja avec cet email");
+      }
 
-    return this.createTokenResponse(user, { rememberMe: true, deviceName: "Initial registration" }, meta);
+      throw error;
+    }
   }
 
   async login(input: LoginInput, meta: RequestMeta) {

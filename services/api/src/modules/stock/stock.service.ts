@@ -87,10 +87,14 @@ export class StockService {
     assertNonNegativeNumber(data.quantity, "quantity");
     assertNonNegativeNumber(data.value, "value");
 
-    const product = await this.prisma.product.update({
-      where: { id },
+    const updateResult = await this.prisma.product.updateMany({
+      where: { id, companyId },
       data: toProductUpdateData(data),
     });
+    if (updateResult.count !== 1) {
+      throw new NotFoundException("Produit introuvable");
+    }
+    const product = await this.findOne(user, id);
 
     await this.audit.record({
       companyId,
@@ -110,9 +114,10 @@ export class StockService {
     const existing = await this.findOne(user, id);
     const companyId = requireTenant(user);
 
-    const product = await this.prisma.product.delete({
-      where: { id },
-    });
+    const deleteResult = await this.prisma.product.deleteMany({ where: { id, companyId } });
+    if (deleteResult.count !== 1) {
+      throw new NotFoundException("Produit introuvable");
+    }
 
     await this.audit.record({
       companyId,
@@ -124,6 +129,6 @@ export class StockService {
       oldValue: existing,
     });
 
-    return product;
+    return existing;
   }
 }

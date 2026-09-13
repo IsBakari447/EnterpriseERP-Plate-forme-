@@ -87,10 +87,14 @@ export class CrmService {
     assertEmail(data.email);
     assertNonNegativeNumber(data.revenue, "revenue");
 
-    const client = await this.prisma.client.update({
-      where: { id },
+    const updateResult = await this.prisma.client.updateMany({
+      where: { id, companyId },
       data: toClientUpdateData(data),
     });
+    if (updateResult.count !== 1) {
+      throw new NotFoundException("Client introuvable");
+    }
+    const client = await this.findOne(user, id);
 
     await this.audit.record({
       companyId,
@@ -110,9 +114,10 @@ export class CrmService {
     const existing = await this.findOne(user, id);
     const companyId = requireTenant(user);
 
-    const client = await this.prisma.client.delete({
-      where: { id },
-    });
+    const deleteResult = await this.prisma.client.deleteMany({ where: { id, companyId } });
+    if (deleteResult.count !== 1) {
+      throw new NotFoundException("Client introuvable");
+    }
 
     await this.audit.record({
       companyId,
@@ -124,6 +129,6 @@ export class CrmService {
       oldValue: existing,
     });
 
-    return client;
+    return existing;
   }
 }
