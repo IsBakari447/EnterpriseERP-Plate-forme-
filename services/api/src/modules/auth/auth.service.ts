@@ -150,10 +150,11 @@ export class AuthService {
     return Boolean(process.env.SMTP_HOST && process.env.SMTP_PORT && process.env.EMAIL_FROM);
   }
 
-  private assertVerificationDeliveryConfigured() {
-    if (process.env.NODE_ENV === "production" && !this.hasSmtpConfig()) {
-      throw new HttpException("Email verification is not configured.", HttpStatus.SERVICE_UNAVAILABLE);
-    }
+  private isEmailVerificationRequired() {
+    const configured = String(process.env.EMAIL_VERIFICATION_REQUIRED ?? "").toLowerCase();
+    if (["true", "1", "yes"].includes(configured)) return true;
+    if (["false", "0", "no"].includes(configured)) return false;
+    return this.hasSmtpConfig();
   }
 
   private buildEmailVerificationUrl(token: string) {
@@ -377,7 +378,7 @@ export class AuthService {
     }
 
     this.validatePassword(input.password);
-    this.assertVerificationDeliveryConfigured();
+    const verificationRequired = this.isEmailVerificationRequired();
     const email = this.normalizeEmail(input.email);
     const existing = await this.prisma.user.findUnique({ where: { email } });
 
@@ -430,7 +431,7 @@ export class AuthService {
             language: input.language ?? "fr",
             role: "OWNER",
             status: "ACTIVE",
-            emailVerifiedAt: null,
+            emailVerifiedAt: verificationRequired ? null : new Date(),
           },
         });
         await tx.membership.create({
@@ -461,8 +462,25 @@ export class AuthService {
         },
       });
 
-      const verification = await this.sendEmailVerification(user, meta);
+      if (!verificationRequired) {
+        await this.audit.record({
+          companyId: company.id,
+          userId: user.id,
+          module: "auth",
+          action: "email_verification_skipped",
+          entityType: "User",
+          entityId: user.id,
+          ipAddress: meta.ipAddress,
+          newValue: {
+            reason: "smtp_not_configured",
+            email: user.email,
+          },
+        });
 
+        return this.createTokenResponse(user, { rememberMe: true, deviceName: "EnterpriseERP Web" }, meta);
+      }
+
+      const verification = await this.sendEmailVerification(user, meta);
       return {
         requiresEmailVerification: true,
         message: "Compte cree. Verifiez votre adresse e-mail pour activer l'acces.",
