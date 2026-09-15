@@ -31,12 +31,6 @@ type RequestMeta = {
   userAgent?: string;
 };
 
-type PasswordResetEntry = {
-  codeHash: string;
-  expiresAt: number;
-  attempts: number;
-};
-
 type MfaChallengeInput = {
   challengeId: string;
   code?: string;
@@ -52,7 +46,6 @@ type MfaDisableInput = {
 @Injectable()
 export class AuthService {
   private readonly loginAttempts = new Map<string, { count: number; resetAt: number; lockedUntil?: number }>();
-  private readonly passwordResetCodes = new Map<string, PasswordResetEntry>();
 
   constructor(
     private readonly prisma: PrismaService,
@@ -871,11 +864,20 @@ export class AuthService {
 
       if (user) {
         const code = this.createResetCode();
-        this.passwordResetCodes.set(email, {
-          codeHash: this.hashToken(code),
-          expiresAt: Date.now() + 15 * 60 * 1000,
-          attempts: 0,
-        });
+
+        await this.prisma.$transaction([
+          this.prisma.passwordResetToken.updateMany({
+            where: { userId: user.id, usedAt: null },
+            data: { usedAt: new Date() },
+          }),
+          this.prisma.passwordResetToken.create({
+            data: {
+              userId: user.id,
+              codeHash: this.hashToken(code),
+              expiresAt: new Date(Date.now() + 15 * 60 * 1000),
+            },
+          }),
+        ]);
 
         await this.audit.record({
           companyId: user.companyId ?? undefined,
@@ -902,28 +904,10 @@ export class AuthService {
   async resetPassword(input: { email?: string; code?: string; password?: string; confirmPassword?: string }, meta: RequestMeta) {
     const email = this.normalizeEmail(input.email ?? "");
     const code = String(input.code ?? "").trim();
-    const entry = this.passwordResetCodes.get(email);
 
-    if (!email || !code || !entry || entry.expiresAt < Date.now()) {
+    if (!email || !code) {
       throw new BadRequestException("Le code est invalide ou expire.");
     }
-
-    if (entry.attempts >= 5) {
-      this.passwordResetCodes.delete(email);
-      throw new BadRequestException("Le code est invalide ou expire.");
-    }
-
-    entry.attempts += 1;
-
-    if (entry.codeHash !== this.hashToken(code)) {
-      throw new BadRequestException("Le code est invalide ou expire.");
-    }
-
-    if (input.password !== input.confirmPassword) {
-      throw new BadRequestException("Les mots de passe ne correspondent pas.");
-    }
-
-    this.validatePassword(input.password ?? "");
 
     const user = await this.prisma.user.findUnique({
       where: { email },
@@ -934,21 +918,72 @@ export class AuthService {
       throw new BadRequestException("Le code est invalide ou expire.");
     }
 
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        passwordHash: this.password.hash(input.password ?? ""),
-        passwordChangedAt: new Date(),
+    const entry = await this.prisma.passwordResetToken.findFirst({
+      where: {
+        userId: user.id,
+        usedAt: null,
       },
+      orderBy: { createdAt: "desc" },
     });
-    await this.prisma.userSession.updateMany({
-      where: { userId: user.id },
-      data: {
-        revokedAt: new Date(),
-        refreshTokenHash: null,
-      },
-    });
-    this.passwordResetCodes.delete(email);
+
+    if (!entry || entry.expiresAt < new Date()) {
+      if (entry) {
+        await this.prisma.passwordResetToken.update({
+          where: { id: entry.id },
+          data: { usedAt: new Date() },
+        });
+      }
+      throw new BadRequestException("Le code est invalide ou expire.");
+    }
+
+    if (entry.attempts >= 5) {
+      await this.prisma.passwordResetToken.update({
+        where: { id: entry.id },
+        data: { usedAt: new Date() },
+      });
+      throw new BadRequestException("Le code est invalide ou expire.");
+    }
+
+    const nextAttempts = entry.attempts + 1;
+
+    if (entry.codeHash !== this.hashToken(code)) {
+      await this.prisma.passwordResetToken.update({
+        where: { id: entry.id },
+        data: { attempts: nextAttempts },
+      });
+      throw new BadRequestException("Le code est invalide ou expire.");
+    }
+
+    if (input.password !== input.confirmPassword) {
+      throw new BadRequestException("Les mots de passe ne correspondent pas.");
+    }
+
+    this.validatePassword(input.password ?? "");
+
+    await this.prisma.$transaction([
+      this.prisma.passwordResetToken.update({
+        where: { id: entry.id },
+        data: { attempts: nextAttempts, usedAt: new Date() },
+      }),
+      this.prisma.passwordResetToken.updateMany({
+        where: { userId: user.id, usedAt: null, id: { not: entry.id } },
+        data: { usedAt: new Date() },
+      }),
+      this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          passwordHash: this.password.hash(input.password ?? ""),
+          passwordChangedAt: new Date(),
+        },
+      }),
+      this.prisma.userSession.updateMany({
+        where: { userId: user.id },
+        data: {
+          revokedAt: new Date(),
+          refreshTokenHash: null,
+        },
+      }),
+    ]);
 
     await this.audit.record({
       companyId: user.companyId ?? undefined,
