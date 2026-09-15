@@ -13,6 +13,8 @@ export type AuthUser = {
   timezone?: string;
   theme?: string;
   displayCurrency?: string;
+  mfaEnabled?: boolean;
+  mfaEnabledAt?: string | null;
   role: string;
   status: string;
   company?: {

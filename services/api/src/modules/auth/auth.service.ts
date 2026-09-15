@@ -1,7 +1,9 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
-import { createHash, randomBytes, randomInt } from "crypto";
+import { createCipheriv, createDecipheriv, createHash, randomBytes, randomInt } from "crypto";
 import { Prisma, UserRole } from "@prisma/client";
 import nodemailer from "nodemailer";
+import { generateSecret, generateURI, verifySync } from "otplib";
+import QRCode from "qrcode";
 import { JwtService } from "../../common/auth/jwt.service";
 import { PasswordService } from "../../common/auth/password.service";
 import { AuditService } from "../../common/audit/audit.service";
@@ -35,6 +37,18 @@ type PasswordResetEntry = {
   attempts: number;
 };
 
+type MfaChallengeInput = {
+  challengeId: string;
+  code?: string;
+  recoveryCode?: string;
+};
+
+type MfaDisableInput = {
+  password: string;
+  code?: string;
+  recoveryCode?: string;
+};
+
 @Injectable()
 export class AuthService {
   private readonly loginAttempts = new Map<string, { count: number; resetAt: number; lockedUntil?: number }>();
@@ -53,6 +67,72 @@ export class AuthService {
 
   private createSecureToken() {
     return randomBytes(32).toString("base64url");
+  }
+
+  private getEncryptionKey() {
+    return createHash("sha256").update(process.env.JWT_SECRET ?? "enterpriseerp-local-secret").digest();
+  }
+
+  private encryptSecret(secret: string) {
+    const iv = randomBytes(12);
+    const cipher = createCipheriv("aes-256-gcm", this.getEncryptionKey(), iv);
+    const encrypted = Buffer.concat([cipher.update(secret, "utf8"), cipher.final()]);
+    const tag = cipher.getAuthTag();
+
+    return `${iv.toString("base64url")}.${tag.toString("base64url")}.${encrypted.toString("base64url")}`;
+  }
+
+  private decryptSecret(value: string) {
+    const [ivRaw, tagRaw, encryptedRaw] = value.split(".");
+    if (!ivRaw || !tagRaw || !encryptedRaw) throw new BadRequestException("Configuration MFA invalide.");
+
+    const decipher = createDecipheriv("aes-256-gcm", this.getEncryptionKey(), Buffer.from(ivRaw, "base64url"));
+    decipher.setAuthTag(Buffer.from(tagRaw, "base64url"));
+
+    return Buffer.concat([decipher.update(Buffer.from(encryptedRaw, "base64url")), decipher.final()]).toString("utf8");
+  }
+
+  private isPrivilegedMfaRole(role: UserRole) {
+    return role === "OWNER" || role === "ADMINISTRATOR" || role === "SUPER_ADMIN";
+  }
+
+  private verifyTotp(code: string | undefined, encryptedSecret: string | null | undefined) {
+    if (!code || !encryptedSecret) return false;
+    return verifySync({
+      secret: this.decryptSecret(encryptedSecret),
+      token: code.trim(),
+      epochTolerance: 30,
+    }).valid;
+  }
+
+  private createRecoveryCodes() {
+    return Array.from({ length: 10 }, () => `${randomBytes(4).toString("hex")}-${randomBytes(4).toString("hex")}`);
+  }
+
+  private hashRecoveryCodes(codes: string[]) {
+    return codes.map((code) => this.hashToken(code.trim().toLowerCase()));
+  }
+
+  private async consumeRecoveryCode(userId: string, recoveryCode: string | undefined, recoveryCodesHash: unknown) {
+    if (!recoveryCode || !Array.isArray(recoveryCodesHash)) return false;
+    const codeHash = this.hashToken(recoveryCode.trim().toLowerCase());
+    const hashes = recoveryCodesHash.filter((item): item is string => typeof item === "string");
+
+    if (!hashes.includes(codeHash)) return false;
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        mfaRecoveryCodes: hashes.filter((hash) => hash !== codeHash),
+      },
+    });
+
+    return true;
+  }
+
+  private async verifyMfaCredential(user: { id: string; mfaSecretEnc: string | null; mfaRecoveryCodes: unknown }, input: { code?: string; recoveryCode?: string }) {
+    if (this.verifyTotp(input.code, user.mfaSecretEnc)) return true;
+    return this.consumeRecoveryCode(user.id, input.recoveryCode, user.mfaRecoveryCodes);
   }
 
   private normalizeEmail(email: string) {
@@ -208,6 +288,36 @@ export class AuthService {
 
   private resetFailedLogin(key: string) {
     this.loginAttempts.delete(key);
+  }
+
+  private async createMfaChallenge(user: { id: string; email: string; companyId: string | null; role: UserRole }, input: LoginInput, meta: RequestMeta) {
+    const challenge = await this.prisma.mfaChallenge.create({
+      data: {
+        userId: user.id,
+        rememberMe: input.rememberMe ?? false,
+        deviceName: input.deviceName,
+        ipAddress: meta.ipAddress,
+        userAgent: meta.userAgent,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      },
+    });
+
+    await this.audit.record({
+      companyId: user.companyId ?? undefined,
+      userId: user.id,
+      module: "auth",
+      action: "mfa_challenge_created",
+      entityType: "MfaChallenge",
+      entityId: challenge.id,
+      ipAddress: meta.ipAddress,
+    });
+
+    return {
+      mfaRequired: true,
+      challengeId: challenge.id,
+      expiresIn: 300,
+      message: "Code MFA requis.",
+    };
   }
 
   private splitName(name: string) {
@@ -398,6 +508,10 @@ export class AuthService {
 
     this.resetFailedLogin(rateKey);
 
+    if (user.mfaEnabled && this.isPrivilegedMfaRole(user.role)) {
+      return this.createMfaChallenge(user, input, meta);
+    }
+
     await this.prisma.user.update({
       where: { id: user.id },
       data: { lastLoginAt: new Date() },
@@ -412,6 +526,201 @@ export class AuthService {
     });
 
     return this.createTokenResponse(user, input, meta);
+  }
+
+  async setupMfa(userId: string, password: string, meta: RequestMeta) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !this.password.verify(password, user.passwordHash)) {
+      throw new UnauthorizedException("Mot de passe incorrect");
+    }
+
+    if (!this.isPrivilegedMfaRole(user.role)) {
+      throw new BadRequestException("MFA est reserve aux comptes administrateurs pour le moment.");
+    }
+
+    const secret = generateSecret();
+    const issuer = "EnterpriseERP Cloud";
+    const label = user.email;
+    const otpauthUrl = generateURI({ issuer, label, secret });
+    const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        mfaTempSecretEnc: this.encryptSecret(secret),
+        mfaTempSecretExpiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      },
+    });
+
+    await this.audit.record({
+      companyId: user.companyId ?? undefined,
+      userId: user.id,
+      module: "auth",
+      action: "mfa_setup_started",
+      entityType: "User",
+      entityId: user.id,
+      ipAddress: meta.ipAddress,
+    });
+
+    return {
+      issuer,
+      label,
+      otpauthUrl,
+      qrCodeDataUrl,
+      expiresIn: 600,
+    };
+  }
+
+  async verifyMfaSetup(userId: string, code: string, meta: RequestMeta) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user?.mfaTempSecretEnc || !user.mfaTempSecretExpiresAt || user.mfaTempSecretExpiresAt < new Date()) {
+      throw new BadRequestException("La configuration MFA est expiree. Relancez la configuration.");
+    }
+
+    if (!this.verifyTotp(code, user.mfaTempSecretEnc)) {
+      throw new BadRequestException("Code MFA invalide.");
+    }
+
+    const recoveryCodes = this.createRecoveryCodes();
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        mfaEnabled: true,
+        mfaSecretEnc: user.mfaTempSecretEnc,
+        mfaTempSecretEnc: null,
+        mfaTempSecretExpiresAt: null,
+        mfaRecoveryCodes: this.hashRecoveryCodes(recoveryCodes),
+        mfaEnabledAt: new Date(),
+      },
+    });
+
+    await this.audit.record({
+      companyId: user.companyId ?? undefined,
+      userId: user.id,
+      module: "auth",
+      action: "mfa_enabled",
+      entityType: "User",
+      entityId: user.id,
+      ipAddress: meta.ipAddress,
+    });
+
+    return {
+      message: "MFA active.",
+      recoveryCodes,
+    };
+  }
+
+  async completeMfaChallenge(input: MfaChallengeInput, meta: RequestMeta) {
+    const challenge = await this.prisma.mfaChallenge.findUnique({
+      where: { id: input.challengeId },
+      include: { user: true },
+    });
+
+    if (!challenge || challenge.usedAt || challenge.expiresAt < new Date()) {
+      throw new UnauthorizedException("Challenge MFA invalide ou expire.");
+    }
+
+    const ok = await this.verifyMfaCredential(challenge.user, input);
+    if (!ok) {
+      await this.audit.record({
+        companyId: challenge.user.companyId ?? undefined,
+        userId: challenge.user.id,
+        module: "auth",
+        action: "mfa_challenge_failed",
+        entityType: "MfaChallenge",
+        entityId: challenge.id,
+        ipAddress: meta.ipAddress,
+        result: "failure",
+      });
+      throw new UnauthorizedException("Code MFA invalide.");
+    }
+
+    await this.prisma.mfaChallenge.update({
+      where: { id: challenge.id },
+      data: { usedAt: new Date() },
+    });
+    await this.prisma.user.update({
+      where: { id: challenge.user.id },
+      data: { lastLoginAt: new Date() },
+    });
+    await this.audit.record({
+      companyId: challenge.user.companyId ?? undefined,
+      userId: challenge.user.id,
+      module: "auth",
+      action: "mfa_challenge_completed",
+      entityType: "MfaChallenge",
+      entityId: challenge.id,
+      ipAddress: meta.ipAddress,
+    });
+
+    return this.createTokenResponse(
+      challenge.user,
+      { rememberMe: challenge.rememberMe, deviceName: challenge.deviceName ?? undefined },
+      { ipAddress: challenge.ipAddress ?? meta.ipAddress, userAgent: challenge.userAgent ?? meta.userAgent }
+    );
+  }
+
+  async disableMfa(userId: string, input: MfaDisableInput, meta: RequestMeta) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !this.password.verify(input.password, user.passwordHash)) {
+      throw new UnauthorizedException("Mot de passe incorrect");
+    }
+
+    if (!user.mfaEnabled) {
+      return { message: "MFA deja desactive." };
+    }
+
+    const ok = await this.verifyMfaCredential(user, input);
+    if (!ok) throw new UnauthorizedException("Code MFA invalide.");
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        mfaEnabled: false,
+        mfaSecretEnc: null,
+        mfaTempSecretEnc: null,
+        mfaTempSecretExpiresAt: null,
+        mfaRecoveryCodes: Prisma.JsonNull,
+        mfaEnabledAt: null,
+      },
+    });
+
+    await this.audit.record({
+      companyId: user.companyId ?? undefined,
+      userId: user.id,
+      module: "auth",
+      action: "mfa_disabled",
+      entityType: "User",
+      entityId: user.id,
+      ipAddress: meta.ipAddress,
+    });
+
+    return { message: "MFA desactive." };
+  }
+
+  async regenerateMfaRecoveryCodes(userId: string, code: string, meta: RequestMeta) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user?.mfaEnabled || !this.verifyTotp(code, user.mfaSecretEnc)) {
+      throw new UnauthorizedException("Code MFA invalide.");
+    }
+
+    const recoveryCodes = this.createRecoveryCodes();
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { mfaRecoveryCodes: this.hashRecoveryCodes(recoveryCodes) },
+    });
+    await this.audit.record({
+      companyId: user.companyId ?? undefined,
+      userId: user.id,
+      module: "auth",
+      action: "mfa_recovery_regenerated",
+      entityType: "User",
+      entityId: user.id,
+      ipAddress: meta.ipAddress,
+    });
+
+    return { recoveryCodes };
   }
 
   async verifyEmail(token: string, meta: RequestMeta) {
@@ -675,6 +984,8 @@ export class AuthService {
         notificationEmail: true,
         notificationErp: true,
         notificationImportant: true,
+        mfaEnabled: true,
+        mfaEnabledAt: true,
         role: true,
         status: true,
         lastLoginAt: true,

@@ -86,6 +86,53 @@ export class ResendVerificationDto {
   email!: string;
 }
 
+export class MfaSetupDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(128)
+  password!: string;
+}
+
+export class MfaVerifyDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(12)
+  code!: string;
+}
+
+export class MfaChallengeDto {
+  @IsString()
+  @IsNotEmpty()
+  challengeId!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(12)
+  code?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  recoveryCode?: string;
+}
+
+export class MfaDisableDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(128)
+  password!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(12)
+  code?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  recoveryCode?: string;
+}
+
 export class ForgotPasswordDto {
   @IsEmail()
   @MaxLength(160)

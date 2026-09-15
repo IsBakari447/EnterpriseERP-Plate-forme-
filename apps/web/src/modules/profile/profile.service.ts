@@ -22,6 +22,8 @@ export type UserProfile = {
   status: string;
   lastLoginAt?: string | null;
   passwordChangedAt?: string | null;
+  mfaEnabled?: boolean;
+  mfaEnabledAt?: string | null;
   company?: {
     id: string;
     name: string;

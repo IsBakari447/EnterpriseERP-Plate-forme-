@@ -14,8 +14,10 @@ function LoginContent() {
   const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [mfaCode, setMfaCode] = useState("");
+  const [mfaChallengeId, setMfaChallengeId] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
-  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "mfa" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -32,6 +34,34 @@ function LoginContent() {
 
     try {
       const session = await authService.login({ email, password, rememberMe });
+      if ("mfaRequired" in session) {
+        setMfaChallengeId(session.challengeId);
+        setStatus("mfa");
+        return;
+      }
+
+      redirectAfterLogin(session);
+    } catch (error) {
+      setStatus("error");
+      setErrorMessage(getApiErrorMessage(error, t("auth.loginError")));
+    }
+  }
+
+  async function submitMfa(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus("loading");
+    setErrorMessage("");
+
+    try {
+      const session = await authService.completeMfaChallenge({ challengeId: mfaChallengeId, code: mfaCode });
+      redirectAfterLogin(session);
+    } catch (error) {
+      setStatus("mfa");
+      setErrorMessage(getApiErrorMessage(error, t("auth.mfaInvalid")));
+    }
+  }
+
+  function redirectAfterLogin(session: Awaited<ReturnType<typeof authService.completeMfaChallenge>>) {
       const onboardingCompleted =
         session.onboardingCompleted ?? session.user.company?.onboardingCompleted ?? false;
       const sector = session.sector ?? session.user.company?.sector ?? "general";
@@ -40,10 +70,6 @@ function LoginContent() {
       const safeRedirect = redirect?.startsWith("/") && !redirect.startsWith("//") ? redirect : null;
 
       router.push(safeRedirect ?? (onboardingCompleted ? "/dashboard" : `/onboarding?sector=${sector}`));
-    } catch (error) {
-      setStatus("error");
-      setErrorMessage(getApiErrorMessage(error, t("auth.loginError")));
-    }
   }
 
   return (
@@ -52,6 +78,43 @@ function LoginContent() {
       title={t("auth.loginTitle")}
       text={t("auth.loginHero")}
     >
+      {status === "mfa" ? (
+        <form onSubmit={submitMfa} className="space-y-6">
+          <div>
+            <div className="inline-flex rounded-full bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
+              MFA
+            </div>
+            <h2 className="mt-5 text-3xl font-black leading-tight text-[#1E2A38] sm:text-4xl">{t("auth.mfaTitle")}</h2>
+            <p className="mt-3 text-slate-600">{t("auth.mfaText")}</p>
+          </div>
+
+          {errorMessage && (
+            <div className="rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-bold text-red-800">
+              {errorMessage}
+            </div>
+          )}
+
+          <label className="block">
+            <span className="text-sm font-black text-slate-700">{t("auth.mfaCode")}</span>
+            <input
+              name="one-time-code"
+              autoComplete="one-time-code"
+              inputMode="numeric"
+              required
+              value={mfaCode}
+              onChange={(event) => setMfaCode(event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-semibold outline-none transition focus:border-[#00C2A9] focus:bg-white focus:ring-4 focus:ring-[#00C2A9]/15"
+            />
+          </label>
+
+          <button
+            type="submit"
+            className="w-full rounded-2xl bg-[#FF7A00] px-6 py-4 font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-[#e66e00]"
+          >
+            {t("auth.mfaVerify")}
+          </button>
+        </form>
+      ) : (
       <form onSubmit={submit} className="space-y-6">
         <div>
           <div className="inline-flex rounded-full bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
@@ -126,6 +189,7 @@ function LoginContent() {
           {t("auth.loginTip")}
         </div>
       </form>
+      )}
     </AuthShell>
   );
 }

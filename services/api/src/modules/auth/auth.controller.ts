@@ -1,8 +1,9 @@
 import { Body, Controller, Get, Post, Req } from "@nestjs/common";
+import { CurrentUser, AuthenticatedUser } from "../../common/auth/current-user.decorator";
 import { Public } from "../../common/auth/public.decorator";
 import { TenantOptional } from "../../common/tenant/tenant-optional.decorator";
 import { AuthService } from "./auth.service";
-import { ForgotPasswordDto, LoginDto, RefreshDto, RegisterDto, ResendVerificationDto, ResetPasswordDto, VerifyEmailDto } from "./dto/auth.dto";
+import { ForgotPasswordDto, LoginDto, MfaChallengeDto, MfaDisableDto, MfaSetupDto, MfaVerifyDto, RefreshDto, RegisterDto, ResendVerificationDto, ResetPasswordDto, VerifyEmailDto } from "./dto/auth.dto";
 
 type AuthenticatedRequest = {
   user?: {
@@ -46,6 +47,32 @@ export class AuthController {
   @Post("resend-verification")
   resendVerification(@Body() body: ResendVerificationDto, @Req() request: AuthenticatedRequest) {
     return this.authService.resendVerification(body.email, this.getMeta(request));
+  }
+
+  @Post("mfa/setup")
+  setupMfa(@CurrentUser() user: AuthenticatedUser, @Body() body: MfaSetupDto, @Req() request: AuthenticatedRequest) {
+    return this.authService.setupMfa(user.sub, body.password, this.getMeta(request));
+  }
+
+  @Post("mfa/verify")
+  verifyMfaSetup(@CurrentUser() user: AuthenticatedUser, @Body() body: MfaVerifyDto, @Req() request: AuthenticatedRequest) {
+    return this.authService.verifyMfaSetup(user.sub, body.code, this.getMeta(request));
+  }
+
+  @Public()
+  @Post("mfa/challenge")
+  challengeMfa(@Body() body: MfaChallengeDto, @Req() request: AuthenticatedRequest) {
+    return this.authService.completeMfaChallenge(body, this.getMeta(request));
+  }
+
+  @Post("mfa/disable")
+  disableMfa(@CurrentUser() user: AuthenticatedUser, @Body() body: MfaDisableDto, @Req() request: AuthenticatedRequest) {
+    return this.authService.disableMfa(user.sub, body, this.getMeta(request));
+  }
+
+  @Post("mfa/recovery")
+  regenerateMfaRecovery(@CurrentUser() user: AuthenticatedUser, @Body() body: MfaVerifyDto, @Req() request: AuthenticatedRequest) {
+    return this.authService.regenerateMfaRecoveryCodes(user.sub, body.code, this.getMeta(request));
   }
 
   @Public()

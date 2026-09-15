@@ -60,6 +60,8 @@ export class ProfileService {
         notificationErp: true,
         notificationImportant: true,
         signature: true,
+        mfaEnabled: true,
+        mfaEnabledAt: true,
         role: true,
         status: true,
         lastLoginAt: true,
