@@ -25,7 +25,9 @@ async function bootstrap() {
   );
   app.enableCors({
     origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
-      if (!origin || (!isProduction && corsOrigins.includes("*")) || corsOrigins.includes(origin)) {
+      const isEnterpriseErpRenderOrigin = Boolean(origin && /^https:\/\/enterpriseerp-[\w-]+\.onrender\.com$/i.test(origin));
+
+      if (!origin || (!isProduction && corsOrigins.includes("*")) || corsOrigins.includes(origin) || isEnterpriseErpRenderOrigin) {
         callback(null, true);
         return;
       }
@@ -33,9 +35,7 @@ async function bootstrap() {
       const isLocalDevOrigin =
         /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0|[\w-]+)(:\d+)?$/i.test(origin) ||
         /^https?:\/\/(10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})(:\d+)?$/i.test(origin);
-      const isEnterpriseErpRenderOrigin = /^https:\/\/enterpriseerp-[\w-]+\.onrender\.com$/i.test(origin);
-
-      callback(null, !isProduction && (isLocalDevOrigin || isEnterpriseErpRenderOrigin));
+      callback(null, !isProduction && isLocalDevOrigin);
     },
     credentials: true,
   });
