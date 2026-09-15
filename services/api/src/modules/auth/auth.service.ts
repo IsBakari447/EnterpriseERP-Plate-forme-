@@ -1,6 +1,7 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
-import { createHash, randomInt } from "crypto";
+import { createHash, randomBytes, randomInt } from "crypto";
 import { Prisma, UserRole } from "@prisma/client";
+import nodemailer from "nodemailer";
 import { JwtService } from "../../common/auth/jwt.service";
 import { PasswordService } from "../../common/auth/password.service";
 import { AuditService } from "../../common/audit/audit.service";
@@ -50,6 +51,10 @@ export class AuthService {
     return createHash("sha256").update(token).digest("hex");
   }
 
+  private createSecureToken() {
+    return randomBytes(32).toString("base64url");
+  }
+
   private normalizeEmail(email: string) {
     return email.trim().toLowerCase();
   }
@@ -62,6 +67,109 @@ export class AuthService {
 
   private createResetCode() {
     return String(randomInt(0, 1_000_000)).padStart(6, "0");
+  }
+
+  private getAppUrl() {
+    return (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+  }
+
+  private hasSmtpConfig() {
+    return Boolean(process.env.SMTP_HOST && process.env.SMTP_PORT && process.env.EMAIL_FROM);
+  }
+
+  private assertVerificationDeliveryConfigured() {
+    if (process.env.NODE_ENV === "production" && !this.hasSmtpConfig()) {
+      throw new HttpException("Email verification is not configured.", HttpStatus.SERVICE_UNAVAILABLE);
+    }
+  }
+
+  private buildEmailVerificationUrl(token: string) {
+    return `${this.getAppUrl()}/verify-email?token=${encodeURIComponent(token)}`;
+  }
+
+  private async deliverVerificationEmail(email: string, verificationUrl: string) {
+    if (!this.hasSmtpConfig()) return false;
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
+      secure: String(process.env.SMTP_SECURE ?? "").toLowerCase() === "true",
+      auth: process.env.SMTP_USERNAME
+        ? {
+            user: process.env.SMTP_USERNAME,
+            pass: process.env.SMTP_PASSWORD,
+          }
+        : undefined,
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: "Verify your EnterpriseERP Cloud email",
+      text: [
+        "Welcome to EnterpriseERP Cloud.",
+        "",
+        "Verify your email address to activate your workspace:",
+        verificationUrl,
+        "",
+        "This link expires in 24 hours.",
+      ].join("\n"),
+      html: `
+        <p>Welcome to <strong>EnterpriseERP Cloud</strong>.</p>
+        <p>Verify your email address to activate your workspace:</p>
+        <p><a href="${verificationUrl}">Verify my email</a></p>
+        <p>This link expires in 24 hours.</p>
+      `,
+    });
+
+    return true;
+  }
+
+  private async createEmailVerificationToken(userId: string) {
+    const token = this.createSecureToken();
+    const tokenHash = this.hashToken(token);
+
+    await this.prisma.emailVerificationToken.updateMany({
+      where: { userId, usedAt: null },
+      data: { usedAt: new Date() },
+    });
+
+    await this.prisma.emailVerificationToken.create({
+      data: {
+        userId,
+        tokenHash,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      },
+    });
+
+    return token;
+  }
+
+  private async sendEmailVerification(user: { id: string; email: string; companyId: string | null }, meta: RequestMeta) {
+    const token = await this.createEmailVerificationToken(user.id);
+    const verificationUrl = this.buildEmailVerificationUrl(token);
+    const delivered = await this.deliverVerificationEmail(user.email, verificationUrl);
+
+    await this.audit.record({
+      companyId: user.companyId ?? undefined,
+      userId: user.id,
+      module: "auth",
+      action: "email_verification_sent",
+      entityType: "User",
+      entityId: user.id,
+      ipAddress: meta.ipAddress,
+      newValue: {
+        email: user.email,
+        delivered,
+        verificationUrl: process.env.NODE_ENV === "production" ? undefined : verificationUrl,
+      },
+    });
+
+    if (process.env.NODE_ENV !== "production") {
+      return { verificationToken: token, verificationUrl };
+    }
+
+    return {};
   }
 
   private getLoginRateKey(email: string, meta: RequestMeta) {
@@ -166,6 +274,7 @@ export class AuthService {
     }
 
     this.validatePassword(input.password);
+    this.assertVerificationDeliveryConfigured();
     const email = this.normalizeEmail(input.email);
     const existing = await this.prisma.user.findUnique({ where: { email } });
 
@@ -218,7 +327,7 @@ export class AuthService {
             language: input.language ?? "fr",
             role: "OWNER",
             status: "ACTIVE",
-            emailVerifiedAt: new Date(),
+            emailVerifiedAt: null,
           },
         });
         await tx.membership.create({
@@ -249,7 +358,14 @@ export class AuthService {
         },
       });
 
-      return this.createTokenResponse(user, { rememberMe: true, deviceName: "Initial registration" }, meta);
+      const verification = await this.sendEmailVerification(user, meta);
+
+      return {
+        requiresEmailVerification: true,
+        message: "Compte cree. Verifiez votre adresse e-mail pour activer l'acces.",
+        email: user.email,
+        ...verification,
+      };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
         throw new BadRequestException("Un compte existe deja avec cet email");
@@ -276,6 +392,10 @@ export class AuthService {
       throw new UnauthorizedException("Compte non actif");
     }
 
+    if (!user.emailVerifiedAt) {
+      throw new UnauthorizedException("Adresse e-mail non verifiee. Verifiez votre boite mail.");
+    }
+
     this.resetFailedLogin(rateKey);
 
     await this.prisma.user.update({
@@ -292,6 +412,76 @@ export class AuthService {
     });
 
     return this.createTokenResponse(user, input, meta);
+  }
+
+  async verifyEmail(token: string, meta: RequestMeta) {
+    const tokenHash = this.hashToken(String(token ?? "").trim());
+    const entry = await this.prisma.emailVerificationToken.findUnique({
+      where: { tokenHash },
+      include: { user: true },
+    });
+
+    if (!entry || entry.usedAt || entry.expiresAt < new Date()) {
+      throw new BadRequestException("Le lien de verification est invalide ou expire.");
+    }
+
+    await this.prisma.$transaction([
+      this.prisma.emailVerificationToken.update({
+        where: { id: entry.id },
+        data: { usedAt: new Date() },
+      }),
+      this.prisma.user.update({
+        where: { id: entry.userId },
+        data: { emailVerifiedAt: new Date() },
+      }),
+    ]);
+
+    await this.audit.record({
+      companyId: entry.user.companyId ?? undefined,
+      userId: entry.userId,
+      module: "auth",
+      action: "email_verified",
+      entityType: "User",
+      entityId: entry.userId,
+      ipAddress: meta.ipAddress,
+    });
+
+    return { message: "Adresse e-mail verifiee. Vous pouvez maintenant vous connecter." };
+  }
+
+  async resendVerification(emailInput: string, meta: RequestMeta) {
+    const email = this.normalizeEmail(emailInput ?? "");
+    const genericMessage = "Si le compte existe et n'est pas verifie, un nouveau lien a ete envoye.";
+
+    if (!email) return { message: genericMessage };
+
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, companyId: true, emailVerifiedAt: true },
+    });
+
+    if (!user || user.emailVerifiedAt) {
+      return { message: genericMessage };
+    }
+
+    const recentToken = await this.prisma.emailVerificationToken.findFirst({
+      where: {
+        userId: user.id,
+        usedAt: null,
+        createdAt: { gt: new Date(Date.now() - 5 * 60 * 1000) },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (recentToken) {
+      return { message: genericMessage };
+    }
+
+    const verification = await this.sendEmailVerification(user, meta);
+    return {
+      message: genericMessage,
+      ...verification,
+    };
   }
 
   async refresh(refreshToken: string, meta: RequestMeta) {

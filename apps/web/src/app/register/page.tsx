@@ -46,16 +46,18 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [sector, setSector] = useState<SectorKey>(getInitialSector);
-  const [status, setStatus] = useState<"idle" | "loading" | "error" | "account-exists">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "error" | "account-exists" | "verification-sent">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [verificationUrl, setVerificationUrl] = useState("");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("loading");
     setErrorMessage("");
+    setVerificationUrl("");
 
     try {
-      await authService.register({
+      const result = await authService.register({
         companyName,
         name,
         email,
@@ -63,6 +65,13 @@ export default function RegisterPage() {
         sector,
         language: locale,
       });
+
+      if ("requiresEmailVerification" in result) {
+        setStatus("verification-sent");
+        setVerificationUrl(result.verificationUrl ?? "");
+        return;
+      }
+
       router.push(`/onboarding?sector=${sector}`);
     } catch (error) {
       const message = getApiErrorMessage(error, t("auth.registerError"));
@@ -99,6 +108,17 @@ export default function RegisterPage() {
             {status === "account-exists" && (
               <Link href="/login" className="mt-2 inline-flex text-[#00A693] underline-offset-4 hover:underline">
                 {t("auth.useExistingAccount")}
+              </Link>
+            )}
+          </div>
+        )}
+
+        {status === "verification-sent" && (
+          <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-sm font-bold text-emerald-900">
+            <p>{t("auth.verifyEmailSent")}</p>
+            {verificationUrl && (
+              <Link href={verificationUrl} className="mt-2 inline-flex text-[#00A693] underline-offset-4 hover:underline">
+                {t("auth.openVerificationLink")}
               </Link>
             )}
           </div>

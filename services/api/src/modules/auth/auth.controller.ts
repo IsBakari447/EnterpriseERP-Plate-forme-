@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Req } from "@nestjs/common";
 import { Public } from "../../common/auth/public.decorator";
 import { TenantOptional } from "../../common/tenant/tenant-optional.decorator";
 import { AuthService } from "./auth.service";
-import { ForgotPasswordDto, LoginDto, RefreshDto, RegisterDto, ResetPasswordDto } from "./dto/auth.dto";
+import { ForgotPasswordDto, LoginDto, RefreshDto, RegisterDto, ResendVerificationDto, ResetPasswordDto, VerifyEmailDto } from "./dto/auth.dto";
 
 type AuthenticatedRequest = {
   user?: {
@@ -34,6 +34,18 @@ export class AuthController {
   @Post("refresh")
   refresh(@Body() body: RefreshDto, @Req() request: AuthenticatedRequest) {
     return this.authService.refresh(body.refreshToken, this.getMeta(request));
+  }
+
+  @Public()
+  @Post("verify-email")
+  verifyEmail(@Body() body: VerifyEmailDto, @Req() request: AuthenticatedRequest) {
+    return this.authService.verifyEmail(body.token, this.getMeta(request));
+  }
+
+  @Public()
+  @Post("resend-verification")
+  resendVerification(@Body() body: ResendVerificationDto, @Req() request: AuthenticatedRequest) {
+    return this.authService.resendVerification(body.email, this.getMeta(request));
   }
 
   @Public()

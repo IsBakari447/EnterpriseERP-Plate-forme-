@@ -44,6 +44,7 @@ const publicRoutePrefixes = [
   "/status",
   "/support",
   "/transport",
+  "/verify-email",
 ];
 
 function isPublicRoute(pathname: string) {

@@ -1535,7 +1535,7 @@ export default function GenericModulePage({ module }: { module: ModuleView }) {
   return (
     <ERPLayout
       title={`${module.icon} ${localizedModule.name}`}
-      subtitle={`${tx(templateLabel)}: ${tx("une interface adaptee au metier, assemblee avec des widgets reutilisables.")}`}
+      subtitle={`${tx(templateLabel)}: ${tx("une vue claire pour suivre vos priorites et agir plus vite.")}`}
       action={tx("Creer")}
       onAction={() => setCreateOpen(true)}
     >

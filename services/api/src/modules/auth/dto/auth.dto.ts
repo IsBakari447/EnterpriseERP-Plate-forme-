@@ -73,6 +73,19 @@ export class RefreshDto {
   refreshToken!: string;
 }
 
+export class VerifyEmailDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(256)
+  token!: string;
+}
+
+export class ResendVerificationDto {
+  @IsEmail()
+  @MaxLength(160)
+  email!: string;
+}
+
 export class ForgotPasswordDto {
   @IsEmail()
   @MaxLength(160)

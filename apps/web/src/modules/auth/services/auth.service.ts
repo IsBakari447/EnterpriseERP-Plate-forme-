@@ -16,6 +16,16 @@ export type RegisterInput = {
   language?: string;
 };
 
+export type RegisterResponse =
+  | AuthSession
+  | {
+      requiresEmailVerification: true;
+      message: string;
+      email: string;
+      verificationToken?: string;
+      verificationUrl?: string;
+    };
+
 export const authService = {
   async login(input: LoginInput) {
     const { data } = await apiClient.post<AuthSession>("/auth/login", {
@@ -27,8 +37,10 @@ export const authService = {
   },
 
   async register(input: RegisterInput) {
-    const { data } = await apiClient.post<AuthSession>("/auth/register", input);
-    tokenStorage.set(data);
+    const { data } = await apiClient.post<RegisterResponse>("/auth/register", input);
+    if ("accessToken" in data) {
+      tokenStorage.set(data);
+    }
     return data;
   },
 
