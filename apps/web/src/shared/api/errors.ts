@@ -24,10 +24,6 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
     return fallback;
   }
 
-  if (error.response.status === 401) {
-    return fallback;
-  }
-
   const payload = error.response?.data;
   const message =
     firstMessage(payload?.message) ??
