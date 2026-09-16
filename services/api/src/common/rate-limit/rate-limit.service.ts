@@ -1,4 +1,4 @@
-import { Injectable, OnModuleDestroy } from "@nestjs/common";
+import { Injectable, Logger, OnModuleDestroy } from "@nestjs/common";
 import { createClient, RedisClientType } from "redis";
 
 type RateLimitHit = {
@@ -15,10 +15,12 @@ type MemoryBucket = {
 
 @Injectable()
 export class RateLimitService implements OnModuleDestroy {
+  private readonly logger = new Logger(RateLimitService.name);
   private readonly memoryBuckets = new Map<string, MemoryBucket>();
   private redisClient: RedisClientType | null = null;
   private redisConnectPromise: Promise<RedisClientType | null> | null = null;
   private redisDisabledUntil = 0;
+  private hasLoggedMemoryFallback = false;
 
   async hit(key: string, limit: number, windowMs: number): Promise<RateLimitHit> {
     const redis = await this.getRedisClient();
@@ -95,7 +97,12 @@ export class RateLimitService implements OnModuleDestroy {
 
   private async getRedisClient(): Promise<RedisClientType | null> {
     const url = process.env.REDIS_URL;
-    if (!url || Date.now() < this.redisDisabledUntil) return null;
+    if (!url) {
+      this.logMemoryFallback("REDIS_URL not configured");
+      return null;
+    }
+
+    if (Date.now() < this.redisDisabledUntil) return null;
 
     if (this.redisClient?.isOpen) return this.redisClient;
     if (this.redisConnectPromise) return this.redisConnectPromise;
@@ -113,15 +120,23 @@ export class RateLimitService implements OnModuleDestroy {
       client.on("error", () => this.disableRedisBriefly());
       await client.connect();
       this.redisClient = client as RedisClientType;
+      this.logger.log("[RateLimit] Redis connected - distributed rate limiting enabled");
       return this.redisClient;
     } catch {
-      this.disableRedisBriefly();
+      this.disableRedisBriefly("Redis unavailable");
       return null;
     }
   }
 
-  private disableRedisBriefly() {
+  private disableRedisBriefly(reason = "Redis command failed") {
+    this.logMemoryFallback(reason);
     this.redisDisabledUntil = Date.now() + 30_000;
+  }
+
+  private logMemoryFallback(reason: string) {
+    if (this.hasLoggedMemoryFallback) return;
+    this.hasLoggedMemoryFallback = true;
+    this.logger.warn(`[RateLimit] ${reason} - using memory fallback`);
   }
 
   private pruneMemoryBuckets(now: number) {
