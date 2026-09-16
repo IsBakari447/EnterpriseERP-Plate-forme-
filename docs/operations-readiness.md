@@ -7,29 +7,66 @@ Cloud as broadly production-ready.
 
 Run this gate against a disposable staging database before major releases.
 
-1. Create a database backup from the active environment.
-2. Restore the backup into a clean staging database.
-3. Run Prisma migrations against the restored database.
-4. Start the API against the restored database.
-5. Verify `/health` and `/health/ready`.
-6. Sign in with a restored OWNER account.
-7. Verify tenant isolation with:
+Targets:
+
+- Initial RPO: `<= 24h`.
+- Initial RTO: `<= 4h`.
+
+Create a backup from the source database:
+
+```bash
+BACKUP_DATABASE_URL="postgresql://..." npm run db:backup
+```
+
+Restore into a disposable staging database only:
+
+```bash
+BACKUP_FILE="backups/enterpriseerp-YYYY-MM-DD.dump" \
+RESTORE_DATABASE_URL="postgresql://...staging..." \
+RESTORE_CONFIRM=I_UNDERSTAND \
+npm run db:restore
+```
+
+Validate restored data:
+
+```bash
+DATABASE_URL="postgresql://...staging..." npm run db:restore:validate
+```
+
+Then start the API against the restored database and verify:
+
+1. `/health`.
+2. `/health/ready`.
+3. OWNER login.
+4. Companies, users, clients, products, invoices, payments, expenses, sessions,
+   audit logs, and important sector data.
+5. Tenant isolation:
 
 ```bash
 npm run security:tenant-isolation
 ```
 
-8. Verify invoices, users, audit logs, products, clients, payments, and sessions.
-9. Run:
+6. API E2E smoke:
 
 ```bash
 npm run e2e:api
 ```
 
-10. Record restore duration, data timestamp, and any failed checks.
+Record:
+
+- backup date;
+- backup size;
+- restore duration;
+- data timestamp;
+- RPO;
+- RTO;
+- result: `PASS` or `FAIL`;
+- failed checks, if any.
 
 The gate is not green until login, tenant isolation, invoices, users, audit logs,
-and core CRUD all pass on restored data.
+and core CRUD all pass on restored data. Never restore into production from
+these scripts; they intentionally require `RESTORE_CONFIRM=I_UNDERSTAND` and a
+staging/test-like target URL.
 
 ## Distributed Rate Limiting Gate
 

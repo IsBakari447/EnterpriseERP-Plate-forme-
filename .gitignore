@@ -38,3 +38,5 @@ Thumbs.db
 *.zip
 *.tar
 *.gz
+*.dump
+backups/
