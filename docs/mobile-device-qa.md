@@ -42,6 +42,12 @@ npm run dev:api
     Each screen must show tenant API data or an honest empty state, not generic sector demo data.
 11. Switch phone network between Wi-Fi and mobile data if the API is deployed, then reload.
 12. Sign out and sign back in.
+13. With an OWNER or ADMINISTRATOR account that has MFA enabled, sign in again.
+14. Confirm the app shows the MFA challenge before opening tenant data.
+15. Enter a valid TOTP code and confirm the session opens normally.
+16. Leave the app idle long enough to force a token refresh, then reopen CRM, Stock, and Invoices.
+17. Toggle the device offline, open supported screens, and confirm they show an honest offline or empty state instead of stale demo data.
+18. Return online and confirm tenant data reloads from the API.
 
 ## Pass Criteria
 
@@ -50,3 +56,6 @@ npm run dev:api
 - No mobile screen shows hard-coded demo commerce/restaurant data for another sector.
 - Every supported module either reads tenant API data or shows a clear empty state.
 - Profile and company preferences remain aligned with the web app.
+- MFA-protected accounts cannot bypass the challenge on mobile.
+- Long-idle sessions refresh or ask the user to sign in again without exposing another tenant.
+- Offline mode never replaces real tenant data with generic commerce or restaurant examples.

@@ -55,54 +55,54 @@ export const publicPageMetadata = {
   home: buildPageMetadata({
     title: "EnterpriseERP Cloud | ERP Cloud, Mobile et IA",
     description:
-      "EnterpriseERP Cloud aide les PME a centraliser ventes, CRM, stock, facturation, finance, RH, mobile et IA dans une plateforme SaaS moderne.",
+      "EnterpriseERP Cloud aide les PME à centraliser ventes, CRM, stock, facturation, finance, RH, mobile et IA dans une plateforme SaaS moderne.",
     path: "/",
     keywords: ["EnterpriseERP", "ERP Cloud", "ERP SaaS", "ERP IA", "ERP mobile"],
   }),
   cloud: buildPageMetadata({
     title: "EnterpriseERP Cloud | ERP SaaS pour PME",
     description:
-      "Decouvrez EnterpriseERP Cloud, une plateforme ERP SaaS pour centraliser CRM, ventes, facturation, stock, finance, RH, mobile et IA.",
+      "Découvrez EnterpriseERP Cloud, une plateforme ERP SaaS pour centraliser CRM, ventes, facturation, stock, finance, RH, mobile et IA.",
     path: "/cloud",
     keywords: ["ERP Cloud", "ERP SaaS", "EnterpriseERP Cloud", "ERP PME", "logiciel de gestion cloud"],
   }),
   solutions: buildPageMetadata({
     title: "Solutions EnterpriseERP | ERP Cloud par secteur",
     description:
-      "Explorez les solutions EnterpriseERP pour commerce, restaurant, hotel, construction, industrie, transport, sante et education.",
+      "Explorez les solutions EnterpriseERP pour commerce, restaurant, hôtel, construction, industrie, transport, santé et éducation.",
     path: "/solutions",
     keywords: ["solution ERP", "ERP par secteur", "ERP metier", "ERP Cloud IA"],
   }),
   pricing: buildPageMetadata({
     title: "Tarifs EnterpriseERP Cloud | Plans ERP SaaS",
     description:
-      "Comparez les offres EnterpriseERP Cloud pour demarrer avec un essai gratuit, un plan Business transparent et une option Enterprise sur mesure.",
+      "Comparez les offres EnterpriseERP Cloud pour démarrer avec un essai gratuit, un plan Business transparent et une option Enterprise sur mesure.",
     path: "/pricing",
     keywords: ["tarif ERP", "prix ERP SaaS", "EnterpriseERP pricing", "ERP PME prix"],
   }),
   demo: buildPageMetadata({
-    title: "Demo EnterpriseERP Cloud | Tester l'ERP par secteur",
+    title: "Démo EnterpriseERP Cloud | Tester l'ERP par secteur",
     description:
-      "Essayez une demo EnterpriseERP Cloud avec donnees fictives, choix du secteur et parcours guide CRM, stock, facturation et dashboard.",
+      "Essayez une démo EnterpriseERP Cloud avec données fictives, choix du secteur et parcours guidé CRM, stock, facturation et dashboard.",
     path: "/demo",
     keywords: ["demo ERP", "essayer ERP Cloud", "demo ERP SaaS", "EnterpriseERP demo"],
   }),
   integrations: buildPageMetadata({
-    title: "Integrations EnterpriseERP | API, webhooks et connecteurs",
+    title: "Intégrations EnterpriseERP | API, webhooks et connecteurs",
     description:
-      "Connectez EnterpriseERP Cloud a votre ecosysteme avec API REST, webhooks, mobile, paiements, e-mail, calendrier et connecteurs metier.",
+      "Connectez EnterpriseERP Cloud à votre écosystème avec API REST, webhooks, mobile, paiements, e-mail, calendrier et connecteurs métier.",
     path: "/integrations",
     keywords: ["integration ERP", "API ERP", "webhooks ERP", "ERP Shopify WooCommerce"],
   }),
   security: buildPageMetadata({
-    title: "Securite EnterpriseERP Cloud | RBAC, audit et donnees",
+    title: "Sécurité EnterpriseERP Cloud | RBAC, audit et données",
     description:
-      "Decouvrez les fondations securite EnterpriseERP Cloud: multi-tenant, roles, permissions, audit, sessions et protection des donnees.",
+      "Découvrez les fondations sécurité EnterpriseERP Cloud: multi-tenant, rôles, permissions, audit, sessions et protection des données.",
     path: "/security",
     keywords: ["securite ERP", "RBAC ERP", "audit ERP", "ERP multi tenant"],
   }),
   status: buildPageMetadata({
-    title: "Status EnterpriseERP Cloud | Disponibilite API et services",
+    title: "Status EnterpriseERP Cloud | Disponibilité API et services",
     description:
       "Consultez le statut EnterpriseERP Cloud: application web, API, PostgreSQL, authentification, stockage fichiers et services IA.",
     path: "/status",
@@ -116,79 +116,79 @@ export const publicPageMetadata = {
     keywords: ["support ERP", "aide EnterpriseERP", "contact ERP Cloud", "support SaaS"],
   }),
   faq: buildPageMetadata({
-    title: "FAQ EnterpriseERP Cloud | Questions frequentes ERP SaaS",
+    title: "FAQ EnterpriseERP Cloud | Questions fréquentes ERP SaaS",
     description:
-      "Reponses aux questions frequentes sur EnterpriseERP Cloud, l'essai gratuit, le mobile, les integrations, la securite et la roadmap.",
+      "Réponses aux questions fréquentes sur EnterpriseERP Cloud, l'essai gratuit, le mobile, les intégrations, la sécurité et la roadmap.",
     path: "/faq",
     keywords: ["FAQ ERP", "questions ERP SaaS", "EnterpriseERP FAQ", "ERP Cloud aide"],
   }),
   roi: buildPageMetadata({
     title: "ROI EnterpriseERP Cloud | Calculer les gains ERP",
     description:
-      "Estimez les gains de temps, de tresorerie et de productivite que votre PME peut obtenir avec EnterpriseERP Cloud.",
+      "Estimez les gains de temps, de trésorerie et de productivité que votre PME peut obtenir avec EnterpriseERP Cloud.",
     path: "/roi",
     keywords: ["ROI ERP", "calcul retour investissement ERP", "gains ERP", "ERP productivite"],
   }),
   roadmap: buildPageMetadata({
-    title: "Roadmap EnterpriseERP Cloud | Disponible, Beta et Prevu",
+    title: "Roadmap EnterpriseERP Cloud | Disponible, bêta et prévu",
     description:
-      "Suivez la roadmap EnterpriseERP Cloud avec les modules disponibles, les fonctionnalites beta et les prochaines evolutions SaaS.",
+      "Suivez la roadmap EnterpriseERP Cloud avec les modules disponibles, les fonctionnalités bêta et les prochaines évolutions SaaS.",
     path: "/roadmap",
     keywords: ["roadmap ERP", "roadmap SaaS", "EnterpriseERP roadmap", "modules ERP"],
   }),
   commerce: buildPageMetadata({
     title: "ERP Commerce | Stock, ventes et facturation",
     description:
-      "EnterpriseERP Commerce aide les boutiques, magasins et supermarches a piloter produits, ventes, stock, fournisseurs, paiements et rapports.",
+      "EnterpriseERP Commerce aide les boutiques, magasins et supermarchés à piloter produits, ventes, stock, fournisseurs, paiements et rapports.",
     path: "/commerce",
     keywords: ["ERP commerce", "logiciel magasin", "gestion stock commerce", "ERP retail"],
   }),
   restaurant: buildPageMetadata({
     title: "ERP Restaurant | Commandes, cuisine et facturation",
     description:
-      "EnterpriseERP Restaurant centralise commandes, reservations, menus, cuisine, stock, achats, paiements, personnel et rapports IA.",
+      "EnterpriseERP Restaurant centralise commandes, réservations, menus, cuisine, stock, achats, paiements, personnel et rapports IA.",
     path: "/restaurant",
     keywords: ["ERP restaurant", "logiciel restaurant", "gestion commandes restaurant", "ERP restauration"],
   }),
   hotel: buildPageMetadata({
-    title: "ERP Hotel | Reservations, chambres et paiements",
+    title: "ERP Hôtel | Réservations, chambres et paiements",
     description:
-      "EnterpriseERP Hotel connecte reservations, chambres, clients, housekeeping, restaurant, facturation, paiements, personnel et finances.",
+      "EnterpriseERP Hôtel connecte réservations, chambres, clients, housekeeping, restaurant, facturation, paiements, personnel et finances.",
     path: "/hotel",
     keywords: ["ERP hotel", "logiciel hotel", "gestion hoteliere", "PMS hotel ERP"],
   }),
   construction: buildPageMetadata({
     title: "ERP Construction | Chantiers, budgets et contrats",
     description:
-      "EnterpriseERP Construction aide les entreprises BTP a suivre chantiers, devis, contrats, materiels, materiaux, budgets, achats et marges.",
+      "EnterpriseERP Construction aide les entreprises BTP à suivre chantiers, devis, contrats, matériels, matériaux, budgets, achats et marges.",
     path: "/construction",
     keywords: ["ERP construction", "ERP BTP", "logiciel chantier", "gestion budget chantier"],
   }),
   industrie: buildPageMetadata({
     title: "ERP Industrie | Production, stock et achats",
     description:
-      "EnterpriseERP Industrie structure production, matieres premieres, machines, achats, stock, ordres de fabrication, facturation et finances.",
+      "EnterpriseERP Industrie structure production, matières premières, machines, achats, stock, ordres de fabrication, facturation et finances.",
     path: "/industrie",
     keywords: ["ERP industrie", "logiciel production", "ERP usine", "gestion ordres de fabrication"],
   }),
   transport: buildPageMetadata({
     title: "ERP Transport | Flotte, expeditions et maintenance",
     description:
-      "EnterpriseERP Transport centralise clients, flotte, conducteurs, expeditions, itineraires, carburant, maintenance, facturation et paiements.",
+      "EnterpriseERP Transport centralise clients, flotte, conducteurs, expéditions, itinéraires, carburant, maintenance, facturation et paiements.",
     path: "/transport",
     keywords: ["ERP transport", "logiciel logistique", "gestion flotte", "gestion expedition"],
   }),
   sante: buildPageMetadata({
-    title: "ERP Sante | Patients, rendez-vous et facturation",
+    title: "ERP Santé | Patients, rendez-vous et facturation",
     description:
-      "EnterpriseERP Sante accompagne cliniques et cabinets avec patients, medecins, rendez-vous, consultations, pharmacie, dossiers et paiements.",
+      "EnterpriseERP Santé accompagne cliniques et cabinets avec patients, médecins, rendez-vous, consultations, pharmacie, dossiers et paiements.",
     path: "/sante",
     keywords: ["ERP sante", "logiciel clinique", "gestion cabinet medical", "facturation medicale"],
   }),
   education: buildPageMetadata({
-    title: "ERP Education | Etudiants, classes et frais scolaires",
+    title: "ERP Éducation | Étudiants, classes et frais scolaires",
     description:
-      "EnterpriseERP Education organise etudiants, enseignants, classes, emploi du temps, examens, cours, frais scolaires, factures et rapports.",
+      "EnterpriseERP Éducation organise étudiants, enseignants, classes, emploi du temps, examens, cours, frais scolaires, factures et rapports.",
     path: "/education",
     keywords: ["ERP education", "logiciel ecole", "gestion scolaire", "ERP universite"],
   }),
