@@ -6,6 +6,15 @@ import LanguageSwitcher from "@shared/i18n/LanguageSwitcher";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { translateContentText } from "@shared/i18n/content-labels";
 
+function getApiErrorMessage(error: unknown, fallback: string) {
+  if (typeof error === "object" && error !== null && "response" in error) {
+    const response = (error as { response?: { data?: { message?: string } } }).response;
+    return response?.data?.message ?? fallback;
+  }
+
+  return fallback;
+}
+
 export default function ResetPasswordPage() {
   const { locale, t } = useI18n();
   const tx = (value: string) => translateContentText(value, locale);
@@ -36,9 +45,9 @@ export default function ResetPasswordPage() {
       setMessage(tx(response.data?.message ?? "Mot de passe mis a jour avec succes."));
       setPassword("");
       setConfirmPassword("");
-    } catch (error: any) {
+    } catch (error: unknown) {
       setStatus("error");
-      setMessage(tx(error?.response?.data?.message ?? "Le code est invalide ou expire."));
+      setMessage(tx(getApiErrorMessage(error, "Le code est invalide ou expire.")));
     }
   }
 

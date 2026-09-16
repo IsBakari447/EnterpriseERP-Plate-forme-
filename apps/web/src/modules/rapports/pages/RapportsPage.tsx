@@ -13,9 +13,9 @@ const config: OperationCrudConfig = {
 };
 
 const kpis: OperationKpi[] = [
-  { label: "Vues enregistrees", value: "0" },
+  { label: "Vues enregistrées", value: "0" },
   { label: "Exports", value: "0" },
-  { label: "Rapports programmes", value: "0" },
+  { label: "Rapports programmés", value: "0" },
   { label: "Insights", value: "0" },
 ];
 
@@ -23,8 +23,8 @@ const fields: OperationField[] = [
   { key: "name", label: "Nom du rapport", required: true },
   { key: "type", label: "Type", defaultValue: "executive" },
   { key: "status", label: "Statut", defaultValue: "ready" },
-  { key: "schedule", label: "Frequence" },
-  { key: "lastRunAt", label: "Derniere execution", type: "datetime-local" },
+  { key: "schedule", label: "Fréquence" },
+  { key: "lastRunAt", label: "Dernière exécution", type: "datetime-local" },
 ];
 
 const rows: OperationRow[] = [
@@ -37,16 +37,16 @@ export default function RapportsPage() {
   return (
     <OperationCrudPage
       title={t("nav.rapports")}
-      subtitle="KPI, vues enregistrees, rapports programmes et exports decisionnels."
-      action="Creer un rapport"
-      listTitle="Rapports enregistres"
-      formTitle="Creer un rapport"
+      subtitle="KPI, vues enregistrées, rapports programmés et exports décisionnels."
+      action="Créer un rapport"
+      listTitle="Rapports enregistrés"
+      formTitle="Créer un rapport"
       kpis={kpis}
       rows={rows}
       columns={[
         { key: "name", label: "Nom" },
         { key: "type", label: "Type" },
-        { key: "schedule", label: "Frequence" },
+        { key: "schedule", label: "Fréquence" },
         { key: "status", label: t("common.status"), badge: true },
       ]}
       fields={fields}
