@@ -4,12 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { navigationItems } from "@/config/navigation";
 import LanguageSwitcher from "@shared/i18n/LanguageSwitcher";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { translateContentText } from "@shared/i18n/content-labels";
 import { translateFixedLabel } from "@shared/i18n/fixed-labels";
 import { useSector } from "@shared/sector/SectorProvider";
+import { buildNavigationSections, type SidebarLink } from "./navigationModel";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -18,31 +18,10 @@ export default function Sidebar() {
   const translateSectorLabel = (value: string) =>
     translateContentText(translateFixedLabel(value, locale), locale);
 
-  const alwaysVisibleKeys = new Set(["dashboard", "parametres"]);
-  const visibleItems = navigationItems.filter((item) => {
-    const sectorAllowsModule = sector.modules.includes(item.key);
-    const companyAllowsModule =
-      enabledModules.length === 0 ||
-      enabledModules.includes(item.key) ||
-      alwaysVisibleKeys.has(item.key);
+  const { businessItems, administrationItems, accountItems, adminExtraItems } =
+    buildNavigationSections({ enabledModules, sector, t, translateSectorLabel });
 
-    return sectorAllowsModule && companyAllowsModule;
-  });
-  const administrationKeys = new Set(["utilisateurs", "roles-permissions"]);
-  const businessItems = visibleItems.filter((item) => !administrationKeys.has(item.key));
-  const administrationItems = visibleItems.filter((item) => administrationKeys.has(item.key));
-  const accountItems = [
-    { href: "/profile", label: t("account.profile"), icon: "ME" },
-    { href: "/account/security", label: t("account.security"), icon: "SC" },
-    { href: "/account/sessions", label: t("account.sessions"), icon: "DV" },
-    { href: "/account/preferences", label: t("account.preferences"), icon: "PF" },
-  ];
-  const adminExtraItems = [
-    { href: "/audit", label: t("account.audit"), icon: "AU" },
-    { href: "/security-center", label: t("account.securityCenter"), icon: "SE" },
-  ];
-
-  const renderLink = (item: { href: string; label: string; icon: string; key?: string }) => {
+  const renderLink = (item: SidebarLink) => {
     const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
     return (
@@ -114,14 +93,7 @@ export default function Sidebar() {
 
       <nav className="mt-5 flex-1 space-y-5 overflow-y-auto pr-1 enterprise-scroll">
         <div className="space-y-1">
-          {businessItems.map((item) =>
-            renderLink({
-              key: item.key,
-              href: item.href,
-              icon: item.icon,
-              label: sector.labels?.[item.key] ? translateSectorLabel(sector.labels[item.key]!) : t(`nav.${item.key}`),
-            })
-          )}
+          {businessItems.map(renderLink)}
         </div>
 
         <div>
@@ -132,14 +104,7 @@ export default function Sidebar() {
         <div>
           <p className="mb-2 px-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">{t("admin.section")}</p>
           <div className="space-y-1">
-            {administrationItems.map((item) =>
-              renderLink({
-                key: item.key,
-                href: item.href,
-                icon: item.icon,
-                label: sector.labels?.[item.key] ? translateSectorLabel(sector.labels[item.key]!) : t(`nav.${item.key}`),
-              })
-            )}
+            {administrationItems.map(renderLink)}
             {adminExtraItems.map(renderLink)}
           </div>
         </div>
