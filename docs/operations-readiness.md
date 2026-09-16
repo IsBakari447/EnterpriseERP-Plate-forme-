@@ -31,6 +31,34 @@ npm run e2e:api
 The gate is not green until login, tenant isolation, invoices, users, audit logs,
 and core CRUD all pass on restored data.
 
+## Distributed Rate Limiting Gate
+
+Production must set `REDIS_URL` for shared rate-limit counters across API
+instances. Without `REDIS_URL`, the API falls back to in-memory limits for local
+development and CI smoke checks.
+
+Protected routes include:
+
+- `/api/auth/login`;
+- `/api/auth/register`;
+- `/api/auth/forgot-password`;
+- `/api/auth/reset-password`;
+- `/api/auth/verify-email`;
+- `/api/auth/resend-verification`;
+- `/api/auth/mfa/*`;
+- `/api/auth/refresh`;
+- `/api/operations/assistant/*`.
+
+Before release, verify:
+
+```bash
+npm --prefix services/api run security:rate-limit
+npm run qa:security
+```
+
+The gate is green when normal requests pass, excessive attempts return `429`,
+and access resumes after the configured window expires.
+
 ## Observability Gate
 
 Production monitoring should alert on:

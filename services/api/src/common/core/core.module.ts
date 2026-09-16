@@ -8,6 +8,8 @@ import { AuthGuard } from "../auth/auth.guard";
 import { JwtService } from "../auth/jwt.service";
 import { PasswordService } from "../auth/password.service";
 import { I18nModule } from "../i18n/i18n.module";
+import { RateLimitGuard } from "../rate-limit/rate-limit.guard";
+import { RateLimitService } from "../rate-limit/rate-limit.service";
 import { PermissionsGuard } from "../security/permissions.guard";
 import { TenantGuard } from "../tenant/tenant.guard";
 
@@ -25,6 +27,11 @@ import { TenantGuard } from "../tenant/tenant.guard";
     JwtService,
     PasswordService,
     AuditService,
+    RateLimitService,
+    {
+      provide: APP_GUARD,
+      useClass: RateLimitGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
@@ -38,6 +45,6 @@ import { TenantGuard } from "../tenant/tenant.guard";
       useClass: PermissionsGuard,
     },
   ],
-  exports: [PrismaService, AiService, JwtService, PasswordService, AuditService, I18nModule],
+  exports: [PrismaService, AiService, JwtService, PasswordService, AuditService, RateLimitService, I18nModule],
 })
 export class CoreModule {}
