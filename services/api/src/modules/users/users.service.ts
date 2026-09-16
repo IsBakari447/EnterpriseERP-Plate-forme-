@@ -178,6 +178,21 @@ export class UsersService {
   async remove(currentUser: AuthenticatedUser, id: string) {
     const existing = await this.findOne(currentUser, id);
     const companyId = requireTenant(currentUser);
+
+    if (id === currentUser.sub) {
+      throw new ForbiddenException("You cannot delete your own account.");
+    }
+
+    if (existing.role === "OWNER" && existing.status === "ACTIVE") {
+      const activeOwnerCount = await this.prisma.user.count({
+        where: { companyId, role: "OWNER", status: "ACTIVE" },
+      });
+
+      if (activeOwnerCount <= 1) {
+        throw new ForbiddenException("You cannot delete the last active owner.");
+      }
+    }
+
     const deleted = await this.prisma.user.delete({ where: { id } });
 
     await this.audit.record({
