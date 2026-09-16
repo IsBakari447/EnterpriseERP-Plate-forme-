@@ -48,7 +48,13 @@ const publicRoutePrefixes = [
 ];
 
 function isPublicRoute(pathname: string) {
-  return publicRoutePrefixes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+  return publicRoutePrefixes.some((route) => {
+    if (route === "/") {
+      return pathname === "/";
+    }
+
+    return pathname === route || pathname.startsWith(`${route}/`);
+  });
 }
 
 function redirectToLogin() {
