@@ -1,9 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "./prisma.service";
+import { RateLimitService } from "./common/rate-limit/rate-limit.service";
 
 @Injectable()
 export class AppService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly rateLimit: RateLimitService
+  ) {}
 
   getRoot() {
     return {
@@ -32,10 +36,12 @@ export class AppService {
 
   async getReadiness() {
     await this.prisma.$queryRaw`SELECT 1`;
+    const rateLimit = await this.rateLimit.getBackendStatus();
 
     return {
       status: "ready",
       database: "ok",
+      rateLimit,
       service: "enterpriseerp-cloud-api",
       timestamp: new Date().toISOString(),
     };

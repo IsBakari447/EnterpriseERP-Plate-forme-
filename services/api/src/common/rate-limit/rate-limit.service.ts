@@ -13,6 +13,11 @@ type MemoryBucket = {
   resetAt: number;
 };
 
+type RateLimitBackendStatus = {
+  backend: "redis" | "memory";
+  distributed: boolean;
+};
+
 @Injectable()
 export class RateLimitService implements OnModuleDestroy {
   private readonly logger = new Logger(RateLimitService.name);
@@ -47,6 +52,14 @@ export class RateLimitService implements OnModuleDestroy {
     } catch {
       this.disableRedisBriefly();
     }
+  }
+
+  async getBackendStatus(): Promise<RateLimitBackendStatus> {
+    const redis = await this.getRedisClient();
+
+    return redis
+      ? { backend: "redis", distributed: true }
+      : { backend: "memory", distributed: false };
   }
 
   async onModuleDestroy() {
