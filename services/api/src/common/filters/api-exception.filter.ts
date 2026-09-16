@@ -24,6 +24,16 @@ export class ApiExceptionFilter implements ExceptionFilter {
       response.setHeader("x-request-id", requestId);
     }
 
+    if (isHttpException && typeof details === "object" && details !== null && !Array.isArray(details)) {
+      response.status(status).json({
+        statusCode: status,
+        path: request.url,
+        requestId,
+        ...(details as Record<string, unknown>),
+      });
+      return;
+    }
+
     response.status(status).json({
       statusCode: status,
       path: request.url,
