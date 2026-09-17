@@ -158,21 +158,35 @@ async function sendAlert(results: CheckResult[]) {
 
   const failed = results.filter((result) => result.status === "fail");
   const warned = results.filter((result) => result.status === "warn");
-  const payload = {
-    service: "enterpriseerp-cloud",
-    status: failed.length > 0 ? "fail" : "warn",
-    generatedAt: new Date().toISOString(),
-    failed,
-    warned,
-  };
+  const content = formatAlertMessage(failed, warned);
 
   const response = await fetch(webhookUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ content }),
   });
 
   return { sent: response.ok, httpStatus: response.status };
+}
+
+function formatAlertMessage(failed: CheckResult[], warned: CheckResult[]) {
+  const lines = [
+    "[EnterpriseERP Cloud Alert]",
+    "",
+    `Status: ${failed.length > 0 ? "FAIL" : "WARN"}`,
+    `Time: ${new Date().toISOString()}`,
+    "",
+  ];
+
+  for (const result of failed) {
+    lines.push(`FAIL ${result.name}: ${result.message}`);
+  }
+
+  for (const result of warned) {
+    lines.push(`WARN ${result.name}: ${result.message}`);
+  }
+
+  return lines.join("\n").slice(0, 1900);
 }
 
 async function main() {
