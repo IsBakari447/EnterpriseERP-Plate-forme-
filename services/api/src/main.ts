@@ -25,9 +25,7 @@ async function bootstrap() {
   );
   app.enableCors({
     origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
-      const isEnterpriseErpRenderOrigin = Boolean(origin && /^https:\/\/enterpriseerp-[\w-]+\.onrender\.com$/i.test(origin));
-
-      if (!origin || (!isProduction && corsOrigins.includes("*")) || corsOrigins.includes(origin) || isEnterpriseErpRenderOrigin) {
+      if (!origin || corsOrigins.includes(origin) || (!isProduction && corsOrigins.includes("*"))) {
         callback(null, true);
         return;
       }

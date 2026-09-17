@@ -199,6 +199,45 @@ export class AuthService {
     return true;
   }
 
+  private async deliverPasswordResetEmail(email: string, code: string) {
+    if (!this.hasSmtpConfig()) return false;
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
+      secure: String(process.env.SMTP_SECURE ?? "").toLowerCase() === "true",
+      auth: process.env.SMTP_USERNAME
+        ? {
+            user: process.env.SMTP_USERNAME,
+            pass: process.env.SMTP_PASSWORD,
+          }
+        : undefined,
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: "Reset your EnterpriseERP Cloud password",
+      text: [
+        "EnterpriseERP Cloud password reset",
+        "",
+        `Your verification code is: ${code}`,
+        "",
+        "This code expires in 15 minutes.",
+        "If you did not request this reset, you can ignore this email.",
+      ].join("\n"),
+      html: `
+        <p><strong>EnterpriseERP Cloud password reset</strong></p>
+        <p>Your verification code is:</p>
+        <p style="font-size: 24px; font-weight: 700; letter-spacing: 4px;">${code}</p>
+        <p>This code expires in 15 minutes.</p>
+        <p>If you did not request this reset, you can ignore this email.</p>
+      `,
+    });
+
+    return true;
+  }
+
   private async createEmailVerificationToken(userId: string) {
     const token = this.createSecureToken();
     const tokenHash = this.hashToken(token);
@@ -897,6 +936,13 @@ export class AuthService {
           }),
         ]);
 
+        let delivered = false;
+        try {
+          delivered = await this.deliverPasswordResetEmail(user.email, code);
+        } catch {
+          delivered = false;
+        }
+
         await this.audit.record({
           companyId: user.companyId ?? undefined,
           userId: user.id,
@@ -905,6 +951,10 @@ export class AuthService {
           entityType: "User",
           entityId: user.id,
           ipAddress: meta.ipAddress,
+          newValue: {
+            email: user.email,
+            delivered,
+          },
         });
 
         if (process.env.NODE_ENV !== "production") {

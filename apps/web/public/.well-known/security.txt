@@ -1,0 +1,5 @@
+Contact: https://enterpriseerp-web.onrender.com/support
+Expires: 2027-09-17T00:00:00Z
+Preferred-Languages: fr, en
+Canonical: https://enterpriseerp-web.onrender.com/.well-known/security.txt
+Policy: https://enterpriseerp-web.onrender.com/security
