@@ -12,6 +12,7 @@ coverage/
 
 # Runtime and logs
 *.log
+logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -40,3 +41,5 @@ Thumbs.db
 *.gz
 *.dump
 backups/
+scripts/monitoring/monitoring.env
+!scripts/monitoring/monitoring.env.example
