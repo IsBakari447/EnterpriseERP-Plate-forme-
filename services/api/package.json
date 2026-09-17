@@ -15,6 +15,7 @@
     "db:backup": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/database-backup.ts",
     "db:restore": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/database-restore.ts",
     "db:restore:validate": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/restore-validate.ts",
+    "observability:check": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/observability-check.ts",
     "e2e:smoke": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/e2e-smoke.ts",
     "security:tenant-isolation": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/tenant-isolation.ts",
     "security:input-validation": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/input-validation.ts",

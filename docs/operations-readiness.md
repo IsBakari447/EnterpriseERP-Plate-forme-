@@ -113,6 +113,45 @@ Production monitoring should alert on:
 - disk, CPU, and memory pressure;
 - `/health/ready` failures.
 
+Run the built-in synthetic probe from CI, a scheduler, or a Render cron job:
+
+```bash
+npm run observability:check
+```
+
+The probe checks:
+
+- web availability;
+- API `/health`;
+- API `/health/ready`;
+- Redis-backed distributed rate limiting from readiness;
+- platform status payload;
+- latency warning and failure thresholds.
+
+Useful environment variables:
+
+```bash
+OBSERVABILITY_WEB_URL="https://enterpriseerp-web.onrender.com/"
+OBSERVABILITY_HEALTH_URL="https://enterpriseerp-api.onrender.com/health"
+OBSERVABILITY_READINESS_URL="https://enterpriseerp-api.onrender.com/health/ready"
+OBSERVABILITY_PLATFORM_STATUS_URL="https://enterpriseerp-api.onrender.com/api/platform-status"
+OBSERVABILITY_TIMEOUT_MS="10000"
+OBSERVABILITY_LATENCY_WARN_MS="3000"
+OBSERVABILITY_LATENCY_FAIL_MS="10000"
+OBSERVABILITY_FAIL_ON_WARN="false"
+ALERT_WEBHOOK_URL="https://..."
+```
+
+To prove the alerting channel without breaking production, run a controlled
+staging simulation:
+
+```bash
+OBSERVABILITY_SIMULATE_INCIDENT=true ALERT_WEBHOOK_URL="https://..." npm run observability:check
+```
+
+The gate is green only after a controlled staging incident produces a real alert
+in the chosen operational channel.
+
 ## AI Safety Gate
 
 Before enabling AI actions that write business data, every AI tool must pass this
