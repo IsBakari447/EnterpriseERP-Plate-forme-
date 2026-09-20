@@ -37,16 +37,19 @@ TIMESTAMP="$(date '+%Y-%m-%d %H:%M:%S')"
 
 send_alert() {
   local message="$1"
+  local json_message
 
   echo "[$TIMESTAMP] ALERT - $message" | tee -a "$LOG_FILE"
 
   if [ -n "$ALERT_WEBHOOK_URL" ]; then
+    json_message="$(node -e 'process.stdout.write(JSON.stringify(process.argv[1]))' "$message")"
+
     curl \
       --silent \
       --show-error \
       --max-time 10 \
       -H "Content-Type: application/json" \
-      -d "{\"content\":\"$message\"}" \
+      -d "{\"content\":$json_message}" \
       "$ALERT_WEBHOOK_URL" \
       >/dev/null 2>&1 || true
   fi
@@ -82,7 +85,7 @@ register_failure() {
     | tee -a "$LOG_FILE"
 
   if [ "$failures" -eq "$FAILURE_THRESHOLD" ]; then
-    send_alert "EnterpriseERP Cloud indisponible apres $FAILURE_THRESHOLD echecs consecutifs. $reason"
+    send_alert "[EnterpriseERP Cloud Alert] Status: FAIL. The API is unavailable after $FAILURE_THRESHOLD consecutive failed checks. Reason: $reason"
   fi
 }
 
@@ -100,7 +103,7 @@ register_success() {
     >> "$LOG_FILE"
 
   if [ "$last_status" = "DOWN" ] && [ "$previous_failures" -ge "$FAILURE_THRESHOLD" ]; then
-    send_alert "EnterpriseERP Cloud est de nouveau operationnel."
+    send_alert "[EnterpriseERP Cloud Alert] Status: RECOVERED. The API is operational again."
   fi
 }
 
@@ -120,7 +123,7 @@ CURL_EXIT=$?
 if [ "$CURL_EXIT" -ne 0 ]; then
   ERROR_MESSAGE="$(cat "$ERROR_FILE" 2>/dev/null)"
 
-  register_failure "API inaccessible. $ERROR_MESSAGE"
+  register_failure "API unreachable. $ERROR_MESSAGE"
 
   exit 2
 fi
