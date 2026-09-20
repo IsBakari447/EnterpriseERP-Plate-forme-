@@ -17,6 +17,7 @@ type CreatedUser = {
 const baseUrl = (process.env.E2E_BASE_URL ?? "http://localhost:4000").replace(/\/$/, "");
 const allowRemoteWrite = process.env.E2E_ALLOW_REMOTE_WRITE === "true";
 const runId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+const e2eIp = `e2e-rbac-${runId}`;
 const password = "E2ePassword123";
 const prisma = new PrismaClient();
 const passwords = new PasswordService();
@@ -34,6 +35,7 @@ function isLocalUrl(url: string) {
 async function request<T = Json>(path: string, options: RequestInit & { token?: string } = {}) {
   const headers = new Headers(options.headers);
   headers.set("accept", "application/json");
+  headers.set("x-forwarded-for", e2eIp);
 
   if (options.body && !headers.has("content-type")) {
     headers.set("content-type", "application/json");
@@ -60,6 +62,7 @@ async function request<T = Json>(path: string, options: RequestInit & { token?: 
 async function expectStatus(path: string, status: number, options: RequestInit & { token?: string } = {}) {
   const headers = new Headers(options.headers);
   headers.set("accept", "application/json");
+  headers.set("x-forwarded-for", e2eIp);
 
   if (options.body && !headers.has("content-type")) {
     headers.set("content-type", "application/json");
