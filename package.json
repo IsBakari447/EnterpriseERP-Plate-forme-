@@ -24,7 +24,7 @@
     "observability:check": "npm --prefix services/api run observability:check",
     "qa": "npm run lint && npm run build && npm run typecheck:mobile && npm --prefix services/api exec prisma validate -- --schema services/api/prisma/schema.prisma",
     "qa:security": "npm --prefix services/api run security:input-validation && npm --prefix services/api run security:rate-limit && npm --prefix services/api run security:tenant-isolation",
-    "e2e:api": "npm --prefix services/api run e2e:smoke",
+    "e2e:api": "npm --prefix services/api run e2e:smoke && npm --prefix services/api run e2e:rbac",
     "qa:mobile:device": "npm --prefix apps/mobile run start -- --clear --tunnel",
     "security:tenant-isolation": "npm --prefix services/api run security:tenant-isolation"
   }
