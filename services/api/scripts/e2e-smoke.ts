@@ -1,6 +1,7 @@
 type Json = Record<string, unknown>;
 type Session = {
   accessToken: string;
+  refreshToken: string;
   user: { id: string; email: string; companyId: string };
   companyId: string;
   sector: string;
@@ -65,6 +66,45 @@ async function expectStatus(path: string, status: number, options: RequestInit &
   });
 
   assert(response.status === status, `${options.method ?? "GET"} ${path}: expected ${status}, got ${response.status}`);
+}
+
+async function verifyAuthAndSessionFlow(session: Session) {
+  await expectStatus("/auth/me", 401);
+
+  await expectStatus("/auth/login", 401, {
+    method: "POST",
+    body: JSON.stringify({
+      email: session.user.email,
+      password: "WrongPassword123",
+    }),
+  });
+
+  await expectStatus("/auth/refresh", 401, {
+    method: "POST",
+    body: JSON.stringify({ refreshToken: "invalid-refresh-token" }),
+  });
+
+  const refreshed = await request<Session>("/auth/refresh", {
+    method: "POST",
+    body: JSON.stringify({ refreshToken: session.refreshToken }),
+  });
+  assert(refreshed.accessToken, "refresh should return a new access token");
+  assert(refreshed.refreshToken, "refresh should rotate the refresh token");
+
+  await expectStatus("/auth/refresh", 401, {
+    method: "POST",
+    body: JSON.stringify({ refreshToken: session.refreshToken }),
+  });
+
+  await request<Json>("/auth/logout", {
+    method: "POST",
+    token: refreshed.accessToken,
+  });
+
+  await expectStatus("/auth/refresh", 401, {
+    method: "POST",
+    body: JSON.stringify({ refreshToken: refreshed.refreshToken }),
+  });
 }
 
 async function registerTenant(label: string, sector: string) {
@@ -184,6 +224,7 @@ async function main() {
     }),
   });
   assert(loginA.companyId === tenantA.companyId, "login returned a different tenant context");
+  await verifyAuthAndSessionFlow(loginA);
 
   const { client, product, invoice } = await verifyCrud(tenantA);
 

@@ -8,6 +8,7 @@ export type JwtPayload = {
   role: string;
   sessionId: string;
   type: "access" | "refresh";
+  jti?: string;
 };
 
 type EncodedPayload = JwtPayload & {
@@ -96,7 +97,14 @@ export class JwtService {
   }
 
   createRefreshToken(payload: Omit<JwtPayload, "type">) {
-    return this.sign({ ...payload, type: "refresh" }, parseDuration(process.env.JWT_REFRESH_EXPIRES_IN, 7 * 24 * 60 * 60));
+    return this.sign(
+      {
+        ...payload,
+        type: "refresh",
+        jti: randomBytes(16).toString("base64url"),
+      },
+      parseDuration(process.env.JWT_REFRESH_EXPIRES_IN, 7 * 24 * 60 * 60)
+    );
   }
 
   createOpaqueRefreshToken() {
