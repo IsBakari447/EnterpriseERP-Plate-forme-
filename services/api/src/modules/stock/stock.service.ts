@@ -52,7 +52,7 @@ export class StockService {
     });
 
     if (!product) {
-      throw new NotFoundException("Produit introuvable");
+      throw new NotFoundException("Product not found.");
     }
 
     return product;
@@ -92,7 +92,7 @@ export class StockService {
       data: toProductUpdateData(data),
     });
     if (updateResult.count !== 1) {
-      throw new NotFoundException("Produit introuvable");
+      throw new NotFoundException("Product not found.");
     }
     const product = await this.findOne(user, id);
 
@@ -116,7 +116,7 @@ export class StockService {
 
     const deleteResult = await this.prisma.product.deleteMany({ where: { id, companyId } });
     if (deleteResult.count !== 1) {
-      throw new NotFoundException("Produit introuvable");
+      throw new NotFoundException("Product not found.");
     }
 
     await this.audit.record({

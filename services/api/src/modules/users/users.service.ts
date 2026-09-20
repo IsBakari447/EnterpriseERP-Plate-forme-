@@ -65,7 +65,7 @@ export class UsersService {
     });
 
     if (!foundUser) {
-      throw new NotFoundException("Utilisateur introuvable");
+      throw new NotFoundException("User not found.");
     }
 
     return foundUser;

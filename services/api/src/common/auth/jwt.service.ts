@@ -69,24 +69,24 @@ export class JwtService {
     const parts = token.split(".");
 
     if (parts.length !== 3) {
-      throw new UnauthorizedException("Token invalide");
+      throw new UnauthorizedException("Invalid token.");
     }
 
     const [header, payload, signature] = parts;
     const expectedSignature = base64Url(createHmac("sha256", this.secret).update(`${header}.${payload}`).digest());
 
     if (signature !== expectedSignature) {
-      throw new UnauthorizedException("Token invalide");
+      throw new UnauthorizedException("Invalid token.");
     }
 
     const decoded = JSON.parse(Buffer.from(payload.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8")) as EncodedPayload;
 
     if (decoded.exp < Math.floor(Date.now() / 1000)) {
-      throw new UnauthorizedException("Token expire");
+      throw new UnauthorizedException("Token expired.");
     }
 
     if (decoded.type !== expectedType) {
-      throw new UnauthorizedException("Type de token invalide");
+      throw new UnauthorizedException("Invalid token type.");
     }
 
     return decoded;

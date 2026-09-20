@@ -54,8 +54,7 @@ function I18nBridge({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const stored = window.localStorage.getItem("enterpriseerp.locale");
-    const browser = window.navigator.language;
-    const nextLocale = normalizeLocale(stored ?? browser);
+    const nextLocale = normalizeLocale(stored ?? defaultLocale);
     setLocaleState(nextLocale);
     void i18next.changeLanguage(nextLocale);
   }, []);

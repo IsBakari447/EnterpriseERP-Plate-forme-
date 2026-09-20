@@ -58,13 +58,13 @@ export class AppService {
     return {
       product: "EnterpriseERP Cloud",
       modules: [
-        { key: "dashboard", name: "Dashboard CEO", status: "available", value: "Pilotage, KPIs, risques et priorites IA" },
-        { key: "crm", name: "CRM", status: "available", value: "Clients, prospects, statut et revenu" },
-        { key: "stock", name: "Stock", status: "available", value: "Produits, SKU, quantites et alertes" },
-        { key: "facturation", name: "Facturation", status: "available", value: "Factures, echeances et encaissements" },
-        { key: "security", name: "RBAC et audit", status: "beta", value: "Roles, permissions, sessions et journal d'audit" },
-        { key: "ai", name: "Assistant IA", status: "planned", value: "Syntheses, recommandations et automatisations" },
-        { key: "mobile", name: "Mobile", status: "beta", value: "Connexion EnterpriseERP.Mobile progressive" },
+        { key: "dashboard", name: "Executive dashboard", status: "available", value: "Steering, KPIs, risks and AI priorities" },
+        { key: "crm", name: "CRM", status: "available", value: "Clients, prospects, status and revenue" },
+        { key: "stock", name: "Inventory", status: "available", value: "Products, SKUs, quantities and alerts" },
+        { key: "facturation", name: "Billing", status: "available", value: "Invoices, due dates and payments" },
+        { key: "security", name: "RBAC and audit", status: "beta", value: "Roles, permissions, sessions and audit log" },
+        { key: "ai", name: "AI Assistant", status: "planned", value: "Summaries, recommendations and automations" },
+        { key: "mobile", name: "Mobile", status: "beta", value: "Progressive EnterpriseERP.Mobile connection" },
       ],
     };
   }
@@ -84,17 +84,17 @@ export class AppService {
         dataRetentionDays: 90,
       },
       plans: [
-        { name: "Starter", price: "Free trial", target: "Validation et demos" },
-        { name: "Business", price: "From 49 EUR/month", target: "PME en croissance" },
-        { name: "Enterprise", price: "Custom", target: "Multi-sites, SLA, integrations" },
+        { name: "Starter", price: "Free trial", target: "Validation and demos" },
+        { name: "Business", price: "From 49 EUR/month", target: "Growing SMEs" },
+        { name: "Enterprise", price: "Custom", target: "Multi-site, SLA and integrations" },
       ],
     };
   }
 
   getRoadmap() {
     return {
-      now: ["CRM", "Stock", "Facturation", "Dashboard", "Health checks"],
-      next: ["Authentification complete", "Multi-tenant", "Audit log", "Assistant IA", "Mobile sync"],
+      now: ["CRM", "Stock", "Billing", "Dashboard", "Health checks"],
+      next: ["Complete authentication", "Multi-tenant", "Audit log", "AI Assistant", "Mobile sync"],
       later: ["SSO", "Marketplace integrations", "Advanced analytics", "Workflow automation"],
     };
   }

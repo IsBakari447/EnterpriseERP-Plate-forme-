@@ -107,7 +107,7 @@ export class EducationService {
     const config = resources[resource];
 
     if (!config) {
-      throw new BadRequestException("Ressource education invalide");
+      throw new BadRequestException("Invalid education resource.");
     }
 
     return config;
@@ -119,7 +119,7 @@ export class EducationService {
     const model = prisma[delegate];
 
     if (!model || typeof model !== "object") {
-      throw new BadRequestException("Ressource education non configuree");
+      throw new BadRequestException("Education resource is not configured.");
     }
 
     return model as {
@@ -206,7 +206,7 @@ export class EducationService {
     });
 
     if (!record) {
-      throw new NotFoundException("Donnee education introuvable");
+      throw new NotFoundException("Education record not found.");
     }
 
     return record;

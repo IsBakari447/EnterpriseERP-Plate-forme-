@@ -2,8 +2,8 @@ export type Locale = "fr" | "en" | "sv";
 export type TranslationKey = string;
 
 export const locales: { key: Locale; label: string }[] = [
-  { key: "fr", label: "FR - Français" },
   { key: "en", label: "EN - English" },
+  { key: "fr", label: "FR - Français" },
   { key: "sv", label: "SV - Svenska" },
 ];
 

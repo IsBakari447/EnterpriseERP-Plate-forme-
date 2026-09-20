@@ -1,8 +1,8 @@
 export type ApiLocale = "fr" | "en" | "sv" | "de" | "es" | "pt" | "it" | "nl";
 
-export const defaultApiLocale: ApiLocale = "fr";
+export const defaultApiLocale: ApiLocale = "en";
 
-export const apiLocales: ApiLocale[] = ["fr", "en", "sv", "de", "es", "pt", "it", "nl"];
+export const apiLocales: ApiLocale[] = ["en", "fr", "sv", "de", "es", "pt", "it", "nl"];
 
 export const apiLocaleLabels: Record<ApiLocale, string> = {
   fr: "FR - Francais",

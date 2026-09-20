@@ -85,7 +85,7 @@ export class ProfileService {
     });
 
     if (!profile) {
-      throw new NotFoundException("Profil introuvable");
+      throw new NotFoundException("Profile not found.");
     }
 
     return {
@@ -157,11 +157,11 @@ export class ProfileService {
     const isInlineImage = /^data:image\/(png|jpeg|jpg|webp);base64,[a-z0-9+/=]+$/i.test(avatarUrl ?? "");
 
     if (!isExternalUrl && !isInlineImage) {
-      throw new BadRequestException("avatarUrl doit etre une URL HTTPS ou une image locale valide");
+      throw new BadRequestException("avatarUrl must be an HTTPS URL or a valid inline image.");
     }
 
     if (isInlineImage && avatarUrl.length > 120_000) {
-      throw new BadRequestException("La photo de profil est trop volumineuse");
+      throw new BadRequestException("The profile photo is too large.");
     }
 
     const updated = await this.prisma.user.update({
@@ -206,13 +206,13 @@ export class ProfileService {
 
   async updatePassword(user: AuthenticatedUser, input: UpdatePasswordInput, meta: RequestMeta) {
     if (!input.newPassword || input.newPassword.length < 8) {
-      throw new BadRequestException("Le nouveau mot de passe doit contenir au moins 8 caracteres");
+      throw new BadRequestException("The new password must contain at least 8 characters.");
     }
 
     const current = await this.prisma.user.findUnique({ where: { id: user.sub } });
 
     if (!current || !this.password.verify(input.currentPassword, current.passwordHash)) {
-      throw new UnauthorizedException("Mot de passe actuel incorrect");
+      throw new UnauthorizedException("Current password is incorrect.");
     }
 
     await this.prisma.user.update({

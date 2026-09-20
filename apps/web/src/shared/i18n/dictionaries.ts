@@ -1,6 +1,6 @@
 ﻿export type Locale = "fr" | "en" | "sv" | "de" | "es" | "pt" | "it" | "nl";
 
-export const locales: Locale[] = ["fr", "en", "sv", "de", "es", "pt", "it", "nl"];
+export const locales: Locale[] = ["en", "fr", "sv", "de", "es", "pt", "it", "nl"];
 
 export const localeLabels: Record<Locale, string> = {
   fr: "FR - Français",
@@ -13,7 +13,7 @@ export const localeLabels: Record<Locale, string> = {
   nl: "NL - Nederlands",
 };
 
-export const defaultLocale: Locale = "fr";
+export const defaultLocale: Locale = "en";
 
 export const dictionaries: Record<Locale, Record<string, string>> = {
   fr: {

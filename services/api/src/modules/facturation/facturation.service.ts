@@ -52,7 +52,7 @@ export class FacturationService {
     });
 
     if (!invoice) {
-      throw new NotFoundException("Facture introuvable");
+      throw new NotFoundException("Invoice not found.");
     }
 
     return invoice;
@@ -92,7 +92,7 @@ export class FacturationService {
       data: toInvoiceUpdateData(data),
     });
     if (updateResult.count !== 1) {
-      throw new NotFoundException("Facture introuvable");
+      throw new NotFoundException("Invoice not found.");
     }
     const invoice = await this.findOne(user, id);
 
@@ -116,7 +116,7 @@ export class FacturationService {
 
     const deleteResult = await this.prisma.invoice.deleteMany({ where: { id, companyId } });
     if (deleteResult.count !== 1) {
-      throw new NotFoundException("Facture introuvable");
+      throw new NotFoundException("Invoice not found.");
     }
 
     await this.audit.record({

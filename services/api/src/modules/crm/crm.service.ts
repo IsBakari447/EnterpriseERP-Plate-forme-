@@ -52,7 +52,7 @@ export class CrmService {
     });
 
     if (!client) {
-      throw new NotFoundException("Client introuvable");
+      throw new NotFoundException("Client not found.");
     }
 
     return client;
@@ -92,7 +92,7 @@ export class CrmService {
       data: toClientUpdateData(data),
     });
     if (updateResult.count !== 1) {
-      throw new NotFoundException("Client introuvable");
+      throw new NotFoundException("Client not found.");
     }
     const client = await this.findOne(user, id);
 
@@ -116,7 +116,7 @@ export class CrmService {
 
     const deleteResult = await this.prisma.client.deleteMany({ where: { id, companyId } });
     if (deleteResult.count !== 1) {
-      throw new NotFoundException("Client introuvable");
+      throw new NotFoundException("Client not found.");
     }
 
     await this.audit.record({

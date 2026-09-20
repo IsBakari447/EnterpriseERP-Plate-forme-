@@ -21,7 +21,7 @@ const STORAGE_KEY = "enterpriseerp.locale";
 const Context = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("fr");
+  const [locale, setLocaleState] = useState<Locale>("en");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {

@@ -74,7 +74,7 @@ export class CompanyService {
 
   private sanitize(data: UpdateCompanyInput) {
     if (data.sector && !this.allowedSectors.has(data.sector)) {
-      throw new BadRequestException("Secteur invalide");
+      throw new BadRequestException("Invalid sector.");
     }
 
     const country = data.country?.trim().toUpperCase();
@@ -83,27 +83,27 @@ export class CompanyService {
     const numberFormat = data.numberFormat?.trim();
 
     if (country && !supportedCountries.has(country)) {
-      throw new BadRequestException("Pays invalide");
+      throw new BadRequestException("Invalid country.");
     }
 
     if (currency && !supportedCurrencies.has(currency)) {
-      throw new BadRequestException("Devise invalide");
+      throw new BadRequestException("Invalid currency.");
     }
 
     if (data.language && !this.allowedLanguages.has(data.language)) {
-      throw new BadRequestException("Langue invalide");
+      throw new BadRequestException("Invalid language.");
     }
 
     if (data.timezone && !supportedTimezones.has(data.timezone.trim())) {
-      throw new BadRequestException("Fuseau horaire invalide");
+      throw new BadRequestException("Invalid timezone.");
     }
 
     if (dateFormat && !supportedDateFormats.has(dateFormat)) {
-      throw new BadRequestException("Format de date invalide");
+      throw new BadRequestException("Invalid date format.");
     }
 
     if (numberFormat && !supportedNumberFormats.has(numberFormat)) {
-      throw new BadRequestException("Format de nombre invalide");
+      throw new BadRequestException("Invalid number format.");
     }
 
     const businessType =
@@ -112,7 +112,7 @@ export class CompanyService {
         : data.businessType?.trim() || undefined;
 
     if (businessType && !this.allowedBusinessTypes.has(businessType)) {
-      throw new BadRequestException("Type d'activite invalide");
+      throw new BadRequestException("Invalid business type.");
     }
 
     return {
@@ -143,7 +143,7 @@ export class CompanyService {
     });
 
     if (!company) {
-      throw new NotFoundException("Entreprise introuvable");
+      throw new NotFoundException("Company not found.");
     }
 
     return company;
@@ -207,23 +207,23 @@ export class CompanyService {
     const company = await this.getCurrentCompany(user);
 
     if (!company.name?.trim()) {
-      throw new BadRequestException("Le nom de l'entreprise est obligatoire");
+      throw new BadRequestException("Company name is required.");
     }
 
     if (!this.allowedSectors.has(company.sector)) {
-      throw new BadRequestException("Secteur invalide");
+      throw new BadRequestException("Invalid sector.");
     }
 
     if (!company.country?.trim()) {
-      throw new BadRequestException("Le pays est obligatoire");
+      throw new BadRequestException("Country is required.");
     }
 
     if (!supportedCountries.has(company.country.trim().toUpperCase())) {
-      throw new BadRequestException("Pays invalide");
+      throw new BadRequestException("Invalid country.");
     }
 
     if (!supportedCurrencies.has(company.currency)) {
-      throw new BadRequestException("Devise invalide");
+      throw new BadRequestException("Invalid currency.");
     }
 
     const updated = await this.prisma.company.update({

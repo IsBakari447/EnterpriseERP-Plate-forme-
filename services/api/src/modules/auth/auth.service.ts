@@ -77,7 +77,7 @@ export class AuthService {
 
   private decryptSecret(value: string) {
     const [ivRaw, tagRaw, encryptedRaw] = value.split(".");
-    if (!ivRaw || !tagRaw || !encryptedRaw) throw new BadRequestException("Configuration MFA invalide.");
+    if (!ivRaw || !tagRaw || !encryptedRaw) throw new BadRequestException("Invalid MFA configuration.");
 
     const decipher = createDecipheriv("aes-256-gcm", this.getEncryptionKey(), Buffer.from(ivRaw, "base64url"));
     decipher.setAuthTag(Buffer.from(tagRaw, "base64url"));
@@ -134,7 +134,7 @@ export class AuthService {
 
   private validatePassword(password: string) {
     if (!password || password.length < 8) {
-      throw new BadRequestException("Le mot de passe doit contenir au moins 8 caracteres");
+      throw new BadRequestException("Password must contain at least 8 characters.");
     }
   }
 
@@ -296,7 +296,7 @@ export class AuthService {
     if (!attempt) return;
 
     if (attempt.lockedUntil && attempt.lockedUntil > now) {
-      throw new HttpException("Trop de tentatives. Reessayez dans quelques minutes.", HttpStatus.TOO_MANY_REQUESTS);
+      throw new HttpException("Too many attempts. Try again in a few minutes.", HttpStatus.TOO_MANY_REQUESTS);
     }
 
     if (attempt.resetAt <= now) {
@@ -349,7 +349,7 @@ export class AuthService {
       mfaRequired: true,
       challengeId: challenge.id,
       expiresIn: 300,
-      message: "Code MFA requis.",
+      message: "MFA code required.",
     };
   }
 
@@ -413,7 +413,7 @@ export class AuthService {
 
   async register(input: RegisterInput, meta: RequestMeta) {
     if (!input.companyName || !input.name || !input.email) {
-      throw new BadRequestException("Entreprise, nom et email sont obligatoires");
+      throw new BadRequestException("Company, name and email are required.");
     }
 
     this.validatePassword(input.password);
@@ -422,7 +422,7 @@ export class AuthService {
     const existing = await this.prisma.user.findUnique({ where: { email } });
 
     if (existing) {
-      throw new BadRequestException("Un compte existe deja avec cet email");
+      throw new BadRequestException("An account already exists with this email.");
     }
 
     try {
@@ -431,7 +431,7 @@ export class AuthService {
           data: {
             name: input.companyName,
             sector: input.sector ?? "general",
-            language: input.language ?? "fr",
+            language: input.language ?? "en",
           },
         });
         const ownerRole = await tx.role.create({
@@ -467,7 +467,7 @@ export class AuthService {
             ...this.splitName(input.name),
             email,
             passwordHash: this.password.hash(input.password),
-            language: input.language ?? "fr",
+            language: input.language ?? "en",
             role: "OWNER",
             status: "ACTIVE",
             emailVerifiedAt: verificationRequired ? null : new Date(),
@@ -522,13 +522,13 @@ export class AuthService {
       const verification = await this.sendEmailVerification(user, meta);
       return {
         requiresEmailVerification: true,
-        message: "Compte cree. Verifiez votre adresse e-mail pour activer l'acces.",
+        message: "Account created. Verify your email address to activate access.",
         email: user.email,
         ...verification,
       };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-        throw new BadRequestException("Un compte existe deja avec cet email");
+        throw new BadRequestException("An account already exists with this email.");
       }
 
       throw error;
@@ -545,15 +545,15 @@ export class AuthService {
 
     if (!user || !this.password.verify(input.password, user.passwordHash)) {
       this.recordFailedLogin(rateKey);
-      throw new UnauthorizedException("Email ou mot de passe incorrect");
+      throw new UnauthorizedException("Invalid email or password.");
     }
 
     if (user.status !== "ACTIVE") {
-      throw new UnauthorizedException("Compte non actif");
+      throw new UnauthorizedException("Account is not active.");
     }
 
     if (!user.emailVerifiedAt) {
-      throw new UnauthorizedException("Adresse e-mail non verifiee. Verifiez votre boite mail.");
+      throw new UnauthorizedException("Email address is not verified. Check your inbox.");
     }
 
     this.resetFailedLogin(rateKey);
@@ -581,11 +581,11 @@ export class AuthService {
   async setupMfa(userId: string, password: string, meta: RequestMeta) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user || !this.password.verify(password, user.passwordHash)) {
-      throw new UnauthorizedException("Mot de passe incorrect");
+      throw new UnauthorizedException("Incorrect password.");
     }
 
     if (!this.isPrivilegedMfaRole(user.role)) {
-      throw new BadRequestException("MFA est reserve aux comptes administrateurs pour le moment.");
+      throw new BadRequestException("MFA is currently reserved for administrator accounts.");
     }
 
     const secret = generateSecret();
@@ -624,11 +624,11 @@ export class AuthService {
   async verifyMfaSetup(userId: string, code: string, meta: RequestMeta) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user?.mfaTempSecretEnc || !user.mfaTempSecretExpiresAt || user.mfaTempSecretExpiresAt < new Date()) {
-      throw new BadRequestException("La configuration MFA est expiree. Relancez la configuration.");
+      throw new BadRequestException("MFA setup has expired. Start setup again.");
     }
 
     if (!this.verifyTotp(code, user.mfaTempSecretEnc)) {
-      throw new BadRequestException("Code MFA invalide.");
+      throw new BadRequestException("Invalid MFA code.");
     }
 
     const recoveryCodes = this.createRecoveryCodes();
@@ -656,7 +656,7 @@ export class AuthService {
     });
 
     return {
-      message: "MFA active.",
+      message: "MFA enabled.",
       recoveryCodes,
     };
   }
@@ -668,7 +668,7 @@ export class AuthService {
     });
 
     if (!challenge || challenge.usedAt || challenge.expiresAt < new Date()) {
-      throw new UnauthorizedException("Challenge MFA invalide ou expire.");
+      throw new UnauthorizedException("Invalid or expired MFA challenge.");
     }
 
     const ok = await this.verifyMfaCredential(challenge.user, input);
@@ -683,7 +683,7 @@ export class AuthService {
         ipAddress: meta.ipAddress,
         result: "failure",
       });
-      throw new UnauthorizedException("Code MFA invalide.");
+      throw new UnauthorizedException("Invalid MFA code.");
     }
 
     await this.prisma.mfaChallenge.update({
@@ -714,15 +714,15 @@ export class AuthService {
   async disableMfa(userId: string, input: MfaDisableInput, meta: RequestMeta) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user || !this.password.verify(input.password, user.passwordHash)) {
-      throw new UnauthorizedException("Mot de passe incorrect");
+      throw new UnauthorizedException("Incorrect password.");
     }
 
     if (!user.mfaEnabled) {
-      return { message: "MFA deja desactive." };
+      return { message: "MFA is already disabled." };
     }
 
     const ok = await this.verifyMfaCredential(user, input);
-    if (!ok) throw new UnauthorizedException("Code MFA invalide.");
+    if (!ok) throw new UnauthorizedException("Invalid MFA code.");
 
     await this.prisma.user.update({
       where: { id: user.id },
@@ -746,13 +746,13 @@ export class AuthService {
       ipAddress: meta.ipAddress,
     });
 
-    return { message: "MFA desactive." };
+    return { message: "MFA disabled." };
   }
 
   async regenerateMfaRecoveryCodes(userId: string, code: string, meta: RequestMeta) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user?.mfaEnabled || !this.verifyTotp(code, user.mfaSecretEnc)) {
-      throw new UnauthorizedException("Code MFA invalide.");
+      throw new UnauthorizedException("Invalid MFA code.");
     }
 
     const recoveryCodes = this.createRecoveryCodes();
@@ -781,7 +781,7 @@ export class AuthService {
     });
 
     if (!entry || entry.usedAt || entry.expiresAt < new Date()) {
-      throw new BadRequestException("Le lien de verification est invalide ou expire.");
+      throw new BadRequestException("The verification link is invalid or expired.");
     }
 
     await this.prisma.$transaction([
@@ -805,7 +805,7 @@ export class AuthService {
       ipAddress: meta.ipAddress,
     });
 
-    return { message: "Adresse e-mail verifiee. Vous pouvez maintenant vous connecter." };
+    return { message: "Email address verified. You can now sign in." };
   }
 
   async resendVerification(emailInput: string, meta: RequestMeta) {
@@ -851,11 +851,11 @@ export class AuthService {
     });
 
     if (!session || session.revokedAt || session.expiresAt < new Date()) {
-      throw new UnauthorizedException("Session expiree");
+      throw new UnauthorizedException("Session expired.");
     }
 
     if (session.refreshTokenHash !== this.hashToken(refreshToken)) {
-      throw new UnauthorizedException("Refresh token invalide");
+      throw new UnauthorizedException("Invalid refresh token.");
     }
 
     const accessToken = this.jwt.createAccessToken({
@@ -959,14 +959,14 @@ export class AuthService {
 
         if (process.env.NODE_ENV !== "production") {
           return {
-            message: "Un code de verification a ete envoye si le compte existe.",
+            message: "A verification code has been sent if the account exists.",
             resetCode: code,
           };
         }
       }
     }
 
-    return { message: "Un code de verification a ete envoye si le compte existe." };
+    return { message: "A verification code has been sent if the account exists." };
   }
 
   async resetPassword(input: { email?: string; code?: string; password?: string; confirmPassword?: string }, meta: RequestMeta) {
@@ -974,7 +974,7 @@ export class AuthService {
     const code = String(input.code ?? "").trim();
 
     if (!email || !code) {
-      throw new BadRequestException("Le code est invalide ou expire.");
+      throw new BadRequestException("The code is invalid or expired.");
     }
 
     const user = await this.prisma.user.findUnique({
@@ -983,7 +983,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException("Le code est invalide ou expire.");
+      throw new BadRequestException("The code is invalid or expired.");
     }
 
     const entry = await this.prisma.passwordResetToken.findFirst({
@@ -1001,7 +1001,7 @@ export class AuthService {
           data: { usedAt: new Date() },
         });
       }
-      throw new BadRequestException("Le code est invalide ou expire.");
+      throw new BadRequestException("The code is invalid or expired.");
     }
 
     if (entry.attempts >= 5) {
@@ -1009,7 +1009,7 @@ export class AuthService {
         where: { id: entry.id },
         data: { usedAt: new Date() },
       });
-      throw new BadRequestException("Le code est invalide ou expire.");
+      throw new BadRequestException("The code is invalid or expired.");
     }
 
     const nextAttempts = entry.attempts + 1;
@@ -1019,11 +1019,11 @@ export class AuthService {
         where: { id: entry.id },
         data: { attempts: nextAttempts },
       });
-      throw new BadRequestException("Le code est invalide ou expire.");
+      throw new BadRequestException("The code is invalid or expired.");
     }
 
     if (input.password !== input.confirmPassword) {
-      throw new BadRequestException("Les mots de passe ne correspondent pas.");
+      throw new BadRequestException("Passwords do not match.");
     }
 
     this.validatePassword(input.password ?? "");
@@ -1063,7 +1063,7 @@ export class AuthService {
       ipAddress: meta.ipAddress,
     });
 
-    return { message: "Mot de passe mis a jour avec succes." };
+    return { message: "Password updated successfully." };
   }
 
   async me(userId: string) {
@@ -1128,7 +1128,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException("Utilisateur introuvable");
+      throw new UnauthorizedException("User not found.");
     }
 
     return user;
