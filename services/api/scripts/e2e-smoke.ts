@@ -1,3 +1,5 @@
+import { generate } from "otplib";
+
 type Json = Record<string, unknown>;
 type Session = {
   accessToken: string;
@@ -6,6 +8,20 @@ type Session = {
   companyId: string;
   sector: string;
   onboardingCompleted: boolean;
+};
+type MfaSetupResponse = {
+  otpauthUrl: string;
+  qrCodeDataUrl: string;
+  expiresIn: number;
+};
+type MfaVerifyResponse = {
+  recoveryCodes: string[];
+};
+type MfaChallengeResponse = {
+  mfaRequired: true;
+  challengeId: string;
+  expiresIn: number;
+  message: string;
 };
 
 const baseUrl = (process.env.E2E_BASE_URL ?? "http://localhost:4000").replace(/\/$/, "");
@@ -68,6 +84,20 @@ async function expectStatus(path: string, status: number, options: RequestInit &
   assert(response.status === status, `${options.method ?? "GET"} ${path}: expected ${status}, got ${response.status}`);
 }
 
+function extractTotpSecret(otpauthUrl: string) {
+  const secret = new URL(otpauthUrl).searchParams.get("secret");
+  assert(secret, "MFA setup should return an otpauth URL with a secret");
+  return secret;
+}
+
+async function generateTotp(secret: string) {
+  return generate({ secret });
+}
+
+function invalidTotp(validCode: string) {
+  return validCode === "000000" ? "111111" : "000000";
+}
+
 async function verifyAuthAndSessionFlow(session: Session) {
   await expectStatus("/auth/me", 401);
 
@@ -104,6 +134,93 @@ async function verifyAuthAndSessionFlow(session: Session) {
   await expectStatus("/auth/refresh", 401, {
     method: "POST",
     body: JSON.stringify({ refreshToken: refreshed.refreshToken }),
+  });
+}
+
+async function verifyMfaFlow() {
+  const tenant = await registerTenant("mfa", "commerce");
+
+  const setup = await request<MfaSetupResponse>("/auth/mfa/setup", {
+    method: "POST",
+    token: tenant.accessToken,
+    body: JSON.stringify({ password: "E2ePassword123" }),
+  });
+  assert(setup.qrCodeDataUrl.startsWith("data:image/png;base64,"), "MFA setup should return a QR code data URL");
+
+  const secret = extractTotpSecret(setup.otpauthUrl);
+  const setupCode = await generateTotp(secret);
+
+  await expectStatus("/auth/mfa/verify", 400, {
+    method: "POST",
+    token: tenant.accessToken,
+    body: JSON.stringify({ code: invalidTotp(setupCode) }),
+  });
+
+  const verification = await request<MfaVerifyResponse>("/auth/mfa/verify", {
+    method: "POST",
+    token: tenant.accessToken,
+    body: JSON.stringify({ code: setupCode }),
+  });
+  assert(verification.recoveryCodes.length > 0, "MFA verification should return recovery codes");
+
+  const challenge = await request<MfaChallengeResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({
+      email: tenant.user.email,
+      password: "E2ePassword123",
+      rememberMe: true,
+      deviceName: "EnterpriseERP E2E MFA",
+    }),
+  });
+  assert(challenge.mfaRequired === true, "MFA-enabled admin login should require a challenge");
+  assert(challenge.challengeId, "MFA challenge should include a challenge id");
+
+  const challengeCode = await generateTotp(secret);
+  await expectStatus("/auth/mfa/challenge", 401, {
+    method: "POST",
+    body: JSON.stringify({ challengeId: challenge.challengeId, code: invalidTotp(challengeCode) }),
+  });
+
+  const mfaSession = await request<Session>("/auth/mfa/challenge", {
+    method: "POST",
+    body: JSON.stringify({ challengeId: challenge.challengeId, code: challengeCode }),
+  });
+  assert(mfaSession.accessToken, "valid MFA challenge should return an access token");
+
+  await expectStatus("/auth/mfa/challenge", 401, {
+    method: "POST",
+    body: JSON.stringify({ challengeId: challenge.challengeId, code: challengeCode }),
+  });
+
+  const recoveryChallenge = await request<MfaChallengeResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({
+      email: tenant.user.email,
+      password: "E2ePassword123",
+      rememberMe: true,
+      deviceName: "EnterpriseERP E2E MFA recovery",
+    }),
+  });
+
+  const recoveryCode = verification.recoveryCodes[0];
+  const recoverySession = await request<Session>("/auth/mfa/challenge", {
+    method: "POST",
+    body: JSON.stringify({ challengeId: recoveryChallenge.challengeId, recoveryCode }),
+  });
+  assert(recoverySession.accessToken, "valid recovery code should complete MFA login");
+
+  const replayRecoveryChallenge = await request<MfaChallengeResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({
+      email: tenant.user.email,
+      password: "E2ePassword123",
+      rememberMe: true,
+      deviceName: "EnterpriseERP E2E MFA recovery replay",
+    }),
+  });
+  await expectStatus("/auth/mfa/challenge", 401, {
+    method: "POST",
+    body: JSON.stringify({ challengeId: replayRecoveryChallenge.challengeId, recoveryCode }),
   });
 }
 
@@ -225,6 +342,7 @@ async function main() {
   });
   assert(loginA.companyId === tenantA.companyId, "login returned a different tenant context");
   await verifyAuthAndSessionFlow(loginA);
+  await verifyMfaFlow();
 
   const { client, product, invoice } = await verifyCrud(tenantA);
 
