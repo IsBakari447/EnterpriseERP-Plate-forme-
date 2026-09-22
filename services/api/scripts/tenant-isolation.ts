@@ -192,7 +192,7 @@ async function verifyInvoices(ctx: TestContext, service: FacturationService) {
   await expectNotFound(() => service.findOne(ctx.ownerB, invoiceA.id), "Invoice read cross-tenant");
   await expectNotFound(() => service.update(ctx.ownerB, invoiceA.id, { amount: 1 }), "Invoice update cross-tenant");
   await expectNotFound(() => service.remove(ctx.ownerB, invoiceA.id), "Invoice delete cross-tenant");
-  assert((await service.findOne(ctx.ownerA, invoiceA.id)).amount === 750, "Invoice cross-tenant update changed data");
+  assert(Number((await service.findOne(ctx.ownerA, invoiceA.id)).amount) === 750, "Invoice cross-tenant update changed data");
 }
 
 async function verifyEducation(ctx: TestContext, service: EducationService) {
@@ -316,7 +316,7 @@ async function verifyOperations(ctx: TestContext, service: OperationsService) {
   assert(!(await service.getOrders(ctx.ownerB)).some((order) => order.id === salesA.id), "Sales orders list leaked another tenant");
   await expectNotFound(() => service.updateSalesOrder(ctx.ownerB, salesA.id, { amount: 999 }), "Sales order update cross-tenant");
   await expectNotFound(() => service.deleteSalesOrder(ctx.ownerB, salesA.id), "Sales order delete cross-tenant");
-  assert((await ctx.prisma.salesOrder.findUniqueOrThrow({ where: { id: salesA.id } })).amount === 100, "Sales order cross-tenant update changed data");
+  assert(Number((await ctx.prisma.salesOrder.findUniqueOrThrow({ where: { id: salesA.id } })).amount) === 100, "Sales order cross-tenant update changed data");
 
   const paymentA = await service.createPayment(ctx.ownerA, {
     reference: `PAY-A-${ctx.companyAId}`,

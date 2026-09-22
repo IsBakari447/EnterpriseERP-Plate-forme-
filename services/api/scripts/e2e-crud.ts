@@ -111,7 +111,7 @@ async function verifyClientCrud(token: string) {
     body: JSON.stringify({ status: "Qualified", revenue: 250 }),
   });
   assert(updated.status === "Qualified", "Client update did not persist status");
-  assert(updated.revenue === 250, "Client update did not persist revenue");
+  assert(Number(updated.revenue) === 250, "Client update did not persist revenue");
 
   await assertListed("/clients", token, created.id);
   await request(`/clients/${created.id}`, { method: "DELETE", token });
@@ -140,7 +140,7 @@ async function verifyProductCrud(token: string) {
     body: JSON.stringify({ quantity: 15, value: 550 }),
   });
   assert(updated.quantity === 15, "Product update did not persist quantity");
-  assert(updated.value === 550, "Product update did not persist value");
+  assert(Number(updated.value) === 550, "Product update did not persist value");
 
   await assertListed("/products", token, created.id);
   await request(`/products/${created.id}`, { method: "DELETE", token });
@@ -168,7 +168,7 @@ async function verifyInvoiceCrud(token: string) {
     token,
     body: JSON.stringify({ amount: 920, status: "Approved" }),
   });
-  assert(updated.amount === 920, "Invoice update did not persist amount");
+  assert(Number(updated.amount) === 920, "Invoice update did not persist amount");
   assert(updated.status === "Approved", "Invoice update did not persist status");
 
   await assertListed("/invoices", token, created.id);
@@ -198,7 +198,7 @@ async function verifyPaymentCrud(token: string, invoiceId: string) {
     token,
     body: JSON.stringify({ amount: 930, status: "reconciled" }),
   });
-  assert(updated.amount === 930, "Payment update did not persist amount");
+  assert(Number(updated.amount) === 930, "Payment update did not persist amount");
   assert(updated.status === "reconciled", "Payment update did not persist status");
 
   await request(`/payments/${created.id}`, { method: "DELETE", token });

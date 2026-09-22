@@ -117,7 +117,7 @@ async function createClient(owner: Session): Promise<TenantResource> {
       const stored = await prisma.client.findUniqueOrThrow({ where: { id: client.id } });
       assert(stored.companyId === owner.companyId, "Client tenant ownership changed");
       assert(stored.status === "Prospect", "Cross-tenant client update changed status");
-      assert(stored.revenue === 1000, "Cross-tenant client update changed revenue");
+      assert(Number(stored.revenue) === 1000, "Cross-tenant client update changed revenue");
     },
   };
 }
@@ -172,7 +172,7 @@ async function createInvoice(owner: Session, label = "A"): Promise<TenantResourc
     verifyUnchanged: async () => {
       const stored = await prisma.invoice.findUniqueOrThrow({ where: { id: invoice.id } });
       assert(stored.companyId === owner.companyId, "Invoice tenant ownership changed");
-      assert(stored.amount === 820, "Cross-tenant invoice update changed amount");
+      assert(Number(stored.amount) === 820, "Cross-tenant invoice update changed amount");
       assert(stored.status === "Pending", "Cross-tenant invoice update changed status");
     },
   };
@@ -229,7 +229,7 @@ async function createPayment(owner: Session, invoiceId: string): Promise<TenantR
     verifyUnchanged: async () => {
       const stored = await prisma.payment.findUniqueOrThrow({ where: { id: payment.id } });
       assert(stored.companyId === owner.companyId, "Payment tenant ownership changed");
-      assert(stored.amount === 820, "Cross-tenant payment update changed amount");
+      assert(Number(stored.amount) === 820, "Cross-tenant payment update changed amount");
       assert(stored.status === "received", "Cross-tenant payment update changed status");
     },
   };

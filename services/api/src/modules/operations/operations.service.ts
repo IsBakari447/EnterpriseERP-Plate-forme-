@@ -93,8 +93,18 @@ export type ProductionOrderInput = {
   dueDate?: string | null;
 };
 
-const money = (value: number, currency = "EUR") =>
-  `${Math.round(value).toLocaleString("fr-FR")} ${currency}`;
+type NumericValue = number | string | { toNumber(): number } | null | undefined;
+
+const toNumber = (value: NumericValue) => {
+  if (value && typeof value === "object" && "toNumber" in value) {
+    return value.toNumber();
+  }
+
+  return Number(value ?? 0);
+};
+
+const money = (value: NumericValue, currency = "EUR") =>
+  `${Math.round(toNumber(value)).toLocaleString("fr-FR")} ${currency}`;
 
 const percent = (value: number) =>
   `${Math.round(value)}%`;
@@ -146,8 +156,8 @@ export class OperationsService {
     const salesOrders = await this.prisma.salesOrder.findMany({ where: { companyId } });
     const invoices = salesOrders.length ? [] : await this.prisma.invoice.findMany({ where: { companyId } });
     const totalSales =
-      salesOrders.reduce((sum, order) => sum + order.amount, 0) ||
-      invoices.reduce((sum, invoice) => sum + invoice.amount, 0);
+      salesOrders.reduce((sum, order) => sum + toNumber(order.amount), 0) ||
+      invoices.reduce((sum, invoice) => sum + toNumber(invoice.amount), 0);
     const totalOrders = salesOrders.length || invoices.length;
     const averageBasket = totalOrders ? totalSales / totalOrders : 0;
     const closedOrders = salesOrders.length
@@ -308,12 +318,12 @@ export class OperationsService {
       this.prisma.expense.findMany({ where: { companyId } }),
       this.prisma.expense.count({ where: { companyId, status: { contains: "pending", mode: "insensitive" } } }),
     ]);
-    const revenue = payments.reduce((sum, payment) => sum + payment.amount, 0) ||
-      invoices.reduce((sum, invoice) => sum + invoice.amount, 0);
-    const expenseTotal = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const revenue = payments.reduce((sum, payment) => sum + toNumber(payment.amount), 0) ||
+      invoices.reduce((sum, invoice) => sum + toNumber(invoice.amount), 0);
+    const expenseTotal = expenses.reduce((sum, expense) => sum + toNumber(expense.amount), 0);
     const unpaid = invoices
       .filter((invoice) => !isPaid(invoice.status))
-      .reduce((sum, invoice) => sum + invoice.amount, 0);
+      .reduce((sum, invoice) => sum + toNumber(invoice.amount), 0);
     const overdue = invoices.filter((invoice) => !isPaid(invoice.status) && invoice.due < new Date()).length;
 
     return [
@@ -573,13 +583,13 @@ export class OperationsService {
       this.prisma.productionOrder.findMany({ where: { companyId } }),
       this.prisma.product.findMany({ where: { companyId } }),
     ]);
-    const stockValue = products.reduce((sum, product) => sum + product.value, 0);
+    const stockValue = products.reduce((sum, product) => sum + toNumber(product.value), 0);
     const lowStock = products.filter((product) => product.quantity <= 5).length;
     const averageYield = productionOrders.length
       ? productionOrders.reduce((sum, order) => sum + order.progress, 0) / productionOrders.length
       : 0;
     const productionCost = productionOrders.reduce(
-      (sum, order) => sum + (order.actualCost ?? order.plannedCost),
+      (sum, order) => sum + toNumber(order.actualCost ?? order.plannedCost),
       0
     );
 
