@@ -1,0 +1,2 @@
+ALTER TABLE "Company" ALTER COLUMN "language" SET DEFAULT 'en';
+ALTER TABLE "User" ALTER COLUMN "language" SET DEFAULT 'en';

@@ -19,6 +19,7 @@
     "e2e:smoke": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/e2e-smoke.ts",
     "e2e:rbac": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/e2e-rbac.ts",
     "e2e:tenant-http": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/e2e-tenant-http.ts",
+    "e2e:crud": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/e2e-crud.ts",
     "security:tenant-isolation": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/tenant-isolation.ts",
     "security:input-validation": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/input-validation.ts",
     "security:rate-limit": "ts-node --compiler-options \"{\\\"rootDir\\\":\\\".\\\"}\" scripts/rate-limit.ts"

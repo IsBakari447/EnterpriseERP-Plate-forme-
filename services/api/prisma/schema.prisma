@@ -184,7 +184,7 @@ model Company {
   address        String?
   country        String?
   currency       String        @default("EUR")
-  language       String        @default("fr")
+  language       String        @default("en")
   timezone       String        @default("Europe/Stockholm")
   dateFormat     String        @default("yyyy-MM-dd")
   numberFormat   String        @default("fr-FR")
@@ -392,7 +392,7 @@ model User {
   jobTitle        String?
   department      String?
   avatarUrl       String?
-  language        String        @default("fr")
+  language        String        @default("en")
   timezone        String        @default("Europe/Stockholm")
   theme           String        @default("system")
   displayCurrency String        @default("EUR")
