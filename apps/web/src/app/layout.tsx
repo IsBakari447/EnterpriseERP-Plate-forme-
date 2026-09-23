@@ -12,13 +12,13 @@ export const metadata: Metadata = {
 
   title: {
     default:
-      "EnterpriseERP Cloud | ERP Cloud, Mobile et IA",
+      "EnterpriseERP Cloud | Cloud ERP, Mobile and AI",
     template:
       "%s | EnterpriseERP Cloud",
   },
 
   description:
-    "EnterpriseERP Cloud centralise CRM, ventes, facturation, stock, finance, RH, mobile et IA dans un ERP SaaS moderne pour PME et entreprises.",
+    "EnterpriseERP Cloud brings CRM, sales, billing, inventory, finance, HR, mobile and AI into a modern SaaS ERP for SMEs and growing companies.",
 
   applicationName:
     "EnterpriseERP Cloud",
@@ -28,17 +28,17 @@ export const metadata: Metadata = {
     "EnterpriseERP Cloud",
     "ERP Cloud",
     "ERP SaaS",
-    "logiciel ERP",
-    "ERP PME",
-    "gestion entreprise",
+    "ERP software",
+    "SME ERP",
+    "business management",
     "CRM",
-    "gestion des ventes",
-    "gestion de stock",
-    "facturation",
+    "sales management",
+    "inventory management",
+    "billing",
     "finance",
-    "ressources humaines",
-    "ERP IA",
-    "assistant IA entreprise",
+    "human resources",
+    "AI ERP",
+    "business AI assistant",
     "ERP mobile",
   ],
 
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: "website",
-    locale: "fr_FR",
+    locale: "en_US",
 
     url:
       "https://enterpriseerp-web.onrender.com/",
@@ -85,10 +85,10 @@ export const metadata: Metadata = {
       "EnterpriseERP Cloud",
 
     title:
-      "EnterpriseERP Cloud | ERP Cloud, Mobile et IA",
+      "EnterpriseERP Cloud | Cloud ERP, Mobile and AI",
 
     description:
-      "Centralisez CRM, ventes, facturation, stock, finance, RH, mobile et IA dans une seule plateforme ERP Cloud.",
+      "Centralize CRM, sales, billing, inventory, finance, HR, mobile and AI in one Cloud ERP platform.",
 
     images: [
       {
@@ -104,10 +104,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
 
     title:
-      "EnterpriseERP Cloud | ERP Cloud, Mobile et IA",
+      "EnterpriseERP Cloud | Cloud ERP, Mobile and AI",
 
     description:
-      "ERP Cloud moderne pour CRM, ventes, facturation, stock, finance, RH, mobile et IA.",
+      "Modern Cloud ERP for CRM, sales, billing, inventory, finance, HR, mobile and AI.",
 
     images: [
       "/enterpriseerp-og.png",
@@ -121,7 +121,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body>
         <JsonLd data={buildGlobalJsonLd()} />
         <I18nProvider>

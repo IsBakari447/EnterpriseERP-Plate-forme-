@@ -80,6 +80,7 @@ async function registerTenant() {
       password,
       sector: "commerce",
       language: "en",
+      termsAccepted: true,
     }),
   });
 }

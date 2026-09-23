@@ -21,6 +21,7 @@ export type RegisterInput = {
   password: string;
   sector?: string;
   language?: string;
+  termsAccepted: boolean;
 };
 
 export type RegisterResponse =

@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { createHmac, randomBytes } from "crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "crypto";
 
 export type JwtPayload = {
   sub: string;
@@ -13,7 +13,15 @@ export type JwtPayload = {
 
 type EncodedPayload = JwtPayload & {
   iat: number;
+  nbf: number;
   exp: number;
+  iss: string;
+  aud: string;
+};
+
+type JwtHeader = {
+  alg: string;
+  typ: string;
 };
 
 function base64Url(input: Buffer | string) {
@@ -35,8 +43,26 @@ function parseDuration(value: string | undefined, fallbackSeconds: number) {
   return amount * multiplier;
 }
 
+function decodeJson<T>(value: string) {
+  try {
+    return JSON.parse(Buffer.from(value.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8")) as T;
+  } catch {
+    throw new UnauthorizedException("Invalid token.");
+  }
+}
+
+function secureEqual(left: string, right: string) {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+
+  return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
+}
+
 @Injectable()
 export class JwtService {
+  private readonly issuer = process.env.JWT_ISSUER ?? "enterpriseerp-cloud-api";
+  private readonly audience = process.env.JWT_AUDIENCE ?? "enterpriseerp-cloud";
+
   private get secret() {
     const secret = process.env.JWT_SECRET ?? process.env.JWT_ACCESS_SECRET ?? process.env.Jwt__Key;
 
@@ -57,7 +83,10 @@ export class JwtService {
     const encodedPayload: EncodedPayload = {
       ...payload,
       iat: now,
+      nbf: now,
       exp: now + expiresInSeconds,
+      iss: this.issuer,
+      aud: this.audience,
     };
     const unsignedToken = `${base64Url(JSON.stringify(header))}.${base64Url(JSON.stringify(encodedPayload))}`;
     const signature = createHmac("sha256", this.secret).update(unsignedToken).digest();
@@ -73,15 +102,30 @@ export class JwtService {
     }
 
     const [header, payload, signature] = parts;
-    const expectedSignature = base64Url(createHmac("sha256", this.secret).update(`${header}.${payload}`).digest());
+    const decodedHeader = decodeJson<JwtHeader>(header);
 
-    if (signature !== expectedSignature) {
+    if (decodedHeader.alg !== "HS256" || decodedHeader.typ !== "JWT") {
       throw new UnauthorizedException("Invalid token.");
     }
 
-    const decoded = JSON.parse(Buffer.from(payload.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8")) as EncodedPayload;
+    const expectedSignature = base64Url(createHmac("sha256", this.secret).update(`${header}.${payload}`).digest());
 
-    if (decoded.exp < Math.floor(Date.now() / 1000)) {
+    if (!secureEqual(signature, expectedSignature)) {
+      throw new UnauthorizedException("Invalid token.");
+    }
+
+    const decoded = decodeJson<EncodedPayload>(payload);
+    const now = Math.floor(Date.now() / 1000);
+
+    if (decoded.iss !== this.issuer || decoded.aud !== this.audience) {
+      throw new UnauthorizedException("Invalid token.");
+    }
+
+    if (decoded.nbf > now) {
+      throw new UnauthorizedException("Token not active.");
+    }
+
+    if (decoded.exp < now) {
       throw new UnauthorizedException("Token expired.");
     }
 

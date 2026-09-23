@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, HttpCode, Options } from "@nestjs/common";
 import { Public } from "./common/auth/public.decorator";
 import { AppService } from "./app.service";
 
@@ -17,9 +17,21 @@ export class AppController {
     return this.appService.getHealth();
   }
 
+  @Options("health")
+  @HttpCode(204)
+  optionsHealth() {
+    return undefined;
+  }
+
   @Get("health/ready")
   getReadiness() {
     return this.appService.getReadiness();
+  }
+
+  @Options("health/ready")
+  @HttpCode(204)
+  optionsReadiness() {
+    return undefined;
   }
 
   @Get("modules")

@@ -50,15 +50,26 @@ export type AuthSession = {
 const STORAGE_KEY = "enterpriseerp-cloud.auth";
 
 function canUseStorage() {
-  return typeof window !== "undefined" && Boolean(window.localStorage);
+  return typeof window !== "undefined" && Boolean(window.sessionStorage);
+}
+
+function clearLegacyLocalStorage() {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Storage can be unavailable in strict privacy modes.
+  }
 }
 
 export const tokenStorage = {
   get(): AuthSession | null {
     if (!canUseStorage()) return null;
+    clearLegacyLocalStorage();
 
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const raw = window.sessionStorage.getItem(STORAGE_KEY);
       return raw ? (JSON.parse(raw) as AuthSession) : null;
     } catch {
       return null;
@@ -67,12 +78,14 @@ export const tokenStorage = {
 
   set(session: AuthSession) {
     if (!canUseStorage()) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+    clearLegacyLocalStorage();
+    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
   },
 
   clear() {
     if (!canUseStorage()) return;
-    window.localStorage.removeItem(STORAGE_KEY);
+    window.sessionStorage.removeItem(STORAGE_KEY);
+    clearLegacyLocalStorage();
   },
 
   getAccessToken() {

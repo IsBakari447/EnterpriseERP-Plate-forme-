@@ -45,6 +45,9 @@ export class RegisterDto {
   @IsString()
   @IsIn(allowedLanguages)
   language?: string;
+
+  @IsBoolean()
+  termsAccepted!: boolean;
 }
 
 export class LoginDto {

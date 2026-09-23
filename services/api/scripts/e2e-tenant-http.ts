@@ -90,6 +90,7 @@ async function registerTenant(label: string, sector = "commerce") {
       password,
       sector,
       language: "en",
+      termsAccepted: true,
     }),
   });
 }

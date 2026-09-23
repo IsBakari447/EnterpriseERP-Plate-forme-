@@ -36,12 +36,17 @@ async function bootstrap() {
       callback(null, !isProduction && isLocalDevOrigin);
     },
     credentials: true,
+    methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Authorization", "Content-Type", "Accept", "X-Requested-With", "X-Forwarded-For"],
+    optionsSuccessStatus: 204,
   });
   app.setGlobalPrefix("api", {
     exclude: [
       { path: "", method: RequestMethod.GET },
       { path: "health", method: RequestMethod.GET },
+      { path: "health", method: RequestMethod.OPTIONS },
       { path: "health/ready", method: RequestMethod.GET },
+      { path: "health/ready", method: RequestMethod.OPTIONS },
     ],
   });
   app.useGlobalPipes(

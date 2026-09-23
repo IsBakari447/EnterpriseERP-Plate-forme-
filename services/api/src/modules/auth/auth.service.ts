@@ -17,6 +17,7 @@ type RegisterInput = {
   password: string;
   sector?: string;
   language?: string;
+  termsAccepted: boolean;
 };
 
 type LoginInput = {
@@ -62,13 +63,23 @@ export class AuthService {
     return randomBytes(32).toString("base64url");
   }
 
-  private getEncryptionKey() {
-    return createHash("sha256").update(process.env.JWT_SECRET ?? "enterpriseerp-local-secret").digest();
+  private getMfaEncryptionKeys() {
+    const dedicatedSecret = process.env.MFA_ENCRYPTION_KEY;
+
+    if (!dedicatedSecret && process.env.NODE_ENV === "production") {
+      throw new Error("MFA_ENCRYPTION_KEY is required in production.");
+    }
+
+    const legacySecret = process.env.JWT_SECRET ?? "enterpriseerp-local-secret";
+    const secrets = [dedicatedSecret, legacySecret].filter((secret): secret is string => Boolean(secret));
+
+    return [...new Set(secrets)].map((secret) => createHash("sha256").update(secret).digest());
   }
 
   private encryptSecret(secret: string) {
     const iv = randomBytes(12);
-    const cipher = createCipheriv("aes-256-gcm", this.getEncryptionKey(), iv);
+    const [key] = this.getMfaEncryptionKeys();
+    const cipher = createCipheriv("aes-256-gcm", key, iv);
     const encrypted = Buffer.concat([cipher.update(secret, "utf8"), cipher.final()]);
     const tag = cipher.getAuthTag();
 
@@ -79,10 +90,18 @@ export class AuthService {
     const [ivRaw, tagRaw, encryptedRaw] = value.split(".");
     if (!ivRaw || !tagRaw || !encryptedRaw) throw new BadRequestException("Invalid MFA configuration.");
 
-    const decipher = createDecipheriv("aes-256-gcm", this.getEncryptionKey(), Buffer.from(ivRaw, "base64url"));
-    decipher.setAuthTag(Buffer.from(tagRaw, "base64url"));
+    for (const key of this.getMfaEncryptionKeys()) {
+      try {
+        const decipher = createDecipheriv("aes-256-gcm", key, Buffer.from(ivRaw, "base64url"));
+        decipher.setAuthTag(Buffer.from(tagRaw, "base64url"));
 
-    return Buffer.concat([decipher.update(Buffer.from(encryptedRaw, "base64url")), decipher.final()]).toString("utf8");
+        return Buffer.concat([decipher.update(Buffer.from(encryptedRaw, "base64url")), decipher.final()]).toString("utf8");
+      } catch {
+        continue;
+      }
+    }
+
+    throw new BadRequestException("Invalid MFA configuration.");
   }
 
   private isPrivilegedMfaRole(role: UserRole) {
@@ -416,6 +435,10 @@ export class AuthService {
       throw new BadRequestException("Company, name and email are required.");
     }
 
+    if (input.termsAccepted !== true) {
+      throw new BadRequestException("Terms and privacy policy acceptance is required.");
+    }
+
     this.validatePassword(input.password);
     const verificationRequired = this.isEmailVerificationRequired();
     const email = this.normalizeEmail(input.email);
@@ -498,6 +521,9 @@ export class AuthService {
           company: company.name,
           email: user.email,
           role: user.role,
+          termsAccepted: true,
+          termsVersion: "2026-09-22",
+          privacyVersion: "2026-09-22",
         },
       });
 

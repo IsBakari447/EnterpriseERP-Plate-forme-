@@ -56,6 +56,7 @@ async function main() {
       password: "StrongPass123",
       sector: "commerce",
       language: "fr",
+      termsAccepted: true,
     },
     "auth register valid payload"
   );

@@ -237,6 +237,7 @@ async function registerTenant(label: string, sector: string) {
       password: "E2ePassword123",
       sector,
       language: "en",
+      termsAccepted: true,
     }),
   });
 }

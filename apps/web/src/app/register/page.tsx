@@ -46,6 +46,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [sector, setSector] = useState<SectorKey>(getInitialSector);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "error" | "account-exists" | "verification-sent">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [verificationUrl, setVerificationUrl] = useState("");
@@ -64,6 +65,7 @@ export default function RegisterPage() {
         password,
         sector,
         language: locale,
+        termsAccepted,
       });
 
       if ("requiresEmailVerification" in result) {
@@ -193,6 +195,26 @@ export default function RegisterPage() {
               </option>
             ))}
           </select>
+        </label>
+
+        <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-sm font-bold text-slate-700">
+          <input
+            type="checkbox"
+            required
+            checked={termsAccepted}
+            onChange={(event) => setTermsAccepted(event.target.checked)}
+            className="mt-1 h-5 w-5 rounded border-slate-300 text-[#00A693] focus:ring-[#00C2A9]"
+          />
+          <span>
+            {t("auth.termsConsent")}{" "}
+            <Link href="/legal" className="text-[#00A693] underline-offset-4 hover:underline">
+              {t("legal.mentions")}
+            </Link>{" "}
+            {t("auth.termsAnd")}{" "}
+            <Link href="/privacy" className="text-[#00A693] underline-offset-4 hover:underline">
+              {t("legal.privacy")}
+            </Link>
+          </span>
         </label>
 
         <button
