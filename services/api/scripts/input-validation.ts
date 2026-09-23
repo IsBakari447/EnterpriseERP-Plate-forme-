@@ -6,6 +6,7 @@ import { CreateInvoiceDto } from "../src/modules/facturation/dto/invoice.dto";
 import { CreateProductDto } from "../src/modules/stock/dto/product.dto";
 import { CreateUserDto } from "../src/modules/users/dto/user.dto";
 import { CreateSalesOrderDto } from "../src/modules/operations/dto/operations.dto";
+import { UpdateProfileDto } from "../src/modules/profile/dto/profile.dto";
 
 const pipe = new ValidationPipe({
   whitelist: true,
@@ -79,6 +80,19 @@ async function main() {
   await expectRejected(CreateInvoiceDto, { number: "INV-1", customer: "Client", amount: 10, due: "not-a-date" }, "invoice invalid date");
   await expectRejected(CreateUserDto, { name: "User", email: "user@example.com", role: "ROOT" }, "user invalid role");
   await expectRejected(CreateSalesOrderDto, { number: "SO-1", customer: "Client", amount: 1, companyId: "OTHER" }, "sales order tenant injection");
+  await expectAccepted(
+    UpdateProfileDto,
+    {
+      language: "fr",
+      timezone: "Africa/Douala",
+      displayCurrency: "XAF",
+      theme: "dark",
+      notificationEmail: true,
+      notificationErp: true,
+      notificationImportant: true,
+    },
+    "profile preferences valid payload"
+  );
 
   console.log("Input validation security checks passed.");
 }

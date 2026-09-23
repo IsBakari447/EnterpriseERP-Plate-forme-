@@ -58,15 +58,15 @@ export class UpdateProfileDto {
 
   @IsOptional()
   @IsBoolean()
-  emailNotifications?: boolean;
+  notificationEmail?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  erpNotifications?: boolean;
+  notificationErp?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  importantAlerts?: boolean;
+  notificationImportant?: boolean;
 
   @IsOptional()
   @IsString()
