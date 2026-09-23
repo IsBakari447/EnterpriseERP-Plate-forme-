@@ -25,7 +25,8 @@ async function bootstrap() {
   const defaultCorsOrigin = isProduction
     ? "https://enterpriseerp-web.onrender.com"
     : "http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,https://enterpriseerp-web.onrender.com";
-  const corsOrigins = (process.env.CORS_ORIGIN ?? defaultCorsOrigin)
+  const configuredCorsOrigin = process.env.CORS_ORIGIN ? `${defaultCorsOrigin},${process.env.CORS_ORIGIN}` : defaultCorsOrigin;
+  const corsOrigins = configuredCorsOrigin
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);
