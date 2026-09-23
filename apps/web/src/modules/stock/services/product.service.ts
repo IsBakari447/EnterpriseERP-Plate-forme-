@@ -14,7 +14,17 @@ export type ProductDto = {
 const STORAGE_KEY = "enterpriseerp-cloud.products";
 
 function canUseStorage() {
-  return typeof window !== "undefined" && Boolean(window.localStorage);
+  return typeof window !== "undefined" && Boolean(window.sessionStorage);
+}
+
+function clearLegacyLocalStorage() {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Storage can be unavailable in strict privacy modes.
+  }
 }
 
 function createLocalId() {
@@ -53,9 +63,10 @@ function getFallbackProducts(): ProductDto[] {
 
 function readLocalProducts(): ProductDto[] {
   if (!canUseStorage()) return getFallbackProducts();
+  clearLegacyLocalStorage();
 
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.sessionStorage.getItem(STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : null;
     if (Array.isArray(parsed)) {
       return parsed.map(normalizeProduct);
@@ -69,7 +80,8 @@ function readLocalProducts(): ProductDto[] {
 
 function writeLocalProducts(products: ProductDto[]) {
   if (!canUseStorage()) return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(products.map(normalizeProduct)));
+  clearLegacyLocalStorage();
+  window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(products.map(normalizeProduct)));
 }
 
 export const productService = {

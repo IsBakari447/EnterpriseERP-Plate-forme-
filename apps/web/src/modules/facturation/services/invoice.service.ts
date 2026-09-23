@@ -14,7 +14,17 @@ export type InvoiceDto = {
 const STORAGE_KEY = "enterpriseerp-cloud.invoices";
 
 function canUseStorage() {
-  return typeof window !== "undefined" && Boolean(window.localStorage);
+  return typeof window !== "undefined" && Boolean(window.sessionStorage);
+}
+
+function clearLegacyLocalStorage() {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Storage can be unavailable in strict privacy modes.
+  }
 }
 
 function createLocalId() {
@@ -52,9 +62,10 @@ function getFallbackInvoices(): InvoiceDto[] {
 
 function readLocalInvoices(): InvoiceDto[] {
   if (!canUseStorage()) return getFallbackInvoices();
+  clearLegacyLocalStorage();
 
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.sessionStorage.getItem(STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : null;
     if (Array.isArray(parsed)) {
       return parsed.map(normalizeInvoice);
@@ -68,7 +79,8 @@ function readLocalInvoices(): InvoiceDto[] {
 
 function writeLocalInvoices(invoices: InvoiceDto[]) {
   if (!canUseStorage()) return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(invoices.map(normalizeInvoice)));
+  clearLegacyLocalStorage();
+  window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(invoices.map(normalizeInvoice)));
 }
 
 export const invoiceService = {

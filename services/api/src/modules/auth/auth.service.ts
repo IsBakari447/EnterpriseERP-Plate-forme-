@@ -44,6 +44,9 @@ type MfaDisableInput = {
   recoveryCode?: string;
 };
 
+const LEGAL_TERMS_VERSION = "2026-09-22";
+const LEGAL_PRIVACY_VERSION = "2026-09-22";
+
 @Injectable()
 export class AuthService {
   private readonly loginAttempts = new Map<string, { count: number; resetAt: number; lockedUntil?: number }>();
@@ -522,8 +525,8 @@ export class AuthService {
           email: user.email,
           role: user.role,
           termsAccepted: true,
-          termsVersion: "2026-09-22",
-          privacyVersion: "2026-09-22",
+          termsVersion: LEGAL_TERMS_VERSION,
+          privacyVersion: LEGAL_PRIVACY_VERSION,
         },
       });
 

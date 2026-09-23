@@ -13,14 +13,25 @@ export type ClientDto = {
 const STORAGE_KEY = "enterpriseerp-cloud.clients";
 
 function canUseStorage() {
-  return typeof window !== "undefined" && Boolean(window.localStorage);
+  return typeof window !== "undefined" && Boolean(window.sessionStorage);
+}
+
+function clearLegacyLocalStorage() {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Storage can be unavailable in strict privacy modes.
+  }
 }
 
 function readLocalClients(): ClientDto[] {
   if (!canUseStorage()) return [];
+  clearLegacyLocalStorage();
 
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.sessionStorage.getItem(STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
@@ -30,7 +41,8 @@ function readLocalClients(): ClientDto[] {
 
 function writeLocalClients(clients: ClientDto[]) {
   if (!canUseStorage()) return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+  clearLegacyLocalStorage();
+  window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
 }
 
 function createLocalId() {

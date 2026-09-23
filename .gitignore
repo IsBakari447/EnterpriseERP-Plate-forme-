@@ -11,6 +11,11 @@ out/
 coverage/
 *.tsbuildinfo
 
+# Local assistant and extraction scratch files
+.codex-tmp/
+.tmp/
+tmp/
+
 # Runtime and logs
 *.log
 logs/

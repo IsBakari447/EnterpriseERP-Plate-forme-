@@ -16,7 +16,7 @@ export type EducationRecord = Record<string, string | number | boolean | null | 
 const STORAGE_PREFIX = "enterpriseerp-cloud.education";
 
 function canUseStorage() {
-  return typeof window !== "undefined" && Boolean(window.localStorage);
+  return typeof window !== "undefined" && Boolean(window.sessionStorage);
 }
 
 function createLocalId() {
@@ -31,6 +31,16 @@ function storageKey(resource: EducationResource) {
   return `${STORAGE_PREFIX}.${resource}`;
 }
 
+function clearLegacyLocalStorage(resource: EducationResource) {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.removeItem(storageKey(resource));
+  } catch {
+    // Storage can be unavailable in strict privacy modes.
+  }
+}
+
 function normalizeRecord(record: EducationRecord): EducationRecord {
   return {
     ...record,
@@ -40,9 +50,10 @@ function normalizeRecord(record: EducationRecord): EducationRecord {
 
 function readLocalRecords(resource: EducationResource): EducationRecord[] {
   if (!canUseStorage()) return [];
+  clearLegacyLocalStorage(resource);
 
   try {
-    const raw = window.localStorage.getItem(storageKey(resource));
+    const raw = window.sessionStorage.getItem(storageKey(resource));
     const parsed = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? parsed.map(normalizeRecord) : [];
   } catch {
@@ -52,7 +63,8 @@ function readLocalRecords(resource: EducationResource): EducationRecord[] {
 
 function writeLocalRecords(resource: EducationResource, records: EducationRecord[]) {
   if (!canUseStorage()) return;
-  window.localStorage.setItem(storageKey(resource), JSON.stringify(records.map(normalizeRecord)));
+  clearLegacyLocalStorage(resource);
+  window.sessionStorage.setItem(storageKey(resource), JSON.stringify(records.map(normalizeRecord)));
 }
 
 export const educationService = {
