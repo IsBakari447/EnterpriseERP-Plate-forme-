@@ -36,7 +36,7 @@ export type AuthUser = {
 
 export type AuthSession = {
   accessToken: string;
-  refreshToken: string;
+  refreshToken?: string;
   tokenType: string;
   expiresIn: string;
   companyId?: string | null;
@@ -70,7 +70,10 @@ export const tokenStorage = {
 
     try {
       const raw = window.sessionStorage.getItem(STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as AuthSession) : null;
+      if (!raw) return null;
+      const session = JSON.parse(raw) as AuthSession;
+      const { refreshToken, ...safeSession } = session;
+      return safeSession;
     } catch {
       return null;
     }
@@ -79,7 +82,8 @@ export const tokenStorage = {
   set(session: AuthSession) {
     if (!canUseStorage()) return;
     clearLegacyLocalStorage();
-    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+    const { refreshToken, ...safeSession } = session;
+    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(safeSession));
   },
 
   clear() {
@@ -92,7 +96,4 @@ export const tokenStorage = {
     return this.get()?.accessToken ?? null;
   },
 
-  getRefreshToken() {
-    return this.get()?.refreshToken ?? null;
-  },
 };

@@ -66,6 +66,10 @@ export class AuthService {
     return randomBytes(32).toString("base64url");
   }
 
+  getRefreshTokenLifetimeMs() {
+    return this.jwt.getRefreshTokenLifetimeMs();
+  }
+
   private getMfaEncryptionKeys() {
     const dedicatedSecret = process.env.MFA_ENCRYPTION_KEY;
 

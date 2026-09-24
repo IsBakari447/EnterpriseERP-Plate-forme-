@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, Res } from "@nestjs/common";
 import { CurrentUser, AuthenticatedUser } from "../../common/auth/current-user.decorator";
 import { Public } from "../../common/auth/public.decorator";
 import { TenantOptional } from "../../common/tenant/tenant-optional.decorator";
@@ -14,6 +14,13 @@ type AuthenticatedRequest = {
   headers: Record<string, string | string[] | undefined>;
 };
 
+type CookieResponse = {
+  cookie(name: string, value: string, options: Record<string, unknown>): void;
+  clearCookie(name: string, options: Record<string, unknown>): void;
+};
+
+const REFRESH_COOKIE_NAME = process.env.NODE_ENV === "production" ? "__Host-enterpriseerp-refresh" : "enterpriseerp-refresh";
+
 @Controller("auth")
 @TenantOptional()
 export class AuthController {
@@ -21,20 +28,21 @@ export class AuthController {
 
   @Public()
   @Post("register")
-  register(@Body() body: RegisterDto, @Req() request: AuthenticatedRequest) {
-    return this.authService.register(body, this.getMeta(request));
+  async register(@Body() body: RegisterDto, @Req() request: AuthenticatedRequest, @Res({ passthrough: true }) response: CookieResponse) {
+    return this.withRefreshCookie(await this.authService.register(body, this.getMeta(request)), response);
   }
 
   @Public()
   @Post("login")
-  login(@Body() body: LoginDto, @Req() request: AuthenticatedRequest) {
-    return this.authService.login(body, this.getMeta(request));
+  async login(@Body() body: LoginDto, @Req() request: AuthenticatedRequest, @Res({ passthrough: true }) response: CookieResponse) {
+    return this.withRefreshCookie(await this.authService.login(body, this.getMeta(request)), response);
   }
 
   @Public()
   @Post("refresh")
-  refresh(@Body() body: RefreshDto, @Req() request: AuthenticatedRequest) {
-    return this.authService.refresh(body.refreshToken, this.getMeta(request));
+  async refresh(@Body() body: RefreshDto, @Req() request: AuthenticatedRequest, @Res({ passthrough: true }) response: CookieResponse) {
+    const refreshToken = body.refreshToken ?? this.getRefreshTokenCookie(request);
+    return this.withRefreshCookie(await this.authService.refresh(refreshToken ?? "", this.getMeta(request)), response);
   }
 
   @Public()
@@ -61,8 +69,8 @@ export class AuthController {
 
   @Public()
   @Post("mfa/challenge")
-  challengeMfa(@Body() body: MfaChallengeDto, @Req() request: AuthenticatedRequest) {
-    return this.authService.completeMfaChallenge(body, this.getMeta(request));
+  async challengeMfa(@Body() body: MfaChallengeDto, @Req() request: AuthenticatedRequest, @Res({ passthrough: true }) response: CookieResponse) {
+    return this.withRefreshCookie(await this.authService.completeMfaChallenge(body, this.getMeta(request)), response);
   }
 
   @Post("mfa/disable")
@@ -88,7 +96,9 @@ export class AuthController {
   }
 
   @Post("logout")
-  logout(@Req() request: AuthenticatedRequest) {
+  logout(@Req() request: AuthenticatedRequest, @Res({ passthrough: true }) response: CookieResponse) {
+    this.clearRefreshCookie(response);
+
     if (!request.user?.sessionId) {
       return { success: true };
     }
@@ -108,5 +118,55 @@ export class AuthController {
       ipAddress: request.ip,
       userAgent: Array.isArray(userAgent) ? userAgent[0] : userAgent,
     };
+  }
+
+  private getCookieOptions(maxAge?: number) {
+    const isProduction = process.env.NODE_ENV === "production";
+
+    return {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      path: "/",
+      ...(maxAge ? { maxAge } : {}),
+    };
+  }
+
+  private setRefreshCookie(response: CookieResponse, refreshToken: string) {
+    response.cookie(REFRESH_COOKIE_NAME, refreshToken, this.getCookieOptions(this.authService.getRefreshTokenLifetimeMs()));
+  }
+
+  private clearRefreshCookie(response: CookieResponse) {
+    response.clearCookie(REFRESH_COOKIE_NAME, this.getCookieOptions());
+  }
+
+  private getRefreshTokenCookie(request: AuthenticatedRequest) {
+    const cookieHeader = request.headers.cookie;
+    const rawCookie = Array.isArray(cookieHeader) ? cookieHeader.join("; ") : cookieHeader;
+    if (!rawCookie) return null;
+
+    const cookies = rawCookie.split(";").map((part) => part.trim());
+    const cookie = cookies.find((part) => part.startsWith(`${REFRESH_COOKIE_NAME}=`));
+    if (!cookie) return null;
+
+    return decodeURIComponent(cookie.slice(REFRESH_COOKIE_NAME.length + 1));
+  }
+
+  private withRefreshCookie<T>(payload: T, response: CookieResponse) {
+    if (!payload || typeof payload !== "object" || !("refreshToken" in payload)) {
+      return payload;
+    }
+
+    const sessionPayload = payload as T & { refreshToken?: string };
+    if (sessionPayload.refreshToken) {
+      this.setRefreshCookie(response, sessionPayload.refreshToken);
+    }
+
+    if (process.env.NODE_ENV === "production") {
+      const { refreshToken, ...safePayload } = sessionPayload;
+      return safePayload;
+    }
+
+    return payload;
   }
 }

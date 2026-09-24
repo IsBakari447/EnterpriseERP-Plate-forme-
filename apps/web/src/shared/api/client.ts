@@ -72,6 +72,7 @@ export const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
   timeout: 10000,
 });
 
@@ -97,28 +98,22 @@ apiClient.interceptors.response.use(
       !["/auth/login", "/auth/register", "/auth/refresh"].includes(String(originalRequest.url ?? ""))
     ) {
       originalRequest._retry = true;
-      const refreshToken = tokenStorage.getRefreshToken();
+      try {
+        const { data } = await axios.post<AuthSession>(
+          `${apiBaseUrl}/auth/refresh`,
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
 
-      if (refreshToken) {
-        try {
-          const { data } = await axios.post<AuthSession>(
-            `${apiBaseUrl}/auth/refresh`,
-            { refreshToken },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          tokenStorage.set(data);
-          originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-          return apiClient(originalRequest);
-        } catch {
-          tokenStorage.clear();
-          redirectToLogin();
-        }
-      } else {
+        tokenStorage.set(data);
+        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+        return apiClient(originalRequest);
+      } catch {
         tokenStorage.clear();
         redirectToLogin();
       }
