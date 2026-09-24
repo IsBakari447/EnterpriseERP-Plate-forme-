@@ -10,9 +10,9 @@ const transparentPlans = [
     price: "14 jours gratuits",
     target: "Pour valider le produit sans risque.",
     users: "3",
-    storage: "Donnees de demonstration",
+    storage: "Données de démonstration",
     modules: "CRM, stock, factures",
-    ai: "Suggestions de demonstration",
+    ai: "Suggestions de démonstration",
     api: "Lecture API",
     audit: "Journal de base",
     support: "Email",
@@ -20,8 +20,8 @@ const transparentPlans = [
   },
   {
     name: "Business Cloud",
-    price: "A partir de 49 EUR/mois",
-    target: "Pour les PME qui veulent centraliser leurs operations.",
+    price: "À partir de 49 EUR/mois",
+    target: "Pour les PME qui veulent centraliser leurs opérations.",
     users: "5 inclus",
     storage: "10 GB",
     modules: "CRM, ventes, stock, facturation, finance, RH",
@@ -34,15 +34,15 @@ const transparentPlans = [
   {
     name: "Enterprise Cloud",
     price: "Sur devis",
-    target: "Pour multi-sites, exigences avancees, SSO et integrations dediees.",
+    target: "Pour les organisations multi-sites, les exigences avancées, le SSO et les intégrations dédiées.",
     users: "Sur mesure",
     storage: "Sur mesure",
     modules: "Tous + extensions",
-    ai: "Agents dedies",
-    api: "API, webhooks, integrations dediees",
+    ai: "Agents dédiés",
+    api: "API, webhooks, intégrations dédiées",
     audit: "Audit, SSO, DPA",
     support: "SLA",
-    multisite: "Illimite",
+    multisite: "Illimité",
   },
 ];
 
@@ -65,11 +65,11 @@ export default function PricingPage() {
     <main className="min-h-screen bg-[#F4F7FB] px-6 py-16 text-night lg:px-16">
       <section className="mx-auto max-w-6xl">
         <span className="rounded-full bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
-          {tx("Pricing SaaS")}
+          {tx("SaaS pricing")}
         </span>
         <h1 className="mt-6 text-5xl font-black">{tx("Des offres simples pour lancer EnterpriseERP Cloud.")}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-          {tx("L'essai gratuit donne un cadre clair: 14 jours, admin complet, 3 utilisateurs, 20 factures, 50 produits, puis lecture seule jusqu'au paiement.")}
+          {tx("L'essai gratuit donne un cadre clair : 14 jours, admin complet, 3 utilisateurs, 20 factures, 50 produits, puis lecture seule jusqu'au paiement.")}
         </p>
 
         <div className="mt-10 grid gap-5 lg:grid-cols-3">
@@ -89,10 +89,10 @@ export default function PricingPage() {
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.18em] text-[#00A693]">{tx("Comparateur PME")}</p>
-              <h2 className="mt-2 text-3xl font-black">{tx("Choisissez un plan clair selon votre croissance.")}</h2>
+              <h2 className="mt-2 text-3xl font-black">{tx("Choisissez une offre claire pour accompagner votre croissance.")}</h2>
             </div>
             <a href="/demo" className="rounded-2xl bg-[#FF7A00] px-5 py-3 font-black text-white">
-              {tx("Essayer la demo")}
+              {tx("Essayer la démo")}
             </a>
           </div>
 

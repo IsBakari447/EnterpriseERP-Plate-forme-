@@ -68,34 +68,34 @@ function getInitialChecks(): ServiceCheck[] {
     {
       id: "web",
       name: "Application web",
-      description: "Disponibilite du frontend EnterpriseERP.",
+      description: "Disponibilité du frontend EnterpriseERP.",
       url: "/status",
       state: "checking",
-      detail: "Verification en cours...",
+      detail: "Vérification en cours...",
     },
     {
       id: "health",
       name: "API principale",
-      description: "Disponibilite du service backend EnterpriseERP.",
+      description: "Disponibilité du service backend EnterpriseERP.",
       url: healthUrl,
       state: "checking",
-      detail: "Verification en cours...",
+      detail: "Vérification en cours...",
     },
     {
       id: "ready",
-      name: "Base de donnees et dependances",
-      description: "Controle de readiness incluant les dependances critiques.",
+      name: "Base de données et dépendances",
+      description: "Contrôle de readiness incluant les dépendances critiques.",
       url: readinessUrl,
       state: "checking",
-      detail: "Verification en cours...",
+      detail: "Vérification en cours...",
     },
     {
       id: "platform",
       name: "Statut produit",
-      description: "Source de verite des statuts Disponible, Beta et Prevu.",
+      description: "Source de vérité des statuts Disponible, Bêta et Prévu.",
       url: platformStatusUrl,
       state: "checking",
-      detail: "Verification en cours...",
+      detail: "Vérification en cours...",
     },
   ];
 }
@@ -141,9 +141,9 @@ function badgeClass(state: CheckState) {
 
 function stateLabel(state: CheckState) {
   return {
-    checking: "Verification",
-    online: "Operationnel",
-    degraded: "Degrade",
+    checking: "Vérification",
+    online: "Opérationnel",
+    degraded: "Dégradé",
     offline: "Indisponible",
   }[state];
 }
@@ -167,7 +167,7 @@ export default function StatusPage() {
             ...check,
             latency: Math.round(performance.now() - startedAt),
             state: "online",
-            detail: "Application web chargee.",
+            detail: "Application web chargée.",
           } satisfies ServiceCheck;
         }
 
@@ -179,7 +179,7 @@ export default function StatusPage() {
             ...check,
             latency,
             state: latency > 1500 ? "degraded" : "online",
-            detail: latency > 1500 ? "Service joignable, latence a surveiller." : "Service joignable.",
+            detail: latency > 1500 ? "Service joignable, latence à surveiller." : "Service joignable.",
           } satisfies ServiceCheck;
         } catch {
           return {
@@ -214,9 +214,10 @@ export default function StatusPage() {
 
   const globalState = useMemo<CheckState>(() => {
     const remoteChecks = checks.filter((check) => check.id !== "web");
+    if (checks.some((check) => check.state === "checking")) return "checking";
     if (remoteChecks.every((check) => check.state === "offline")) return "degraded";
     if (checks.some((check) => check.state === "offline")) return "degraded";
-    if (checks.some((check) => check.state === "degraded" || check.state === "checking")) return "degraded";
+    if (checks.some((check) => check.state === "degraded")) return "degraded";
     return "online";
   }, [checks]);
 
@@ -228,9 +229,9 @@ export default function StatusPage() {
             <span className="rounded-full bg-[#1E2A38] px-4 py-2 text-sm font-black text-white">
               {tx("Statut plateforme")}
             </span>
-            <h1 className="mt-6 text-5xl font-black">{tx("Disponibilite EnterpriseERP Cloud.")}</h1>
+            <h1 className="mt-6 text-5xl font-black">{tx("Disponibilité EnterpriseERP Cloud.")}</h1>
             <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-              {tx("Cette page verifie les endpoints de sante de l'API, la disponibilite des dependances et la latence observee.")}
+              {tx("Cette page vérifie les endpoints de santé de l'API, la disponibilité des dépendances et la latence observée.")}
             </p>
           </div>
           <button onClick={runChecks} className="rounded-2xl bg-[#FF7A00] px-6 py-4 font-black text-white shadow-lg shadow-orange-500/20">
@@ -241,8 +242,8 @@ export default function StatusPage() {
         <section className="mt-10 rounded-3xl bg-white p-7 shadow ring-1 ring-slate-200">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h2 className="text-2xl font-black">{tx("Etat global")}</h2>
-              <p className="mt-2 text-slate-500">{tx("Derniere verification")}: {lastUpdated || tx("en cours")}</p>
+              <h2 className="text-2xl font-black">{tx("État global")}</h2>
+              <p className="mt-2 text-slate-500">{tx("Dernière vérification")}: {lastUpdated || tx("en cours")}</p>
             </div>
             <span className={`rounded-full px-4 py-2 text-sm font-black ${badgeClass(globalState)}`}>
               {tx(stateLabel(globalState))}

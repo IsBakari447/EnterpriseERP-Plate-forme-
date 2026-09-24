@@ -48,15 +48,15 @@ export const pricingPlans = [
   },
   {
     name: "Business Cloud",
-    price: "A partir de 49 EUR/mois",
-    highlight: "Pour PME qui veulent centraliser leurs operations.",
+    price: "À partir de 49 EUR/mois",
+    highlight: "Pour les PME qui veulent centraliser leurs opérations.",
     features: ["5 utilisateurs inclus", "CRM, stock, ventes, factures", "Dashboard dirigeant", "Exports et API"],
   },
   {
     name: "Enterprise Cloud",
     price: "Sur mesure",
-    highlight: "Pour multi-sites, integrations et exigences avancees.",
-    features: ["Multi-tenant", "Roles avances", "Audit securite", "Integrations dediees"],
+    highlight: "Pour les organisations multi-sites, les exigences avancées, le SSO et les intégrations dédiées.",
+    features: ["Multi-tenant", "Rôles avancés", "Audit sécurité", "Intégrations dédiées"],
   },
 ];
 

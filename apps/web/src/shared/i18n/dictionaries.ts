@@ -3260,27 +3260,27 @@ Object.entries(demoLiveFallbackTranslations).forEach(([locale, entries]) => {
 });
 
 Object.assign(dictionaries.fr, {
-  "auth.loginHero": "Un espace securise pour piloter votre entreprise, vos equipes et vos operations.",
-  "auth.registerHero": "Creez votre espace de travail, choisissez votre secteur et invitez votre equipe.",
-  "auth.valueDataIsolation": "Donnees isolees",
-  "auth.valueDataIsolationText": "Chaque entreprise garde ses donnees separees et controlees.",
-  "auth.valueRoleAccess": "Acces par role",
-  "auth.valueRoleAccessText": "Chaque utilisateur voit uniquement ce qui correspond a son role.",
-  "auth.valueSecureSessions": "Sessions securisees",
-  "auth.valueSecureSessionsText": "Connexion controlee avec appareils et sessions revocables.",
+  "auth.loginHero": "Un espace sécurisé pour piloter votre entreprise, vos équipes et vos opérations.",
+  "auth.registerHero": "Créez votre espace de travail, choisissez votre secteur et invitez votre équipe.",
+  "auth.valueDataIsolation": "Données isolées",
+  "auth.valueDataIsolationText": "Chaque entreprise garde ses données séparées et contrôlées.",
+  "auth.valueRoleAccess": "Accès par rôle",
+  "auth.valueRoleAccessText": "Chaque utilisateur voit uniquement ce qui correspond à son rôle.",
+  "auth.valueSecureSessions": "Sessions sécurisées",
+  "auth.valueSecureSessionsText": "Connexion contrôlée avec appareils et sessions révocables.",
   "auth.valueSectorWorkspace": "Espace sectoriel",
   "faq.0.question": "EnterpriseERP Cloud est-il different de EnterpriseERP classique ?",
   "faq.0.answer":
-    "Oui. EnterpriseERP Cloud est la version SaaS concue pour travailler depuis le web, connecter le mobile, isoler les donnees par entreprise et integrer vos outils.",
+    "Oui. EnterpriseERP Cloud est la version SaaS conçue pour travailler depuis le web, connecter le mobile, isoler les données par entreprise et intégrer vos outils.",
   "faq.1.question": "L'essai gratuit demande-t-il une carte bancaire ?",
   "faq.1.answer":
-    "Non. Vous beneficiez de 14 jours d'essai sans carte bancaire pour tester les modules essentiels avec des limites clairement affichees.",
+    "Non. Vous bénéficiez de 14 jours d'essai sans carte bancaire pour tester les modules essentiels avec des limites clairement affichées.",
   "faq.2.question": "Peut-on connecter l'application mobile ?",
   "faq.2.answer":
-    "Oui. Le socle API Cloud est disponible et la synchronisation mobile avancee est livree progressivement en beta.",
+    "Oui. Le socle API Cloud est disponible et la synchronisation mobile avancée est livrée progressivement en bêta.",
   "faq.3.question": "Quelles integrations sont disponibles ?",
   "faq.3.answer":
-    "Les endpoints API REST sont disponibles, les webhooks sont en beta et les connecteurs paiements, email/calendrier et comptables sont classes comme prevus.",
+    "Les endpoints API REST sont disponibles, les webhooks sont en bêta et les connecteurs paiements, email/calendrier et comptables sont classés comme prévus.",
 });
 
 Object.assign(dictionaries.en, {

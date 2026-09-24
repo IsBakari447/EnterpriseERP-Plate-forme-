@@ -20,8 +20,8 @@ export default function AuthShell({
 
   return (
     <main className="min-h-screen bg-[#F4F7FB] text-[#1E2A38]">
-      <div className="mx-auto grid min-h-screen max-w-7xl items-center gap-8 px-6 py-8 lg:grid-cols-[1.02fr_.98fr] lg:px-10">
-        <section className="relative overflow-hidden rounded-[34px] bg-gradient-to-br from-[#1E2A38] via-[#142235] to-[#00A990] p-8 text-white shadow-2xl lg:min-h-[720px] lg:p-12">
+      <div className="mx-auto grid min-h-screen max-w-7xl items-center gap-8 px-5 py-6 sm:px-6 lg:grid-cols-[1.02fr_.98fr] lg:px-10">
+        <section className="relative order-2 overflow-hidden rounded-[28px] bg-gradient-to-br from-[#1E2A38] via-[#142235] to-[#00A990] p-6 text-white shadow-2xl sm:rounded-[34px] sm:p-8 lg:order-1 lg:min-h-[720px] lg:p-12">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(0,194,169,.34),transparent_28%),radial-gradient(circle_at_82%_18%,rgba(255,122,0,.2),transparent_28%)]" />
           <div className="relative flex h-full flex-col">
             <div className="flex items-center justify-between gap-4">
@@ -37,7 +37,7 @@ export default function AuthShell({
               <LanguageSwitcher compact />
             </div>
 
-            <div className="my-auto py-14">
+            <div className="my-auto py-10 lg:py-14">
               <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-black text-[#99f6e4]">
                 {eyebrow}
               </div>
@@ -48,7 +48,7 @@ export default function AuthShell({
                 {text}
               </p>
 
-              <div className="mt-10 grid gap-3 sm:grid-cols-3">
+              <div className="mt-8 grid gap-3 sm:grid-cols-3 lg:mt-10">
                 {[
                   [t("auth.valueDataIsolation"), t("auth.valueDataIsolationText")],
                   [t("auth.valueRoleAccess"), t("auth.valueRoleAccessText")],
@@ -74,7 +74,7 @@ export default function AuthShell({
           </div>
         </section>
 
-        <section className="rounded-[34px] bg-white p-6 shadow-2xl ring-1 ring-slate-200 sm:p-8 lg:p-10">
+        <section className="order-1 rounded-[28px] bg-white p-6 shadow-2xl ring-1 ring-slate-200 sm:rounded-[34px] sm:p-8 lg:order-2 lg:p-10">
           {children}
         </section>
       </div>
