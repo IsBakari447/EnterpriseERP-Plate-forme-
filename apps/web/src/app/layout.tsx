@@ -123,9 +123,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
         <JsonLd data={buildGlobalJsonLd()} />
         <I18nProvider>
-          <SectorProvider>{children}</SectorProvider>
+          <SectorProvider>
+            <div id="main-content">{children}</div>
+          </SectorProvider>
         </I18nProvider>
       </body>
     </html>

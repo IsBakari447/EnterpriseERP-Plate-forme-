@@ -1495,6 +1495,8 @@ Object.assign(contentTranslations.fr ??= {}, {
   "Progressive EnterpriseERP.Mobile connection": "Connexion EnterpriseERP.Mobile progressive",
   "Integration monitoring upgrade": "Amélioration du monitoring des intégrations",
   "Upcoming sprint": "Prochain sprint",
+  "This check is taking longer than usual. Render may be waking up the service; the status will update automatically.":
+    "Cette vérification prend plus de temps que d'habitude. Render réveille peut-être le service; le statut se mettra à jour automatiquement.",
 });
 
 Object.assign(contentTranslations.en ??= {}, {
@@ -1520,6 +1522,8 @@ Object.assign(contentTranslations.en ??= {}, {
   "Services produit": "Product services",
   "Incidents et maintenance": "Incidents and maintenance",
   "Aucun incident ouvert.": "No open incident.",
+  "This check is taking longer than usual. Render may be waking up the service; the status will update automatically.":
+    "This check is taking longer than usual. Render may be waking up the service; the status will update automatically.",
   Disponible: "Available",
   Beta: "Beta",
   Prevu: "Planned",
@@ -1791,6 +1795,8 @@ Object.assign(contentTranslations.sv ??= {}, {
   "Services produit": "Produkttjanster",
   "Incidents et maintenance": "Incidenter och underhall",
   "Aucun incident ouvert.": "Ingen oppen incident.",
+  "This check is taking longer than usual. Render may be waking up the service; the status will update automatically.":
+    "Kontrollen tar langre tid an vanligt. Render kan vacka tjansten; statusen uppdateras automatiskt.",
   Disponible: "Tillganglig",
   Beta: "Beta",
   Prevu: "Planerad",

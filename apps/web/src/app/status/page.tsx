@@ -154,8 +154,11 @@ export default function StatusPage() {
   const [checks, setChecks] = useState<ServiceCheck[]>(() => getInitialChecks());
   const [lastUpdated, setLastUpdated] = useState<string>("");
   const [platformStatus, setPlatformStatus] = useState<PlatformStatus>(fallbackPlatformStatus);
+  const [isTakingLonger, setIsTakingLonger] = useState(false);
 
   async function runChecks() {
+    setIsTakingLonger(false);
+    setChecks(getInitialChecks());
     const checksToRun = getInitialChecks();
     const { platformStatusUrl } = getStatusUrls();
     const results = await Promise.all(
@@ -212,6 +215,19 @@ export default function StatusPage() {
     runChecks();
   }, []);
 
+  useEffect(() => {
+    if (!checks.some((check) => check.state === "checking")) {
+      setIsTakingLonger(false);
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setIsTakingLonger(true);
+    }, 8000);
+
+    return () => window.clearTimeout(timer);
+  }, [checks]);
+
   const globalState = useMemo<CheckState>(() => {
     const remoteChecks = checks.filter((check) => check.id !== "web");
     if (checks.some((check) => check.state === "checking")) return "checking";
@@ -249,6 +265,11 @@ export default function StatusPage() {
               {tx(stateLabel(globalState))}
             </span>
           </div>
+          {globalState === "checking" && isTakingLonger && (
+            <div className="mt-5 rounded-2xl bg-amber-50 p-4 text-sm font-bold text-amber-800">
+              {tx("This check is taking longer than usual. Render may be waking up the service; the status will update automatically.")}
+            </div>
+          )}
         </section>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2">

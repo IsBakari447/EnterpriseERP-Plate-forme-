@@ -30,6 +30,27 @@ select {
   background: rgb(0 194 169 / 0.22);
 }
 
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 9999;
+  transform: translateY(-150%);
+  border-radius: 999px;
+  background: var(--night);
+  color: white;
+  font-weight: 900;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 18px 40px rgb(15 23 42 / 0.24);
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 3px solid var(--action);
+  outline-offset: 3px;
+}
+
 .bg-night {
   background: var(--night);
 }
