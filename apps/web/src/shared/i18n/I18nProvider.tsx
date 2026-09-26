@@ -49,7 +49,7 @@ function normalizeLocale(value: string | null | undefined): Locale {
 }
 
 function I18nBridge({ children }: { children: ReactNode }) {
-  const { t: translate } = useTranslation();
+  useTranslation();
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
 
   useEffect(() => {
@@ -74,9 +74,10 @@ function I18nBridge({ children }: { children: ReactNode }) {
     () => ({
       locale,
       setLocale,
-      t: (key: string) => translate(key),
+      t: (key: string) =>
+        dictionaries[locale]?.[key] ?? dictionaries[defaultLocale]?.[key] ?? key,
     }),
-    [locale, translate]
+    [locale]
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

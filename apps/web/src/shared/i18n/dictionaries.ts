@@ -3891,4 +3891,76 @@ Object.assign(dictionaries.nl, {
   "profile.preferencesError": "Voorkeuren konden niet worden opgeslagen.",
 });
 
+Object.assign(dictionaries.fr, {
+  "market.command.crm": "CRM",
+  "market.command.stock": "Stock",
+  "market.command.invoices": "Factures",
+  "market.command.ai": "IA",
+  "market.command.mobile": "Mobile",
+  "market.command.api": "API",
+});
+
+Object.assign(dictionaries.en, {
+  "market.command.crm": "CRM",
+  "market.command.stock": "Inventory",
+  "market.command.invoices": "Invoices",
+  "market.command.ai": "AI",
+  "market.command.mobile": "Mobile",
+  "market.command.api": "API",
+});
+
+Object.assign(dictionaries.sv, {
+  "market.command.crm": "CRM",
+  "market.command.stock": "Lager",
+  "market.command.invoices": "Fakturor",
+  "market.command.ai": "AI",
+  "market.command.mobile": "Mobil",
+  "market.command.api": "API",
+});
+
+Object.assign(dictionaries.de, {
+  "market.command.crm": "CRM",
+  "market.command.stock": "Lager",
+  "market.command.invoices": "Rechnungen",
+  "market.command.ai": "KI",
+  "market.command.mobile": "Mobil",
+  "market.command.api": "API",
+});
+
+Object.assign(dictionaries.es, {
+  "market.command.crm": "CRM",
+  "market.command.stock": "Inventario",
+  "market.command.invoices": "Facturas",
+  "market.command.ai": "IA",
+  "market.command.mobile": "Movil",
+  "market.command.api": "API",
+});
+
+Object.assign(dictionaries.pt, {
+  "market.command.crm": "CRM",
+  "market.command.stock": "Stock",
+  "market.command.invoices": "Faturas",
+  "market.command.ai": "IA",
+  "market.command.mobile": "Movel",
+  "market.command.api": "API",
+});
+
+Object.assign(dictionaries.it, {
+  "market.command.crm": "CRM",
+  "market.command.stock": "Magazzino",
+  "market.command.invoices": "Fatture",
+  "market.command.ai": "IA",
+  "market.command.mobile": "Mobile",
+  "market.command.api": "API",
+});
+
+Object.assign(dictionaries.nl, {
+  "market.command.crm": "CRM",
+  "market.command.stock": "Voorraad",
+  "market.command.invoices": "Facturen",
+  "market.command.ai": "AI",
+  "market.command.mobile": "Mobiel",
+  "market.command.api": "API",
+});
+
 

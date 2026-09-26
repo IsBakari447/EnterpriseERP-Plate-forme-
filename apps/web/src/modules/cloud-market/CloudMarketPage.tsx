@@ -75,9 +75,9 @@ export function CloudMarketPage() {
             <div className="rounded-2xl bg-[#0f172a] p-6">
               <h2 className="text-2xl font-black">{t("auth.commandCenter")}</h2>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                {["CRM", "Stock", "Factures", "IA", "Mobile", "API"].map((item) => (
+                {["crm", "stock", "invoices", "ai", "mobile", "api"].map((item) => (
                   <div key={item} className="rounded-2xl border border-white/10 bg-white/5 p-4 font-black">
-                    {item}
+                    {t(`market.command.${item}`)}
                   </div>
                 ))}
               </div>
