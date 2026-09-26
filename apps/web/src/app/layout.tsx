@@ -5,6 +5,8 @@ import { SectorProvider } from "@shared/sector/SectorProvider";
 import { I18nProvider } from "@shared/i18n/I18nProvider";
 import { JsonLd, buildGlobalJsonLd } from "@shared/seo/structured-data";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   metadataBase: new URL(
     "https://enterpriseerp-web.onrender.com"

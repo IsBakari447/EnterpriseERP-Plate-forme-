@@ -1,14 +1,21 @@
+import { headers } from "next/headers";
+
 const siteUrl = "https://enterpriseerp-web.onrender.com";
 const logoUrl = `${siteUrl}/enterpriseerp-logo.png`;
 const ogImageUrl = `${siteUrl}/enterpriseerp-og.png`;
 
 type JsonLdProps = {
   data: Record<string, unknown> | Array<Record<string, unknown>>;
+  nonce?: string;
 };
 
-export function JsonLd({ data }: JsonLdProps) {
+export async function JsonLd({ data, nonce }: JsonLdProps) {
+  const requestHeaders = await headers();
+  const resolvedNonce = nonce ?? requestHeaders.get("x-nonce") ?? undefined;
+
   return (
     <script
+      nonce={resolvedNonce}
       type="application/ld+json"
       dangerouslySetInnerHTML={{
         __html: JSON.stringify(data).replace(/</g, "\\u003c"),
