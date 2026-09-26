@@ -23,6 +23,10 @@ type MfaChallengeResponse = {
   expiresIn: number;
   message: string;
 };
+type ResponseEnvelope<T = Json> = {
+  data: T;
+  response: Response;
+};
 
 const baseUrl = (process.env.E2E_BASE_URL ?? "http://localhost:4000").replace(/\/$/, "");
 const allowRemoteWrite = process.env.E2E_ALLOW_REMOTE_WRITE === "true";
@@ -40,6 +44,13 @@ function isLocalUrl(url: string) {
 }
 
 async function request<T = Json>(path: string, options: RequestInit & { token?: string } = {}) {
+  return (await requestWithResponse<T>(path, options)).data;
+}
+
+async function requestWithResponse<T = Json>(
+  path: string,
+  options: RequestInit & { token?: string } = {}
+): Promise<ResponseEnvelope<T>> {
   const headers = new Headers(options.headers);
   headers.set("accept", "application/json");
   headers.set("x-forwarded-for", e2eIp);
@@ -63,10 +74,14 @@ async function request<T = Json>(path: string, options: RequestInit & { token?: 
     throw new Error(`${options.method ?? "GET"} ${path} failed with ${response.status}: ${text}`);
   }
 
-  return data as T;
+  return { data: data as T, response };
 }
 
 async function expectStatus(path: string, status: number, options: RequestInit & { token?: string } = {}) {
+  await expectStatusIn(path, [status], options);
+}
+
+async function expectStatusIn(path: string, statuses: number[], options: RequestInit & { token?: string } = {}) {
   const headers = new Headers(options.headers);
   headers.set("accept", "application/json");
   headers.set("x-forwarded-for", e2eIp);
@@ -84,7 +99,10 @@ async function expectStatus(path: string, status: number, options: RequestInit &
     headers,
   });
 
-  assert(response.status === status, `${options.method ?? "GET"} ${path}: expected ${status}, got ${response.status}`);
+  assert(
+    statuses.includes(response.status),
+    `${options.method ?? "GET"} ${path}: expected ${statuses.join(" or ")}, got ${response.status}`
+  );
 }
 
 function extractTotpSecret(otpauthUrl: string) {
@@ -116,6 +134,62 @@ async function verifyAuthAndSessionFlow(session: Session) {
     method: "POST",
     body: JSON.stringify({ refreshToken: "invalid-refresh-token" }),
   });
+
+  await expectStatus("/auth/login", 403, {
+    method: "POST",
+    headers: { origin: "https://evil.example" },
+    body: JSON.stringify({
+      email: session.user.email,
+      password: "E2ePassword123",
+    }),
+  });
+
+  await expectStatus("/auth/refresh", 403, {
+    method: "POST",
+    headers: { origin: "https://evil.example" },
+    body: JSON.stringify({ refreshToken: session.refreshToken }),
+  });
+
+  await expectStatusIn("/auth/login", [400, 403], {
+    method: "POST",
+    headers: { origin: "http://localhost:3000", "content-type": "text/plain" },
+    body: JSON.stringify({
+      email: session.user.email,
+      password: "E2ePassword123",
+    }),
+  });
+
+  const browserLogin = await requestWithResponse<Session>("/auth/login", {
+    method: "POST",
+    headers: { origin: "http://localhost:3000" },
+    body: JSON.stringify({
+      email: session.user.email,
+      password: "E2ePassword123",
+      rememberMe: true,
+      deviceName: "EnterpriseERP E2E browser",
+    }),
+  });
+  assert(browserLogin.response.headers.get("set-cookie"), "browser login should set a refresh cookie");
+
+  const mobileLogin = await request<Session>("/auth/login", {
+    method: "POST",
+    headers: { "x-enterpriseerp-client": "mobile" },
+    body: JSON.stringify({
+      email: session.user.email,
+      password: "E2ePassword123",
+      rememberMe: true,
+      deviceName: "EnterpriseERP Mobile E2E",
+    }),
+  });
+  assert(mobileLogin.refreshToken, "mobile login should return a refresh token for SecureStore");
+
+  const mobileRefresh = await request<Session>("/auth/refresh", {
+    method: "POST",
+    headers: { "x-enterpriseerp-client": "mobile" },
+    body: JSON.stringify({ refreshToken: mobileLogin.refreshToken }),
+  });
+  assert(mobileRefresh.accessToken, "mobile refresh should return a new access token");
+  assert(mobileRefresh.refreshToken, "mobile refresh should rotate and return the refresh token");
 
   const refreshed = await request<Session>("/auth/refresh", {
     method: "POST",

@@ -12,6 +12,9 @@ export const API_URL =
 
 const ACCESS_TOKEN_KEY = "enterpriseerp.accessToken";
 const REFRESH_TOKEN_KEY = "enterpriseerp.refreshToken";
+const MOBILE_CLIENT_HEADERS = {
+  "X-EnterpriseERP-Client": "mobile",
+};
 
 export const endpoints = {
   health: "/health",
@@ -57,7 +60,7 @@ async function refreshAccessToken() {
 
   const response = await fetch(`${API_URL}${endpoints.refresh}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...MOBILE_CLIENT_HEADERS },
     body: JSON.stringify({ refreshToken }),
   });
 
@@ -87,6 +90,7 @@ async function request<T>(path: string, init: RequestInit, token?: string | null
     ...init,
     headers: {
       "Content-Type": "application/json",
+      ...MOBILE_CLIENT_HEADERS,
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...init.headers,
     },
