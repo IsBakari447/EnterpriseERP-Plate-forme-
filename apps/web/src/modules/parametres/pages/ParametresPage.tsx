@@ -6,7 +6,7 @@ import KPICard from "@shared/components/ui/KPICard";
 import Badge from "@shared/components/ui/Badge";
 import LanguageSwitcher from "@shared/i18n/LanguageSwitcher";
 import { useI18n } from "@shared/i18n/I18nProvider";
-import { parametresKpis, settings } from "@modules/parametres/data";
+import { parametresKpis } from "@modules/parametres/data";
 import { companyService, type CompanyDto } from "@modules/company/services/company.service";
 import { settingsService, type SettingsKpi } from "../services/settings.service";
 
@@ -37,10 +37,10 @@ export default function ParametresPage() {
 
   const settingsRows = useMemo(
     () => [
-      { labelKey: "settings.companyName", value: company?.name ?? settings[0].value },
+      { labelKey: "settings.companyName", value: company?.name ?? "EnterpriseERP" },
       { labelKey: "settings.mainLanguage", value: t(`locale.${locale}`) },
       { labelKey: "settings.currency", value: company?.currency ?? "EUR" },
-      { labelKey: "settings.timezone", value: company?.timezone ?? settings[3].value },
+      { labelKey: "settings.timezone", value: company?.timezone ?? "UTC" },
     ],
     [company, locale, t]
   );
