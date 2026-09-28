@@ -1876,7 +1876,7 @@ dictionaries.sv = {
   "dashboard.month.apr": "Apr",
   "dashboard.month.may": "Maj",
   "dashboard.month.jun": "Jun",
-  "crm.title": "CRM kunder",
+  "crm.title": "CRM-kunder",
   "crm.subtitle": "Hantera kunder, prospekt och partners.",
   "crm.registered": "Registrerade kunder",
   "crm.active": "Aktiva kunder",

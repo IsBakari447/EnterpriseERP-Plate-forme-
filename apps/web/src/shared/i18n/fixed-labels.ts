@@ -1,4 +1,5 @@
 import type { Locale } from "./dictionaries";
+import { normalizeSwedishText } from "./swedish-normalization";
 
 const labels: Partial<Record<Locale, Record<string, string>>> = {
   fr: {
@@ -337,11 +338,13 @@ const labels: Partial<Record<Locale, Record<string, string>>> = {
     "Valeur": "Varde",
     "Montant": "Belopp",
     "Client": "Kund",
+    "Pays": "Land",
     "Statut": "Status",
     "Echeance": "Forfallodatum",
     "No": "Nr",
     "No facture": "Fakturanr",
     "Supprimer": "Ta bort",
+    "Modifier": "Ändra",
     "Enregistrer la facture": "Spara faktura",
     "Enregistrer le produit": "Spara produkt",
     "Confirmer": "Bekrafta",
@@ -630,5 +633,5 @@ Object.assign(labels.sv!, {
 
 export function translateFixedLabel(value: string, locale: Locale) {
   if (locale === "fr") return labels.fr?.[value] ?? value;
-  return labels[locale]?.[value] ?? labels.en?.[value] ?? value;
+  return normalizeSwedishText(labels[locale]?.[value] ?? labels.en?.[value] ?? value, locale);
 }

@@ -1,4 +1,5 @@
 import type { Locale } from "@shared/i18n/dictionaries";
+import { normalizeSwedishText } from "@shared/i18n/swedish-normalization";
 
 const translations: Partial<Record<Locale, Record<string, string>>> = {
   fr: {
@@ -724,5 +725,5 @@ Object.assign(translations.sv!, {
 
 export function translateDashboardText(value: string, locale: Locale) {
   if (locale === "fr") return translations.fr?.[value] ?? value;
-  return translations[locale]?.[value] ?? translations.en?.[value] ?? value;
+  return normalizeSwedishText(translations[locale]?.[value] ?? translations.en?.[value] ?? value, locale);
 }

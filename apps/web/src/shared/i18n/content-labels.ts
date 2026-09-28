@@ -1,4 +1,5 @@
 import type { Locale } from "./dictionaries";
+import { normalizeSwedishText } from "./swedish-normalization";
 
 const labelTranslations: Partial<Record<Locale, Record<string, string>>> = {
   en: {
@@ -2055,63 +2056,70 @@ Object.assign(contentTranslations.sv ??= {}, {
 
 function translateLabelPart(value: string, locale: Locale) {
   if (locale === "fr") return value;
-  return labelTranslations[locale]?.[value] ?? labelTranslations.en?.[value] ?? value;
+  return normalizeSwedishText(labelTranslations[locale]?.[value] ?? labelTranslations.en?.[value] ?? value, locale);
 }
 
 export function translateContentText(value: string, locale: Locale) {
   if (locale === "fr") return contentTranslations.fr?.[value] ?? value;
 
   const direct = contentTranslations[locale]?.[value] ?? contentTranslations.en?.[value];
-  if (direct) return direct;
+  if (direct) return normalizeSwedishText(direct, locale);
 
   const badge = value.match(/^ERP Cloud pour (.+)$/);
   if (badge) {
-    return locale === "sv"
+    const translated = locale === "sv"
       ? `Cloud ERP for ${translateLabelPart(badge[1], locale)}`
       : `Cloud ERP for ${translateLabelPart(badge[1], locale)}`;
+    return normalizeSwedishText(translated, locale);
   }
 
   const title = value.match(/^Pilotez votre (.+) avec EnterpriseERP$/);
   if (title) {
-    return locale === "sv"
+    const translated = locale === "sv"
       ? `Styr din ${translateLabelPart(title[1], locale)} med EnterpriseERP`
       : `Run your ${translateLabelPart(title[1], locale)} with EnterpriseERP`;
+    return normalizeSwedishText(translated, locale);
   }
 
   const dashboard = value.match(/^Dashboard (.+)$/);
   if (dashboard) {
-    return locale === "sv"
+    const translated = locale === "sv"
       ? `Oversikt ${translateLabelPart(dashboard[1], locale)}`
       : `${translateLabelPart(dashboard[1], locale)} dashboard`;
+    return normalizeSwedishText(translated, locale);
   }
 
   const cta = value.match(/^Modernisez la gestion de votre (.+)$/);
   if (cta) {
-    return locale === "sv"
+    const translated = locale === "sv"
       ? `Modernisera hanteringen av din ${translateLabelPart(cta[1], locale)}`
       : `Modernize the management of your ${translateLabelPart(cta[1], locale)}`;
+    return normalizeSwedishText(translated, locale);
   }
 
   const operational = value.match(/^(.+) operationnel$/);
   if (operational) {
-    return locale === "sv"
+    const translated = locale === "sv"
       ? `${translateLabelPart(operational[1], locale)} operativ`
       : `${translateLabelPart(operational[1], locale)} operational`;
+    return normalizeSwedishText(translated, locale);
   }
 
   const form = value.match(/^Formulaire (.+)$/);
   if (form) {
-    return locale === "sv"
+    const translated = locale === "sv"
       ? `Formular ${form[1]}`
       : `${form[1]} form`;
+    return normalizeSwedishText(translated, locale);
   }
 
   const history = value.match(/^(.+) - historique$/);
   if (history) {
-    return locale === "sv"
+    const translated = locale === "sv"
       ? `${history[1]} - historik`
       : `${history[1]} - history`;
+    return normalizeSwedishText(translated, locale);
   }
 
-  return value;
+  return normalizeSwedishText(value, locale);
 }

@@ -11,7 +11,7 @@ import { companyService, type CompanyDto } from "@modules/company/services/compa
 import { settingsService, type SettingsKpi } from "../services/settings.service";
 
 export default function ParametresPage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const [kpis, setKpis] = useState<SettingsKpi[]>(parametresKpis);
   const [company, setCompany] = useState<CompanyDto | null>(null);
   const [security, setSecurity] = useState({
@@ -38,11 +38,11 @@ export default function ParametresPage() {
   const settingsRows = useMemo(
     () => [
       { labelKey: "settings.companyName", value: company?.name ?? settings[0].value },
-      { labelKey: "settings.mainLanguage", value: company?.language ? t(`locale.${company.language}`) : t("locale.fr") },
+      { labelKey: "settings.mainLanguage", value: t(`locale.${locale}`) },
       { labelKey: "settings.currency", value: company?.currency ?? "EUR" },
       { labelKey: "settings.timezone", value: company?.timezone ?? settings[3].value },
     ],
-    [company, t]
+    [company, locale, t]
   );
 
   return (
