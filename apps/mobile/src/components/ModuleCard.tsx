@@ -23,6 +23,8 @@ export function ModuleCard({
   return (
     <Pressable
       onPress={() => router.push(meta.route as never)}
+      accessibilityRole="button"
+      accessibilityLabel={t(meta.labelKey)}
       style={({ pressed }) => [
         styles.card,
         pressed && styles.pressed,

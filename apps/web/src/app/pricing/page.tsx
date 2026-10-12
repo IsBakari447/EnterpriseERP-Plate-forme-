@@ -1,6 +1,8 @@
 "use client";
 
 import { pricingPlans } from "@modules/cloud-market/data";
+import MarketingFooter from "@shared/components/marketing/MarketingFooter";
+import MarketingHeader from "@shared/components/marketing/MarketingHeader";
 import { useI18n } from "@shared/i18n/I18nProvider";
 import { translateContentText } from "@shared/i18n/content-labels";
 
@@ -62,12 +64,13 @@ export default function PricingPage() {
   const tx = (value: string) => translateContentText(value, locale);
 
   return (
-    <main className="min-h-screen bg-[#F4F7FB] px-6 py-16 text-night lg:px-16">
-      <section className="mx-auto max-w-6xl">
+    <main className="min-h-screen bg-[#F4F7FB] text-night">
+      <MarketingHeader />
+      <section className="mx-auto max-w-6xl px-5 py-14 sm:px-8 lg:py-20">
         <span className="rounded-full bg-[#00C2A9]/10 px-4 py-2 text-sm font-black text-[#008f7d]">
           {tx("SaaS pricing")}
         </span>
-        <h1 className="mt-6 text-5xl font-black">{tx("Des offres simples pour lancer EnterpriseERP Cloud.")}</h1>
+        <h1 className="mt-6 text-4xl font-black tracking-tight sm:text-5xl">{tx("Des offres simples pour lancer EnterpriseERP Cloud.")}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
           {tx("L'essai gratuit donne un cadre clair : 14 jours, admin complet, 3 utilisateurs, 20 factures, 50 produits, puis lecture seule jusqu'au paiement.")}
         </p>
@@ -96,7 +99,25 @@ export default function PricingPage() {
             </a>
           </div>
 
-          <div className="mt-7 overflow-x-auto">
+          <div className="mt-7 grid gap-4 md:hidden">
+            {transparentPlans.map((plan) => (
+              <article key={plan.name} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <h3 className="text-xl font-black text-night">{tx(plan.name)}</h3>
+                <p className="mt-1 text-2xl font-black text-[#00A693]">{tx(plan.price)}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{tx(plan.target)}</p>
+                <dl className="mt-5 divide-y divide-slate-200 text-sm">
+                  {comparisonRows.map(([label, key]) => (
+                    <div key={label} className="grid grid-cols-[.8fr_1.2fr] gap-3 py-3">
+                      <dt className="font-black text-night">{tx(label)}</dt>
+                      <dd className="font-semibold text-slate-600">{tx(plan[key])}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-7 hidden overflow-x-auto md:block">
             <table className="w-full min-w-[920px] border-separate border-spacing-0 text-left text-sm">
               <thead>
                 <tr>
@@ -126,6 +147,7 @@ export default function PricingPage() {
           </div>
         </section>
       </section>
+      <MarketingFooter />
     </main>
   );
 }

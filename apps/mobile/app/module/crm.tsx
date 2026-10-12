@@ -168,6 +168,7 @@ export default function CrmScreen() {
         <Pressable
           onPress={() => setShowForm((value) => !value)}
           accessibilityLabel={t("crm.add")}
+          accessibilityRole="button"
           style={styles.addButton}
         >
           <Ionicons name={showForm ? "close" : "add"} size={24} color="white" />
@@ -182,6 +183,7 @@ export default function CrmScreen() {
             onChangeText={(value) => updateForm("name", value)}
             placeholder={t("crm.name")}
             placeholderTextColor={colors.muted}
+            accessibilityLabel={t("crm.name")}
             style={styles.formInput}
           />
           <TextInput
@@ -191,6 +193,7 @@ export default function CrmScreen() {
             placeholderTextColor={colors.muted}
             autoCapitalize="none"
             keyboardType="email-address"
+            accessibilityLabel={t("login.email")}
             style={styles.formInput}
           />
           <View style={styles.formRow}>
@@ -199,6 +202,7 @@ export default function CrmScreen() {
               onChangeText={(value) => updateForm("country", value)}
               placeholder={t("crm.country")}
               placeholderTextColor={colors.muted}
+              accessibilityLabel={t("crm.country")}
               style={[styles.formInput, styles.formHalf]}
             />
             <TextInput
@@ -207,10 +211,17 @@ export default function CrmScreen() {
               placeholder={t("crm.revenue")}
               placeholderTextColor={colors.muted}
               keyboardType="numeric"
+              accessibilityLabel={t("crm.revenue")}
               style={[styles.formInput, styles.formHalf]}
             />
           </View>
-          <Pressable disabled={saving} onPress={saveClient} style={[styles.saveButton, saving && styles.disabledButton]}>
+          <Pressable
+            disabled={saving}
+            onPress={saveClient}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: saving, busy: saving }}
+            style={[styles.saveButton, saving && styles.disabledButton]}
+          >
             <Text style={styles.saveText}>{saving ? t("common.saving") : t("crm.save")}</Text>
           </Pressable>
         </View>
@@ -234,6 +245,7 @@ export default function CrmScreen() {
           onChangeText={setSearch}
           placeholder={t("crm.search")}
           placeholderTextColor={colors.muted}
+          accessibilityLabel={t("crm.search")}
           style={styles.searchInput}
         />
       </View>
@@ -254,7 +266,12 @@ export default function CrmScreen() {
           />
           <Text style={styles.error}>{error}</Text>
 
-          <Pressable onPress={loadClients} style={styles.retryButton}>
+          <Pressable
+            onPress={loadClients}
+            accessibilityRole="button"
+            accessibilityLabel={t("common.retry")}
+            style={styles.retryButton}
+          >
             <Text style={styles.retryText}>{t("common.retry")}</Text>
           </Pressable>
         </View>

@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -16,11 +17,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { locales } from "@/i18n";
 import { colors } from "@/theme";
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
-  const { t } = useLanguage();
+  const { locale, setLocale, t } = useLanguage();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -54,9 +56,14 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
-        style={styles.container}
+        style={styles.keyboard}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
         <View style={styles.logo}>
           <Image
             source={require("../assets/enterpriseerp-icon.png")}
@@ -69,6 +76,31 @@ export default function LoginScreen() {
         <Text style={styles.title}>{t("login.title")}</Text>
         <Text style={styles.subtitle}>{t("login.subtitle")}</Text>
 
+        <View style={styles.languageRow} accessibilityRole="radiogroup">
+          {locales.map((item) => (
+            <Pressable
+              key={item.key}
+              onPress={() => setLocale(item.key)}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: locale === item.key }}
+              accessibilityLabel={item.label}
+              style={[
+                styles.languagePill,
+                locale === item.key && styles.languagePillActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.languageText,
+                  locale === item.key && styles.languageTextActive,
+                ]}
+              >
+                {item.key.toUpperCase()}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+
         <View style={styles.form}>
           <Text style={styles.label}>{t("login.email")}</Text>
 
@@ -80,6 +112,7 @@ export default function LoginScreen() {
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
+            accessibilityLabel={t("login.email")}
             style={styles.input}
           />
 
@@ -93,12 +126,14 @@ export default function LoginScreen() {
               placeholderTextColor={colors.muted}
               secureTextEntry={!showPassword}
               autoCapitalize="none"
+              accessibilityLabel={t("login.password")}
               style={styles.passwordInput}
             />
 
             <Pressable
               onPress={() => setShowPassword((value) => !value)}
               accessibilityLabel={t("login.password")}
+              accessibilityRole="button"
             >
               <Ionicons
                 name={showPassword ? "eye-off-outline" : "eye-outline"}
@@ -108,11 +143,15 @@ export default function LoginScreen() {
             </Pressable>
           </View>
 
-          {error ? <Text style={styles.error}>{error}</Text> : null}
+          {error ? (
+            <Text accessibilityRole="alert" style={styles.error}>{error}</Text>
+          ) : null}
 
           <Pressable
             onPress={handleLogin}
             disabled={submitting}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: submitting, busy: submitting }}
             style={({ pressed }) => [
               styles.button,
               pressed && styles.buttonPressed,
@@ -126,11 +165,17 @@ export default function LoginScreen() {
             )}
           </Pressable>
 
-          <Pressable onPress={() => router.push("/register")} style={styles.accessNotice}>
+          <Pressable
+            onPress={() => router.push("/register")}
+            accessibilityRole="button"
+            accessibilityLabel={t("login.mobileAccess")}
+            style={styles.accessNotice}
+          >
             <Ionicons name="shield-checkmark-outline" size={18} color={colors.primary} />
             <Text style={styles.accessNoticeText}>{t("login.mobileAccess")}</Text>
           </Pressable>
         </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -141,10 +186,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  container: {
+  keyboard: {
     flex: 1,
+  },
+  container: {
+    flexGrow: 1,
     justifyContent: "center",
     padding: 24,
+    paddingVertical: 28,
   },
   logo: {
     width: 72,
@@ -178,8 +227,35 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
   },
+  languageRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 18,
+  },
+  languagePill: {
+    minWidth: 48,
+    minHeight: 42,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  languagePillActive: {
+    borderColor: colors.primaryDark,
+    backgroundColor: colors.primaryDark,
+  },
+  languageText: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: "800",
+  },
+  languageTextActive: {
+    color: "white",
+  },
   form: {
-    marginTop: 30,
+    marginTop: 22,
   },
   label: {
     marginBottom: 8,

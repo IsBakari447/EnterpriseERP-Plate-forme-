@@ -120,6 +120,7 @@ export default function Dashboard() {
           <Pressable
             onPress={handleSignOut}
             accessibilityLabel={t("common.logout")}
+            accessibilityRole="button"
             style={styles.avatar}
           >
             <Ionicons name="log-out-outline" size={22} color="white" />
@@ -131,6 +132,9 @@ export default function Dashboard() {
             <Pressable
               key={item.key}
               onPress={() => setLocale(item.key)}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: locale === item.key }}
+              accessibilityLabel={item.label}
               style={[
                 styles.languagePill,
                 locale === item.key && styles.languagePillActive,

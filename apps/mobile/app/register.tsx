@@ -36,6 +36,8 @@ export default function RegisterDisabledScreen() {
 
           <Pressable
             onPress={() => router.replace("/login")}
+            accessibilityRole="button"
+            accessibilityLabel={t("mobileProvisioning.backToLogin")}
             style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
           >
             <Text style={styles.buttonText}>{t("mobileProvisioning.backToLogin")}</Text>
